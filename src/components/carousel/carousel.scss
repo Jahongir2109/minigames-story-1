@@ -1,0 +1,96 @@
+@use '../../styles/tokens/spacing' as *;
+@use '../../styles/tokens/typography' as *;
+@use '../../styles/utils/mixins' as *;
+
+.carousel {
+  padding-block: $space-7;
+}
+
+.carousel__container {
+  @include container;
+}
+
+.carousel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $space-5;
+
+  h2 {
+    font-size: $fs-2xl;
+  }
+}
+
+.carousel__controls {
+  display: flex;
+  gap: $space-2;
+}
+
+.carousel__control {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: $radius-pill;
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-text);
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background-color: var(--color-surface-alt);
+  }
+}
+
+.carousel__track {
+  display: flex;
+  gap: $space-5;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: $space-4;
+  scroll-behavior: smooth;
+  padding-bottom: $space-2;
+
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.carousel__card {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+  width: 200px;
+
+  @include from-tablet {
+    width: 240px;
+  }
+}
+
+.carousel__card img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: $radius-md;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: $space-3;
+  transition: transform 0.2s ease;
+}
+
+.carousel__card:hover img {
+  transform: translateY(-4px);
+}
+
+.carousel__card-title {
+  font-weight: $fw-semibold;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel__track {
+    scroll-behavior: auto;
+  }
+}
