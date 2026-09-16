@@ -5,26 +5,18 @@ export function createHero(): HTMLElement {
   const section = document.createElement('section');
   section.className = 'hero';
   section.id = 'home';
+  section.style.setProperty('--hero-image', `url(${heroGame.heroImage})`);
 
   section.innerHTML = `
     <div class="hero__container container">
-      <div class="hero__content">
-        <p class="hero__eyebrow">New this week</p>
-        <h1 class="hero__title">Cozy games for slow, happy days</h1>
+      <div class="hero__card">
+        <h1 class="hero__title">Take a Short Break &amp; Have Fun</h1>
         <p class="hero__subtitle">
-          Discover hand-picked indie games about tending gardens, running tiny cafés and
-          solving gentle little mysteries. No timers, no pressure — just cozy fun.
+          Discover hundreds of curated casual mini-games. Play instantly in your browser —
+          puzzle, match 3, farm, and board classics.
         </p>
-        <div class="hero__cta">
-          <a class="btn btn--primary" href="#games">Browse games</a>
-          <a class="btn btn--ghost" href="#developers">Submit your game</a>
-        </div>
+        <a class="btn btn--primary btn--large" href="#games">Browse Library</a>
       </div>
-
-      <figure class="hero__media">
-        <img src="${heroGame.heroImage}" alt="Screenshot from ${heroGame.name}" width="640" height="480" />
-        <figcaption class="hero__media-badge">${heroGame.name}</figcaption>
-      </figure>
     </div>
   `;
 

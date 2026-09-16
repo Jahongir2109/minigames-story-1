@@ -12,9 +12,9 @@ html {
 
 body {
   font-family: $font-family-base;
-  font-size: $fs-md;
+  font-size: $fs-body-md;
   font-weight: $fw-regular;
-  color: var(--color-text);
+  color: var(--color-text-muted);
   background-color: var(--color-bg);
 }
 
@@ -28,12 +28,13 @@ body {
 h1,
 h2,
 h3 {
+  color: var(--color-text);
   font-weight: $fw-extrabold;
   line-height: $line-height-tight;
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-text);
   outline-offset: 2px;
 }
 

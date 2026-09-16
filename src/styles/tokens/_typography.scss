@@ -1,21 +1,40 @@
 $font-family-base:
-  'Nunito',
+  'Inter',
   system-ui,
   -apple-system,
   'Segoe UI',
   sans-serif;
 
-$fs-xs: 0.75rem;
-$fs-sm: 0.875rem;
-$fs-md: 1rem;
-$fs-lg: 1.125rem;
-$fs-xl: 1.5rem;
-$fs-2xl: 2rem;
-$fs-3xl: 2.75rem;
-$fs-4xl: 3.5rem;
+$font-family-data:
+  'Roboto',
+  system-ui,
+  -apple-system,
+  'Segoe UI',
+  sans-serif;
+
+// Display
+$fs-display-lg: 3.5rem; // 56px
+$fs-display-md: 2.25rem; // 36px
+$fs-display-sm: 1.5rem; // 24px
+
+// Headline
+$fs-headline-lg: 2rem; // 32px
+$fs-headline-md: 1.5rem; // 24px
+$fs-headline-sm: 1.25rem; // 20px
+
+// Body
+$fs-body-lg: 1.125rem; // 18px
+$fs-body-md: 1rem; // 16px
+$fs-body-sm: 0.875rem; // 14px
+
+// Label
+$fs-label-xl: 1rem; // 16px
+$fs-label-lg: 0.875rem; // 14px
+$fs-label-md: 0.75rem; // 12px
+$fs-label-sm: 0.625rem; // 10px
 
 $fw-regular: 400;
-$fw-semibold: 600;
+$fw-medium: 500;
 $fw-bold: 700;
 $fw-extrabold: 800;
 

@@ -3,7 +3,7 @@
 @use '../../styles/utils/mixins' as *;
 
 .carousel {
-  padding-block: $space-7;
+  padding-block: $size-5;
 }
 
 .carousel__container {
@@ -14,30 +14,41 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: $space-5;
+  margin-bottom: $size-3;
 
   h2 {
-    font-size: $fs-2xl;
+    display: flex;
+    align-items: center;
+    gap: $size-1;
+    font-size: $fs-headline-md;
   }
+}
+
+.carousel__accent {
+  display: inline-block;
+  width: 6px;
+  height: 22px;
+  border-radius: $radius-sm;
+  background-color: var(--color-primary);
 }
 
 .carousel__controls {
   display: flex;
-  gap: $space-2;
+  gap: $size-1;
 }
 
 .carousel__control {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
   border-radius: $radius-pill;
-  border: 1px solid var(--color-border-strong);
+  border: 2px solid var(--color-border);
   color: var(--color-text);
 
   svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
 
   &:hover {
@@ -45,14 +56,23 @@
   }
 }
 
+.carousel__control--next {
+  background-color: var(--color-primary);
+  border-color: var(--color-border);
+
+  &:hover {
+    background-color: var(--color-primary-dark);
+  }
+}
+
 .carousel__track {
   display: flex;
-  gap: $space-5;
+  gap: $size-2;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: $space-4;
+  scroll-padding-inline: $size-2;
   scroll-behavior: smooth;
-  padding-bottom: $space-2;
+  padding-bottom: $size-1;
 
   scrollbar-width: none;
 
@@ -61,13 +81,29 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .carousel__track {
+    scroll-behavior: auto;
+  }
+}
+
 .carousel__card {
+  position: relative;
   scroll-snap-align: start;
   flex: 0 0 auto;
-  width: 200px;
+  width: 190px;
+  border-radius: $radius-md;
+  border: 2px solid var(--color-border);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+  }
 
   @include from-tablet {
-    width: 240px;
+    width: 220px;
   }
 }
 
@@ -75,22 +111,47 @@
   width: 100%;
   aspect-ratio: 3 / 4;
   object-fit: cover;
-  border-radius: $radius-md;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: $space-3;
-  transition: transform 0.2s ease;
+  display: block;
 }
 
-.carousel__card:hover img {
-  transform: translateY(-4px);
+.carousel__card-overlay {
+  position: absolute;
+  inset: auto 0 0;
+  padding: $size-2;
+  background: linear-gradient(to top, rgb(30 27 58 / 90%), rgb(30 27 58 / 0%) 80%);
+  color: var(--color-text-inverse);
 }
 
 .carousel__card-title {
-  font-weight: $fw-semibold;
+  font-weight: $fw-bold;
+  font-size: $fs-body-sm;
+  margin-bottom: $size-1;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .carousel__track {
-    scroll-behavior: auto;
+.carousel__card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: $fs-label-md;
+  font-weight: $fw-bold;
+}
+
+.carousel__card-rating,
+.carousel__card-likes {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  svg {
+    width: 12px;
+    height: 12px;
   }
+}
+
+.carousel__card-rating {
+  color: var(--color-primary);
+}
+
+.carousel__card-likes {
+  color: var(--color-text-inverse);
 }

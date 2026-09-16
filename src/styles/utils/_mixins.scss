@@ -7,6 +7,18 @@
   }
 }
 
+@mixin from-nav-desktop {
+  @media (min-width: $bp-nav-desktop) {
+    @content;
+  }
+}
+
+@mixin until-nav-desktop {
+  @media (max-width: #{$bp-nav-desktop - 1px}) {
+    @content;
+  }
+}
+
 @mixin from-desktop {
   @media (min-width: $bp-desktop) {
     @content;
@@ -23,10 +35,14 @@
   width: 100%;
   max-width: $container-max-width;
   margin-inline: auto;
-  padding-inline: $space-4;
+  padding-inline: $size-2;
 
   @include from-tablet {
-    padding-inline: $space-6;
+    padding-inline: $size-5;
+  }
+
+  @include from-desktop {
+    padding-inline: $size-15;
   }
 }
 
@@ -43,6 +59,6 @@
 }
 
 @mixin focus-ring {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-text);
   outline-offset: 2px;
 }

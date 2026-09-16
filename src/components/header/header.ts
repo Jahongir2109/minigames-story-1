@@ -2,13 +2,28 @@ import './header.scss';
 import { openAuthDialog } from '@/components/auth-dialog/auth-dialog';
 
 const NAV_LINKS = [
-  { href: '#games', label: 'Games' },
-  { href: '#leaderboard', label: 'Leaderboard' },
-  { href: '#developers', label: 'For developers' },
+  { href: '#home', label: 'Home' },
+  { href: '#games', label: 'Library' },
+  { href: '#leaderboard', label: 'Tournaments' },
+  { href: '#developers', label: 'Community' },
 ];
 
 function navMarkup(): string {
-  return NAV_LINKS.map((link) => `<a href="${link.href}">${link.label}</a>`).join('');
+  return NAV_LINKS.map(
+    (link, index) =>
+      `<a href="${link.href}"${index === 0 ? ' class="is-active"' : ''}>${link.label}</a>`,
+  ).join('');
+}
+
+function logoMarkup(): string {
+  return `
+    <span class="header__logo-badge" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 3l2.4 5.1 5.6.8-4 3.9 1 5.5L12 15.8 7 18.3l1-5.5-4-3.9 5.6-.8L12 3Z" fill="currentColor" />
+      </svg>
+    </span>
+    <span>MiniGames</span>
+  `;
 }
 
 export function createHeader(): HTMLElement {
@@ -18,8 +33,7 @@ export function createHeader(): HTMLElement {
   header.innerHTML = `
     <div class="header__bar container">
       <a class="header__logo" href="#/" aria-label="MiniGames home">
-        <span class="header__logo-mark">🎮</span>
-        <span>MiniGames</span>
+        ${logoMarkup()}
       </a>
 
       <nav class="header__nav" aria-label="Primary">
@@ -27,35 +41,45 @@ export function createHeader(): HTMLElement {
       </nav>
 
       <div class="header__actions">
-        <button type="button" class="btn btn--ghost" data-open-auth="login">Log in</button>
-        <button type="button" class="btn btn--primary" data-open-auth="register">Sign up</button>
+        <button type="button" class="btn btn--ghost header__login" data-open-auth="login">Log In</button>
+        <button type="button" class="btn btn--primary" data-open-auth="register">Sign Up</button>
+        <button
+          type="button"
+          class="header__burger"
+          aria-expanded="false"
+          aria-controls="mobile-nav"
+          aria-label="Open menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
       </div>
-
-      <button
-        type="button"
-        class="header__burger"
-        aria-expanded="false"
-        aria-controls="mobile-nav"
-        aria-label="Open menu"
-      >
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
     </div>
 
     <div class="header__mobile-panel" id="mobile-nav" hidden>
-      <nav class="header__mobile-nav" aria-label="Mobile">
+      <div class="header__mobile-top container">
+        <a class="header__logo" href="#/" aria-label="MiniGames home">
+          ${logoMarkup()}
+        </a>
+        <button type="button" class="header__mobile-close" aria-label="Close menu">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
+      </div>
+      <nav class="header__mobile-nav container" aria-label="Mobile">
         ${navMarkup()}
       </nav>
-      <div class="header__mobile-actions">
-        <button type="button" class="btn btn--ghost btn--block" data-open-auth="login">Log in</button>
-        <button type="button" class="btn btn--primary btn--block" data-open-auth="register">Sign up</button>
+      <div class="header__mobile-actions container">
+        <button type="button" class="btn btn--ghost-inverse btn--block" data-open-auth="login">Log In</button>
+        <button type="button" class="btn btn--primary btn--block" data-open-auth="register">Sign Up</button>
       </div>
     </div>
   `;
 
   const burger = header.querySelector<HTMLButtonElement>('.header__burger');
+  const closeButton = header.querySelector<HTMLButtonElement>('.header__mobile-close');
   const panel = header.querySelector<HTMLElement>('#mobile-nav');
 
   function closeMenu(): void {
@@ -74,6 +98,7 @@ export function createHeader(): HTMLElement {
   }
 
   burger?.addEventListener('click', toggleMenu);
+  closeButton?.addEventListener('click', closeMenu);
   panel?.addEventListener('click', (event) => {
     if ((event.target as HTMLElement).tagName === 'A') closeMenu();
   });

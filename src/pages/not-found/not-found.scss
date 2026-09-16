@@ -5,11 +5,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: $space-4;
-  padding-block: $space-9;
+  gap: $size-2;
+  padding-block: $size-9;
 
   h1 {
-    font-size: $fs-3xl;
+    font-size: $fs-display-sm;
   }
 
   p {

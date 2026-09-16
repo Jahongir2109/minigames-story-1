@@ -3,85 +3,57 @@
 @use '../../styles/utils/mixins' as *;
 
 .hero {
-  padding-block: $space-7 $space-8;
-
-  @include from-tablet {
-    padding-block: $space-9;
-  }
+  position: relative;
+  background-image: linear-gradient(var(--color-overlay), var(--color-overlay)), var(--hero-image);
+  background-size: cover;
+  background-position: center;
+  border-bottom: 2px solid var(--color-border);
 }
 
 .hero__container {
   @include container;
 
-  display: flex;
-  flex-direction: column;
-  gap: $space-7;
+  padding-block: $size-6 $size-7;
 
   @include from-tablet {
-    flex-direction: row;
-    align-items: center;
-    gap: $space-8;
+    padding-block: $size-8;
   }
 }
 
-.hero__content {
-  flex: 1;
-}
+.hero__card {
+  max-width: 600px;
+  padding: $size-3;
+  border-radius: $radius-lg;
+  border: 2px solid var(--color-border);
+  background-color: var(--color-bg);
+  box-shadow: var(--shadow-lg);
 
-.hero__eyebrow {
-  display: inline-block;
-  padding: $space-1 $space-3;
-  border-radius: $radius-pill;
-  background-color: var(--color-primary-light);
-  color: var(--color-primary-dark);
-  font-weight: $fw-semibold;
-  font-size: $fs-sm;
-  margin-bottom: $space-4;
+  @include from-tablet {
+    padding: $size-4;
+  }
 }
 
 .hero__title {
-  font-size: $fs-3xl;
-  margin-bottom: $space-4;
+  font-size: $fs-display-sm;
+  color: var(--color-text);
+  margin-bottom: $size-2;
 
   @include from-tablet {
-    font-size: $fs-4xl;
+    font-size: $fs-display-md;
+  }
+
+  @include from-nav-desktop {
+    font-size: $fs-display-lg;
   }
 }
 
 .hero__subtitle {
   color: var(--color-text-muted);
-  font-size: $fs-lg;
-  max-width: 46ch;
-  margin-bottom: $space-6;
-}
+  font-size: $fs-body-md;
+  line-height: $line-height-normal;
+  margin-bottom: $size-3;
 
-.hero__cta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-3;
-}
-
-.hero__media {
-  position: relative;
-  flex: 1;
-}
-
-.hero__media img {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: $radius-lg;
-  box-shadow: var(--shadow-lg);
-}
-
-.hero__media-badge {
-  position: absolute;
-  left: $space-4;
-  bottom: $space-4;
-  padding: $space-2 $space-4;
-  border-radius: $radius-pill;
-  background-color: var(--color-surface);
-  box-shadow: var(--shadow-md);
-  font-weight: $fw-semibold;
-  font-size: $fs-sm;
+  @include from-tablet {
+    font-size: $fs-body-lg;
+  }
 }

@@ -2,12 +2,26 @@ import type { GameCard } from '@/types/game';
 
 const ASSETS_BASE = '/assets/games';
 
+function hashSlug(slug: string): number {
+  let hash = 0;
+  for (const char of slug) {
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  }
+  return hash;
+}
+
 function buildGame(slug: string, name: string): GameCard {
+  const hash = hashSlug(slug);
+  const rating = Math.round((4 + (hash % 10) / 10) * 10) / 10;
+  const likes = Math.round(((hash % 900) + 100) * 10) / 10;
+
   return {
     slug,
     name,
     cardImage: `${ASSETS_BASE}/${slug}-card.jpg`,
     heroImage: `${ASSETS_BASE}/${slug}-hero.jpg`,
+    rating,
+    likes: `${likes}K`,
   };
 }
 
