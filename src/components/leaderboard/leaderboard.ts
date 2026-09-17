@@ -5,7 +5,7 @@ const AVATAR_COLORS = ['primary', 'teal', 'purple', 'pink', 'blue'] as const;
 
 function initials(name: string): string {
   const letters = name
-    .replace(/[^a-zA-Z\s]/g, ' ')
+    .replaceAll(/[^a-zA-Z\s]/g, ' ')
     .trim()
     .split(/\s+/);
   const first = letters[0]?.[0] ?? '';
@@ -78,7 +78,7 @@ export function createLeaderboard(): HTMLElement {
   loadLeaderboard()
     .then((response) => {
       if (!tbody) return;
-      tbody.innerHTML = response.data.map(rowMarkup).join('');
+      tbody.innerHTML = response.data.map((entry) => rowMarkup(entry)).join('');
     })
     .catch(() => {
       if (!tbody) return;

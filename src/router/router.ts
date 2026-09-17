@@ -13,10 +13,10 @@ export class Router {
   constructor(root: HTMLElement, notFound: RouteRender) {
     this.root = root;
     this.notFound = notFound;
-    window.addEventListener('hashchange', () => {
+    globalThis.addEventListener('hashchange', () => {
       // Plain in-page anchors (e.g. "#games") are not routes — leave them to
       // the browser's native scroll-into-view and don't touch the outlet.
-      if (this.isRoutableHash(window.location.hash)) this.render();
+      if (this.isRoutableHash(globalThis.location.hash)) this.render();
     });
   }
 
@@ -35,7 +35,7 @@ export class Router {
   }
 
   private currentPath(): string {
-    const hash = window.location.hash.replace(/^#/, '');
+    const hash = globalThis.location.hash.replace(/^#/, '');
     return hash || '/';
   }
 
