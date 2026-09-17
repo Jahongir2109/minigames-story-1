@@ -46,10 +46,10 @@ export function createFooter(): HTMLElement {
       <nav class="footer__column" aria-label="Company">
         <h3>Company</h3>
         <ul>
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Contact</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#/">About Us</a></li>
+          <li><a href="#/">Contact</a></li>
+          <li><a href="#/">Privacy Policy</a></li>
+          <li><a href="#/">Terms of Service</a></li>
         </ul>
       </nav>
 
@@ -58,7 +58,7 @@ export function createFooter(): HTMLElement {
         <div class="footer__social">
           ${SOCIAL_ICONS.map(
             (icon) => `
-              <a href="#" class="footer__social-link" aria-label="MiniGames on social media">
+              <a href="#/" class="footer__social-link" aria-label="MiniGames on social media">
                 <svg viewBox="0 0 24 24" aria-hidden="true">${icon}</svg>
               </a>
             `,
@@ -70,8 +70,8 @@ export function createFooter(): HTMLElement {
     <div class="footer__bottom">
       <div class="footer__bottom-inner container">
         <p>© ${YEAR} MiniGames. All rights reserved.</p>
-        <span class="footer__badge">🎓 RS School</span>
-        <span>@student-nickname</span>
+        <a class="footer__badge" href="https://rs.school/courses/short-track" target="_blank" rel="noopener noreferrer">🎓 RS School</a>
+        <a href="https://github.com/Jahongir2109" target="_blank" rel="noopener noreferrer">@Jahongir2109</a>
         <span>Designed with love</span>
       </div>
     </div>
