@@ -103,6 +103,12 @@ export function createHeader(): HTMLElement {
     if ((event.target as HTMLElement).tagName === 'A') closeMenu();
   });
 
+  globalThis.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && burger?.getAttribute('aria-expanded') === 'true') {
+      closeMenu();
+    }
+  });
+
   for (const button of header.querySelectorAll<HTMLButtonElement>('[data-open-auth]')) {
     button.addEventListener('click', () => {
       const mode = button.dataset['openAuth'] === 'register' ? 'register' : 'login';
