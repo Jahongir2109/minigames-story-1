@@ -42,8 +42,8 @@
   color: var(--color-primary);
 
   svg {
-    width: 18px;
-    height: 18px;
+    width: $icon-size-md;
+    height: $icon-size-md;
   }
 }
 
@@ -85,8 +85,8 @@
   color: var(--color-on-bg-footer);
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: $icon-size-sm;
+    height: $icon-size-sm;
   }
 
   &:hover {
@@ -96,7 +96,7 @@
 }
 
 .footer__bottom {
-  border-top: 1px solid var(--color-bg-footer-low);
+  border-top: $border-width-thin solid var(--color-bg-footer-low);
 }
 
 .footer__bottom-inner {
@@ -111,5 +111,5 @@
 .footer__badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: $size-half;
 }

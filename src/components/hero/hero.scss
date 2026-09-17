@@ -7,7 +7,7 @@
   background-image: linear-gradient(var(--color-overlay), var(--color-overlay)), var(--hero-image);
   background-size: cover;
   background-position: center;
-  border-bottom: 2px solid var(--color-border);
+  border-bottom: $border-width-default solid var(--color-border);
 }
 
 .hero__container {
@@ -24,7 +24,7 @@
   max-width: 600px;
   padding: $size-3;
   border-radius: $radius-lg;
-  border: 2px solid var(--color-border);
+  border: $border-width-default solid var(--color-border);
   background-color: var(--color-bg);
   box-shadow: var(--shadow-lg);
 

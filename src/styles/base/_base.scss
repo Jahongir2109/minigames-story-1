@@ -1,4 +1,5 @@
 @use '../tokens/typography' as *;
+@use '../tokens/spacing' as *;
 
 html {
   scroll-behavior: smooth;
@@ -22,7 +23,8 @@ body {
 #games,
 #leaderboard,
 #developers {
-  scroll-margin-top: 88px;
+  // Sticky header height plus a 3px Pixel Perfect breathing gap.
+  scroll-margin-top: calc(#{$header-height} + 3px);
 }
 
 h1,

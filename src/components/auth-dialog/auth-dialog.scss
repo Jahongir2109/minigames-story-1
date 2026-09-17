@@ -5,7 +5,7 @@
 .auth-dialog {
   margin: auto;
   padding: 0;
-  border: 2px solid var(--color-border);
+  border: $border-width-default solid var(--color-border);
   border-radius: $radius-lg;
   box-shadow: var(--shadow-lg);
   width: min(420px, calc(100vw - #{$size-2}));
@@ -68,8 +68,8 @@
   color: var(--color-text-muted);
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: $icon-size-sm;
+    height: $icon-size-sm;
   }
 
   &:hover {
@@ -80,10 +80,10 @@
 
 .auth-dialog__tabs {
   display: flex;
-  gap: 4px;
-  padding: 4px;
+  gap: $size-half;
+  padding: $size-half;
   background-color: var(--color-bg);
-  border: 1.5px solid var(--color-outline);
+  border: $border-width-outline solid var(--color-outline);
   border-radius: $radius-pill;
   margin-bottom: $size-3;
 }
@@ -113,20 +113,40 @@
 .auth-dialog__form {
   flex-direction: column;
   gap: $size-2;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 0.18s ease-out,
+    transform 0.18s ease-out,
+    display 0.18s ease-out allow-discrete,
+    overlay 0.18s ease-out allow-discrete;
 
   &[hidden] {
     display: none;
+    opacity: 0;
+    transform: translateX(8px);
   }
 
   &:not([hidden]) {
     display: flex;
   }
+
+  @starting-style {
+    &:not([hidden]) {
+      opacity: 0;
+      transform: translateX(8px);
+    }
+  }
+}
+
+.auth-dialog__fields {
+  display: contents;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: $size-half;
 
   label {
     font-size: $fs-label-lg;
@@ -136,7 +156,7 @@
 
   input {
     padding: $size-2;
-    border: 2px solid var(--color-outline);
+    border: $border-width-default solid var(--color-outline);
     border-radius: $radius-sm;
     background-color: var(--color-surface);
     font-family: $font-family-base;
@@ -159,8 +179,21 @@
 }
 
 .auth-dialog__switch-hint {
+  display: flex;
+  justify-content: center;
+  gap: $size-half;
   margin-top: $size-3;
   text-align: center;
   font-size: $fs-label-lg;
   color: var(--color-text-muted);
+}
+
+.auth-dialog__switch-link {
+  font-size: inherit;
+  font-weight: $fw-bold;
+  color: var(--color-primary-dark);
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
