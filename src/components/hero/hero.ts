@@ -15,7 +15,7 @@ export function createHero(): HTMLElement {
           Discover hundreds of curated casual mini-games. Play instantly in your browser —
           puzzle, match 3, farm, and board classics.
         </p>
-        <a class="btn btn--primary btn--large" href="#games">Browse Library</a>
+        <button type="button" class="btn btn--primary btn--large">Browse Library</button>
       </div>
     </div>
   `;
