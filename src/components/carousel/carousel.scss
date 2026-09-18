@@ -26,8 +26,8 @@
 
 .carousel__accent {
   display: inline-block;
-  width: 6px;
-  height: 22px;
+  width: $accent-bar-width;
+  height: $accent-bar-height;
   border-radius: $radius-sm;
   background-color: var(--color-primary);
 }
@@ -38,8 +38,8 @@
 }
 
 .carousel__control {
-  width: 36px;
-  height: 36px;
+  width: $icon-button-size-md;
+  height: $icon-button-size-md;
   display: grid;
   place-items: center;
   border-radius: $radius-pill;
@@ -121,6 +121,8 @@ $carousel-card-info-threshold: 288px;
   container-name: carousel-card;
   scroll-snap-align: start;
   flex: 0 0 auto;
+  // Card widths (190/220/300px) follow the Figma mockup's per-breakpoint card
+  // sizing directly; they don't map onto the 8px spacing scale.
   width: 190px;
   border-radius: $radius-md;
   border: $border-width-default solid var(--color-border);

@@ -59,6 +59,6 @@
 }
 
 @mixin focus-ring {
-  outline: 2px solid var(--color-text);
-  outline-offset: 2px;
+  outline: $border-width-default solid var(--color-text);
+  outline-offset: $border-width-default;
 }

@@ -60,8 +60,8 @@
   position: absolute;
   top: $size-2;
   right: $size-2;
-  width: 32px;
-  height: 32px;
+  width: $icon-button-size-sm;
+  height: $icon-button-size-sm;
   display: grid;
   place-items: center;
   border-radius: $radius-pill;

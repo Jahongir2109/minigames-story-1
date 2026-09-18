@@ -16,8 +16,8 @@
 
 .leaderboard__accent {
   display: inline-block;
-  width: 6px;
-  height: 22px;
+  width: $accent-bar-width;
+  height: $accent-bar-height;
   border-radius: $radius-sm;
   background-color: var(--color-primary);
 }
@@ -33,6 +33,8 @@
 
 .leaderboard__table {
   width: 100%;
+  // 720px: minimum width to keep all six columns legible before the
+  // table-wrap's own horizontal scroll takes over on narrow viewports.
   min-width: 720px;
 
   th,
@@ -75,8 +77,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: $size-5;
+  height: $size-5;
   flex-shrink: 0;
   border-radius: $radius-pill;
   border: $border-width-outline solid var(--color-border);
@@ -115,7 +117,7 @@
 
 .leaderboard__pill {
   display: inline-flex;
-  padding: $size-half 12px;
+  padding: $size-half calc(#{$size-1} + #{$size-half});
   border-radius: $radius-pill;
   border: $border-width-outline solid var(--color-outline);
   background-color: var(--color-bg);

@@ -21,6 +21,7 @@
 }
 
 .hero__card {
+  // 600px: Figma hero-card max width, not derived from the spacing scale.
   max-width: 600px;
   padding: $size-3;
   border-radius: $radius-lg;
