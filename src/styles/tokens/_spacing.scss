@@ -33,3 +33,15 @@ $icon-size-lg: 20px;
 $icon-size-xl: 24px;
 
 $header-height: 85px;
+
+// Round icon-only buttons (close/dismiss controls, carousel arrows, social links).
+$icon-button-size-sm: 32px;
+$icon-button-size-md: 36px;
+
+// Section heading accent bar (carousel, leaderboard).
+$accent-bar-width: 6px;
+$accent-bar-height: 22px;
+
+// Button sizing, per the Figma button style guide.
+$btn-padding-block: 10px;
+$btn-padding-inline: 20px;

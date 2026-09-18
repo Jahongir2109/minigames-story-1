@@ -36,7 +36,7 @@ function rowMarkup(entry: LeaderboardEntry): string {
 }
 
 async function loadLeaderboard(): Promise<LeaderboardResponse> {
-  const response = await fetch('/mock-data/leaderboard.json');
+  const response = await fetch(`${import.meta.env.BASE_URL}mock-data/leaderboard.json`);
   if (!response.ok) {
     throw new Error(`Failed to load leaderboard: ${response.status}`);
   }

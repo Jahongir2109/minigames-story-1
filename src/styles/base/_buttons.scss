@@ -7,9 +7,9 @@
   align-items: center;
   justify-content: center;
   gap: $size-1;
-  padding: 10px 20px;
+  padding: $btn-padding-block $btn-padding-inline;
   border-radius: $radius-sm;
-  border: 2px solid var(--color-border);
+  border: $border-width-default solid var(--color-border);
   font-family: $font-family-base;
   font-weight: $fw-bold;
   font-size: $fs-label-lg;

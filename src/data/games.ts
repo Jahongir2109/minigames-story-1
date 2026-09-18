@@ -1,6 +1,6 @@
 import type { GameCard } from '@/types/game';
 
-const ASSETS_BASE = '/assets/games';
+const ASSETS_BASE = `${import.meta.env.BASE_URL}assets/games`;
 
 function hashSlug(slug: string): number {
   let hash = 0;

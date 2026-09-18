@@ -35,8 +35,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  // 30px: Figma footer logo-badge size, 2px under the $size-4 (32px) token.
+  width: calc(#{$size-4} - 2px);
+  height: calc(#{$size-4} - 2px);
   border-radius: $radius-sm;
   background-color: var(--color-text-inverse);
   color: var(--color-primary);
@@ -78,8 +79,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: $icon-button-size-md;
+  height: $icon-button-size-md;
   border-radius: $radius-pill;
   background-color: var(--color-bg-footer-low);
   color: var(--color-on-bg-footer);
