@@ -4,6 +4,10 @@ Home page and authentication dialog for **MiniGames**, a cozy indie games platfo
 for the [RS School Qualifying Stage — MiniGames, Story 1](https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/minigames/story-1.md)
 task.
 
+## Live demo
+
+[minigames-story-1.vercel.app](https://minigames-story-1.vercel.app)
+
 ## Tech stack
 
 - [Vite](https://vitejs.dev/) — dev server & bundler
