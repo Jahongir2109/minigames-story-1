@@ -1,0 +1,137 @@
+@use '../../styles/tokens/spacing' as *;
+@use '../../styles/tokens/typography' as *;
+@use '../../styles/utils/mixins' as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header__bar {
+  @include container;
+
+  display: flex;
+  align-items: center;
+  gap: $space-5;
+  height: 72px;
+}
+
+.header__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  font-weight: $fw-extrabold;
+  font-size: $fs-lg;
+  margin-right: auto;
+}
+
+.header__logo-mark {
+  font-size: $fs-xl;
+}
+
+.header__nav {
+  display: none;
+  align-items: center;
+  gap: $space-6;
+  font-weight: $fw-semibold;
+  color: var(--color-text-muted);
+
+  a:hover {
+    color: var(--color-text);
+  }
+
+  @include from-tablet {
+    display: flex;
+  }
+}
+
+.header__actions {
+  display: none;
+  align-items: center;
+  gap: $space-3;
+
+  @include from-tablet {
+    display: flex;
+  }
+}
+
+.header__burger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-sm;
+
+  span {
+    width: 20px;
+    height: 2px;
+    background-color: var(--color-text);
+    transition: transform 0.2s ease;
+  }
+
+  &[aria-expanded='true'] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  &[aria-expanded='true'] span:nth-child(2) {
+    opacity: 0;
+  }
+
+  &[aria-expanded='true'] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  &:hover {
+    background-color: var(--color-surface-alt);
+  }
+
+  @include from-tablet {
+    display: none;
+  }
+}
+
+.header__mobile-panel {
+  display: none;
+  flex-direction: column;
+  gap: $space-5;
+  padding: $space-5 $space-4 $space-6;
+  border-top: 1px solid var(--color-border);
+
+  @include until-tablet {
+    &:not([hidden]) {
+      display: flex;
+      animation: header-panel-in 0.18s ease-out;
+    }
+  }
+}
+
+.header__mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  font-weight: $fw-semibold;
+}
+
+.header__mobile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+@keyframes header-panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
