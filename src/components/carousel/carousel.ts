@@ -47,23 +47,20 @@ export function createCarousel(): HTMLElement {
       </div>
 
       <ul class="carousel__track" role="list">
-        ${games.map(cardMarkup).join('')}
+        ${games.map((game) => cardMarkup(game)).join('')}
       </ul>
+
+      <div class="carousel__indicators" aria-hidden="true">
+        ${games.map((_, index) => `<span class="carousel__indicator${index === 0 ? ' is-active' : ''}"></span>`).join('')}
+      </div>
     </div>
   `;
 
-  const track = section.querySelector<HTMLUListElement>('.carousel__track');
-  const [prevButton, nextButton] = section.querySelectorAll<HTMLButtonElement>('[data-dir]');
-
-  function scrollByCards(direction: 1 | -1): void {
-    const card = track?.querySelector<HTMLLIElement>('.carousel__card');
-    if (!track || !card) return;
-    const amount = card.getBoundingClientRect().width + 20;
-    track.scrollBy({ left: amount * direction });
+  // Navigation arrows and indicators are static at this stage — slide
+  // switching interactivity is implemented in a later task.
+  for (const button of section.querySelectorAll<HTMLButtonElement>('[data-dir]')) {
+    button.disabled = true;
   }
-
-  prevButton?.addEventListener('click', () => scrollByCards(-1));
-  nextButton?.addEventListener('click', () => scrollByCards(1));
 
   return section;
 }

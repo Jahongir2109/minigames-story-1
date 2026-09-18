@@ -5,7 +5,7 @@ const ASSETS_BASE = '/assets/games';
 function hashSlug(slug: string): number {
   let hash = 0;
   for (const char of slug) {
-    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+    hash = (hash * 31 + (char.codePointAt(0) ?? 0)) >>> 0;
   }
   return hash;
 }

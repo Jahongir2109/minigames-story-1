@@ -25,7 +25,8 @@
 .leaderboard__table-wrap {
   overflow-x: auto;
   border-radius: $radius-lg;
-  border: 2.5px solid var(--color-border);
+  // 2.5px: small Pixel Perfect adjustment on top of the $border-width-default token.
+  border: calc(#{$border-width-default} + 0.5px) solid var(--color-border);
   background-color: var(--color-surface);
   box-shadow: var(--shadow-lg);
 }
@@ -52,7 +53,7 @@
   }
 
   tbody tr:not(:last-child) td {
-    border-bottom: 1px solid var(--color-outline);
+    border-bottom: $border-width-thin solid var(--color-outline);
   }
 }
 
@@ -78,7 +79,7 @@
   height: 40px;
   flex-shrink: 0;
   border-radius: $radius-pill;
-  border: 1.5px solid var(--color-border);
+  border: $border-width-outline solid var(--color-border);
   font-family: $font-family-data;
   font-weight: $fw-bold;
   font-size: $fs-label-lg;
@@ -114,9 +115,9 @@
 
 .leaderboard__pill {
   display: inline-flex;
-  padding: 4px 12px;
+  padding: $size-half 12px;
   border-radius: $radius-pill;
-  border: 1.5px solid var(--color-outline);
+  border: $border-width-outline solid var(--color-outline);
   background-color: var(--color-bg);
   font-size: $fs-label-md;
   font-weight: $fw-medium;
