@@ -7,7 +7,7 @@
   top: 0;
   z-index: 40;
   background-color: var(--color-bg);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 2px solid var(--color-border);
 }
 
 .header__bar {
@@ -15,46 +15,72 @@
 
   display: flex;
   align-items: center;
-  gap: $space-5;
-  height: 72px;
+  gap: $size-3;
+  height: 85px;
 }
 
 .header__logo {
   display: inline-flex;
   align-items: center;
-  gap: $space-2;
+  gap: $size-1;
+  color: var(--color-text);
   font-weight: $fw-extrabold;
-  font-size: $fs-lg;
+  font-size: $fs-headline-sm;
   margin-right: auto;
 }
 
-.header__logo-mark {
-  font-size: $fs-xl;
+.header__logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: $radius-sm;
+  background-color: var(--color-text);
+  color: var(--color-primary);
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
 }
 
 .header__nav {
   display: none;
   align-items: center;
-  gap: $space-6;
-  font-weight: $fw-semibold;
-  color: var(--color-text-muted);
+  gap: $size-4;
+  font-weight: $fw-medium;
+  font-size: $fs-body-md;
 
-  a:hover {
-    color: var(--color-text);
+  a {
+    color: var(--color-text-muted);
+
+    &:hover {
+      color: var(--color-text);
+    }
+
+    &.is-active {
+      color: var(--color-primary-dark);
+      font-weight: $fw-bold;
+    }
   }
 
-  @include from-tablet {
+  @include from-nav-desktop {
     display: flex;
   }
 }
 
 .header__actions {
-  display: none;
+  display: flex;
   align-items: center;
-  gap: $space-3;
+  gap: $size-2;
+}
 
-  @include from-tablet {
-    display: flex;
+.header__login {
+  display: none;
+
+  @include from-nav-desktop {
+    display: inline-flex;
   }
 }
 
@@ -64,12 +90,13 @@
   justify-content: center;
   align-items: center;
   gap: 5px;
-  width: 40px;
-  height: 40px;
+  width: 37px;
+  height: 37px;
   border-radius: $radius-sm;
+  border: 2px solid var(--color-border);
 
   span {
-    width: 20px;
+    width: 18px;
     height: 2px;
     background-color: var(--color-text);
     transition: transform 0.2s ease;
@@ -91,47 +118,88 @@
     background-color: var(--color-surface-alt);
   }
 
-  @include from-tablet {
+  @include from-nav-desktop {
     display: none;
   }
 }
 
 .header__mobile-panel {
-  display: none;
-  flex-direction: column;
-  gap: $space-5;
-  padding: $space-5 $space-4 $space-6;
-  border-top: 1px solid var(--color-border);
+  position: fixed;
+  inset: 85px 0 0;
+  z-index: 39;
+  overflow-y: auto;
+  background-color: var(--color-bg-footer);
+  animation: header-panel-in 0.18s ease-out;
 
-  @include until-tablet {
-    &:not([hidden]) {
-      display: flex;
-      animation: header-panel-in 0.18s ease-out;
-    }
+  &[hidden] {
+    display: none;
+  }
+
+  @include from-nav-desktop {
+    display: none !important;
+  }
+}
+
+.header__mobile-top {
+  display: flex;
+  align-items: center;
+  padding-block: $size-3;
+
+  .header__logo {
+    color: var(--color-text-inverse);
+  }
+}
+
+.header__mobile-close {
+  margin-left: auto;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: $radius-pill;
+  color: var(--color-text-inverse);
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    background-color: var(--color-bg-footer-low);
   }
 }
 
 .header__mobile-nav {
   display: flex;
   flex-direction: column;
-  gap: $space-4;
-  font-weight: $fw-semibold;
+  gap: $size-3;
+  padding-block: $size-2 $size-4;
+  font-weight: $fw-medium;
+  font-size: $fs-body-lg;
+
+  a {
+    color: var(--color-on-bg-footer);
+  }
+
+  a.is-active {
+    color: var(--color-primary);
+    font-weight: $fw-bold;
+  }
 }
 
 .header__mobile-actions {
   display: flex;
   flex-direction: column;
-  gap: $space-3;
+  gap: $size-2;
+  padding-bottom: $size-4;
 }
 
 @keyframes header-panel-in {
   from {
     opacity: 0;
-    transform: translateY(-8px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }

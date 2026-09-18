@@ -1,15 +1,36 @@
 import './leaderboard.scss';
 import type { LeaderboardEntry, LeaderboardResponse } from '@/types/leaderboard';
 
+const AVATAR_COLORS = ['primary', 'teal', 'purple', 'pink', 'blue'] as const;
+
+function initials(name: string): string {
+  const letters = name
+    .replace(/[^a-zA-Z\s]/g, ' ')
+    .trim()
+    .split(/\s+/);
+  const first = letters[0]?.[0] ?? '';
+  const second = letters[1]?.[0] ?? letters[0]?.[1] ?? '';
+  return `${first}${second}`.toUpperCase();
+}
+
 function rowMarkup(entry: LeaderboardEntry): string {
+  const color = AVATAR_COLORS[(entry.rank - 1) % AVATAR_COLORS.length];
+
   return `
     <tr>
       <td><span class="leaderboard__rank">#${entry.rank}</span></td>
-      <td>${entry.playerName}</td>
+      <td>
+        <div class="leaderboard__player">
+          <span class="leaderboard__avatar leaderboard__avatar--${color}">${initials(entry.playerName)}</span>
+          ${entry.playerName}
+        </div>
+      </td>
       <td>${entry.gamesPlayed}</td>
       <td>${entry.totalScore.toLocaleString('en-US')}</td>
-      <td>${entry.streakDays} days</td>
-      <td>${entry.favoriteGameName}</td>
+      <td>
+        <span class="leaderboard__streak">🔥 ${entry.streakDays} days</span>
+      </td>
+      <td><span class="leaderboard__pill">${entry.favoriteGameName}</span></td>
     </tr>
   `;
 }
@@ -29,7 +50,7 @@ export function createLeaderboard(): HTMLElement {
 
   section.innerHTML = `
     <div class="container">
-      <h2>Top players this week</h2>
+      <h2><span class="leaderboard__accent" aria-hidden="true"></span>Top Players This Week</h2>
       <div class="leaderboard__table-wrap">
         <table class="leaderboard__table">
           <thead>
