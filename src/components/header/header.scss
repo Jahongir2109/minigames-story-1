@@ -33,8 +33,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  // 34px: Figma logo-badge size, 2px over the $size-4 (32px) token.
+  width: calc(#{$size-4} + 2px);
+  height: calc(#{$size-4} + 2px);
   border-radius: $radius-sm;
   background-color: var(--color-text);
   color: var(--color-primary);
@@ -65,7 +66,7 @@
     }
   }
 
-  @include from-nav-desktop {
+  @include from-tablet {
     display: flex;
   }
 }
@@ -79,7 +80,7 @@
 .header__login {
   display: none;
 
-  @include from-nav-desktop {
+  @include from-tablet {
     display: inline-flex;
   }
 }
@@ -89,9 +90,10 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 5px;
-  width: 37px;
-  height: 37px;
+  // 5px gap and 37px box: Figma burger control size, closest to $size-1 (8px)/$size-4+5px.
+  gap: calc(#{$size-1} - 3px);
+  width: calc(#{$size-4} + 5px);
+  height: calc(#{$size-4} + 5px);
   border-radius: $radius-sm;
   border: $border-width-default solid var(--color-border);
 
@@ -118,7 +120,7 @@
     background-color: var(--color-surface-alt);
   }
 
-  @include from-nav-desktop {
+  @include from-tablet {
     display: none;
   }
 }
@@ -149,7 +151,7 @@
     }
   }
 
-  @include from-nav-desktop {
+  @include from-tablet {
     display: none !important;
   }
 }
@@ -166,8 +168,8 @@
 
 .header__mobile-close {
   margin-left: auto;
-  width: 32px;
-  height: 32px;
+  width: $icon-button-size-sm;
+  height: $icon-button-size-sm;
   display: grid;
   place-items: center;
   border-radius: $radius-pill;
