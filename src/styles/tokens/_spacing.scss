@@ -32,7 +32,10 @@ $icon-size-md: 18px;
 $icon-size-lg: 20px;
 $icon-size-xl: 24px;
 
-$header-height: 85px;
+// Header height per breakpoint, per the Figma Header frame (Hug at mobile/desktop, Fixed at tablet).
+$header-height-mobile: $size-8; // 64px
+$header-height-tablet: $size-9; // 72px
+$header-height-desktop: 85px;
 
 // Round icon-only buttons (close/dismiss controls, carousel arrows, social links).
 $icon-button-size-sm: 32px;

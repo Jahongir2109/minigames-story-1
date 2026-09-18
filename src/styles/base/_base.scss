@@ -1,5 +1,6 @@
 @use '../tokens/typography' as *;
 @use '../tokens/spacing' as *;
+@use '../utils/mixins' as *;
 
 html {
   scroll-behavior: smooth;
@@ -24,7 +25,15 @@ body {
 #leaderboard,
 #developers {
   // Sticky header height plus a 3px Pixel Perfect breathing gap.
-  scroll-margin-top: calc(#{$header-height} + 3px);
+  scroll-margin-top: calc(#{$header-height-mobile} + 3px);
+
+  @include from-tablet {
+    scroll-margin-top: calc(#{$header-height-tablet} + 3px);
+  }
+
+  @include from-desktop {
+    scroll-margin-top: calc(#{$header-height-desktop} + 3px);
+  }
 }
 
 h1,

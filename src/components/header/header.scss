@@ -16,7 +16,18 @@
   display: flex;
   align-items: center;
   gap: $size-3;
-  height: $header-height;
+  height: $header-height-mobile;
+
+  @include from-tablet {
+    height: $header-height-tablet;
+  }
+
+  // The Figma Header frame uses a narrower side padding (size-10) than the
+  // shared container scale (size-15) at this breakpoint.
+  @include from-desktop {
+    height: $header-height-desktop;
+    padding-inline: $size-10;
+  }
 }
 
 .header__logo {
@@ -127,7 +138,7 @@
 
 .header__mobile-panel {
   position: fixed;
-  inset: $header-height 0 0;
+  inset: $header-height-mobile 0 0;
   z-index: 39;
   overflow-y: auto;
   background-color: var(--color-bg-footer);
