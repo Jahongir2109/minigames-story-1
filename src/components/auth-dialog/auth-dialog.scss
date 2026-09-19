@@ -1,3 +1,4 @@
+@use '../../styles/tokens/motion' as *;
 @use '../../styles/tokens/spacing' as *;
 @use '../../styles/tokens/typography' as *;
 @use '../../styles/utils/mixins' as *;
@@ -8,17 +9,17 @@
   border: $border-width-default solid var(--color-border);
   border-radius: $radius-lg;
   box-shadow: var(--shadow-lg);
-  width: min(420px, calc(100vw - #{$size-2}));
-  max-height: min(640px, calc(100vh - #{$size-3}));
+  width: min(#{$dialog-max-width}, calc(100vw - #{$size-2}));
+  max-height: min(#{$dialog-max-height}, calc(100vh - #{$size-3}));
   overflow: auto;
 
   opacity: 0;
-  transform: translateY(16px) scale(0.97);
+  transform: translateY($size-2) scale($scale-down);
   transition:
-    opacity 0.22s ease-out,
-    transform 0.22s ease-out,
-    overlay 0.22s ease-out allow-discrete,
-    display 0.22s ease-out allow-discrete;
+    opacity $duration-dialog ease-out,
+    transform $duration-dialog ease-out,
+    overlay $duration-dialog ease-out allow-discrete,
+    display $duration-dialog ease-out allow-discrete;
 
   &[open] {
     opacity: 1;
@@ -28,16 +29,16 @@
   @starting-style {
     &[open] {
       opacity: 0;
-      transform: translateY(16px) scale(0.97);
+      transform: translateY($size-2) scale($scale-down);
     }
   }
 
   &::backdrop {
     background-color: transparent;
     transition:
-      background-color 0.22s ease-out,
-      overlay 0.22s ease-out allow-discrete,
-      display 0.22s ease-out allow-discrete;
+      background-color $duration-dialog ease-out,
+      overlay $duration-dialog ease-out allow-discrete,
+      display $duration-dialog ease-out allow-discrete;
   }
 
   &[open]::backdrop {
@@ -95,8 +96,8 @@
   font-weight: $fw-bold;
   color: var(--color-text-muted);
   transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+    background-color $duration-fast ease,
+    color $duration-fast ease;
 
   &[aria-selected='true'] {
     background-color: var(--color-primary);
@@ -116,15 +117,15 @@
   opacity: 1;
   transform: translateX(0);
   transition:
-    opacity 0.18s ease-out,
-    transform 0.18s ease-out,
-    display 0.18s ease-out allow-discrete,
-    overlay 0.18s ease-out allow-discrete;
+    opacity $duration-panel ease-out,
+    transform $duration-panel ease-out,
+    display $duration-panel ease-out allow-discrete,
+    overlay $duration-panel ease-out allow-discrete;
 
   &[hidden] {
     display: none;
     opacity: 0;
-    transform: translateX(8px);
+    transform: translateX($size-1);
   }
 
   &:not([hidden]) {
@@ -134,7 +135,7 @@
   @starting-style {
     &:not([hidden]) {
       opacity: 0;
-      transform: translateX(8px);
+      transform: translateX($size-1);
     }
   }
 }

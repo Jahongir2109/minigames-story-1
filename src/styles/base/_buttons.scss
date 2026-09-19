@@ -1,3 +1,4 @@
+@use '../tokens/motion' as *;
 @use '../tokens/spacing' as *;
 @use '../tokens/typography' as *;
 @use '../utils/mixins' as *;
@@ -15,13 +16,13 @@
   font-size: $fs-label-lg;
   white-space: nowrap;
   transition:
-    background-color 0.15s ease,
-    color 0.15s ease,
-    box-shadow 0.15s ease,
-    transform 0.1s ease;
+    background-color $duration-fast ease,
+    color $duration-fast ease,
+    box-shadow $duration-fast ease,
+    transform $duration-instant ease;
 
   &:active {
-    transform: scale(0.97);
+    transform: scale($scale-down);
   }
 
   &:focus-visible {

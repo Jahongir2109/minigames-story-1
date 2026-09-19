@@ -35,9 +35,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  // 30px: Figma footer logo-badge size, 2px under the $size-4 (32px) token.
-  width: calc(#{$size-4} - 2px);
-  height: calc(#{$size-4} - 2px);
+  width: $logo-badge-size-footer;
+  height: $logo-badge-size-footer;
   border-radius: $radius-sm;
   background-color: var(--color-text-inverse);
   color: var(--color-primary);

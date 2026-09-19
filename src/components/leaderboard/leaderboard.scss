@@ -25,17 +25,16 @@
 .leaderboard__table-wrap {
   overflow-x: auto;
   border-radius: $radius-lg;
-  // 2.5px: small Pixel Perfect adjustment on top of the $border-width-default token.
-  border: calc(#{$border-width-default} + 0.5px) solid var(--color-border);
+  border: $border-width-table solid var(--color-border);
   background-color: var(--color-surface);
   box-shadow: var(--shadow-lg);
 }
 
 .leaderboard__table {
   width: 100%;
-  // 720px: minimum width to keep all six columns legible before the
-  // table-wrap's own horizontal scroll takes over on narrow viewports.
-  min-width: 720px;
+  // Keeps all six columns legible before the table-wrap's own horizontal
+  // scroll takes over on narrow viewports.
+  min-width: $leaderboard-min-width;
 
   th,
   td {
@@ -50,7 +49,7 @@
     color: var(--color-text-inverse);
     font-weight: $fw-bold;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: $letter-spacing-label;
     font-size: $fs-label-md;
   }
 

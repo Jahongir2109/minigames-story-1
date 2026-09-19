@@ -1,3 +1,4 @@
+@use '../../styles/tokens/motion' as *;
 @use '../../styles/tokens/spacing' as *;
 @use '../../styles/tokens/typography' as *;
 @use '../../styles/utils/mixins' as *;
@@ -113,8 +114,8 @@
 }
 
 // Card info-overlay visibility follows the card's own rendered width, not the
-// viewport — a card is only wide enough for text/rating/likes at >= 288px.
-$carousel-card-info-threshold: 288px;
+// viewport — a card is only wide enough for text/rating/likes at the desktop width.
+$carousel-overlay-fade-stop: 80%;
 
 .carousel__card {
   position: relative;
@@ -122,25 +123,23 @@ $carousel-card-info-threshold: 288px;
   container-name: carousel-card;
   scroll-snap-align: start;
   flex: 0 0 auto;
-  // Card widths (190/220/288px) follow the Figma mockup's per-breakpoint card
-  // sizing directly; they don't map onto the 8px spacing scale.
-  width: 190px;
+  width: $carousel-card-width-mobile;
   border-radius: $radius-md;
   border: $border-width-default solid var(--color-border);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.2s ease;
+  transition: transform $duration-base ease;
 
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(-$size-half);
   }
 
   @include from-tablet {
-    width: 220px;
+    width: $carousel-card-width-tablet;
   }
 
   @include from-desktop {
-    width: 288px;
+    width: $carousel-card-width-desktop;
   }
 }
 
@@ -156,10 +155,14 @@ $carousel-card-info-threshold: 288px;
   position: absolute;
   inset: auto 0 0;
   padding: $size-2;
-  background: linear-gradient(to top, rgb(30 27 58 / 90%), rgb(30 27 58 / 0%) 80%);
+  background: linear-gradient(
+    to top,
+    var(--color-overlay-card-strong),
+    var(--color-overlay-card-clear) $carousel-overlay-fade-stop
+  );
   color: var(--color-text-inverse);
 
-  @container carousel-card (min-width: #{$carousel-card-info-threshold}) {
+  @container carousel-card (min-width: #{$carousel-card-width-desktop}) {
     display: block;
   }
 }

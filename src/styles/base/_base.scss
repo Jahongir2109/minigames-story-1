@@ -24,15 +24,15 @@ body {
 #games,
 #leaderboard,
 #developers {
-  // Sticky header height plus a 3px Pixel Perfect breathing gap.
-  scroll-margin-top: calc(#{$header-height-mobile} + 3px);
+  // Sticky header height plus a small breathing gap.
+  scroll-margin-top: calc(#{$header-height-mobile} + #{$scroll-offset-gap});
 
   @include from-tablet {
-    scroll-margin-top: calc(#{$header-height-tablet} + 3px);
+    scroll-margin-top: calc(#{$header-height-tablet} + #{$scroll-offset-gap});
   }
 
   @include from-desktop {
-    scroll-margin-top: calc(#{$header-height-desktop} + 3px);
+    scroll-margin-top: calc(#{$header-height-desktop} + #{$scroll-offset-gap});
   }
 }
 
@@ -50,15 +50,7 @@ h3 {
 }
 
 .visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+  @include visually-hidden;
 }
 
 .no-scroll {

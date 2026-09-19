@@ -48,3 +48,25 @@ $accent-bar-height: 22px;
 // Button sizing, per the Figma button style guide.
 $btn-padding-block: 10px;
 $btn-padding-inline: 20px;
+
+// Layering
+$z-header: 40;
+$z-header-panel: 39;
+
+// Figma sizes that do not map onto the 8px spacing scale.
+$logo-badge-size-header: 34px;
+$logo-badge-size-footer: 30px;
+$burger-size: 37px;
+$burger-gap: 5px;
+$burger-cross-offset: $burger-gap + $border-width-default;
+$scroll-offset-gap: 3px;
+$border-width-table: 2.5px;
+
+$hero-card-max-width: 600px;
+$leaderboard-min-width: 720px;
+$dialog-max-width: 420px;
+$dialog-max-height: 640px;
+
+$carousel-card-width-mobile: 190px;
+$carousel-card-width-tablet: 220px;
+$carousel-card-width-desktop: 288px;

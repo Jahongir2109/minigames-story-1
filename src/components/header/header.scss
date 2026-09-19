@@ -1,3 +1,4 @@
+@use '../../styles/tokens/motion' as *;
 @use '../../styles/tokens/spacing' as *;
 @use '../../styles/tokens/typography' as *;
 @use '../../styles/utils/mixins' as *;
@@ -5,7 +6,7 @@
 .header {
   position: sticky;
   top: 0;
-  z-index: 40;
+  z-index: $z-header;
   background-color: var(--color-bg);
   border-bottom: $border-width-default solid var(--color-border);
 }
@@ -44,9 +45,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  // 34px: Figma logo-badge size, 2px over the $size-4 (32px) token.
-  width: calc(#{$size-4} + 2px);
-  height: calc(#{$size-4} + 2px);
+  width: $logo-badge-size-header;
+  height: $logo-badge-size-header;
   border-radius: $radius-sm;
   background-color: var(--color-text);
   color: var(--color-primary);
@@ -101,10 +101,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  // 5px gap and 37px box: Figma burger control size, closest to $size-1 (8px)/$size-4+5px.
-  gap: calc(#{$size-1} - 3px);
-  width: calc(#{$size-4} + 5px);
-  height: calc(#{$size-4} + 5px);
+  gap: $burger-gap;
+  width: $burger-size;
+  height: $burger-size;
   border-radius: $radius-sm;
   border: $border-width-default solid var(--color-border);
 
@@ -112,11 +111,11 @@
     width: $icon-size-md;
     height: $border-width-default;
     background-color: var(--color-text);
-    transition: transform 0.2s ease;
+    transition: transform $duration-base ease;
   }
 
   &[aria-expanded='true'] span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
+    transform: translateY($burger-cross-offset) rotate(45deg);
   }
 
   &[aria-expanded='true'] span:nth-child(2) {
@@ -124,7 +123,7 @@
   }
 
   &[aria-expanded='true'] span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
+    transform: translateY(-$burger-cross-offset) rotate(-45deg);
   }
 
   &:hover {
@@ -139,7 +138,7 @@
 .header__mobile-panel {
   position: fixed;
   inset: $header-height-mobile 0 0;
-  z-index: 39;
+  z-index: $z-header-panel;
 
   // The burger is also visible at exactly 768px, where the header is taller.
   @include from-tablet {
@@ -149,8 +148,8 @@
   background-color: var(--color-bg-footer);
   opacity: 1;
   transition:
-    opacity 0.18s ease-out,
-    display 0.18s ease-out allow-discrete;
+    opacity $duration-panel ease-out,
+    display $duration-panel ease-out allow-discrete;
 
   &[hidden] {
     display: none;
