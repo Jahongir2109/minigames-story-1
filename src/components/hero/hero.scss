@@ -43,7 +43,7 @@
     font-size: $fs-display-md;
   }
 
-  @include from-nav-desktop {
+  @include from-desktop {
     font-size: $fs-display-lg;
   }
 }

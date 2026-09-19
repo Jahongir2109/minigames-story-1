@@ -77,7 +77,7 @@
     }
   }
 
-  @include from-tablet {
+  @include from-nav {
     display: flex;
   }
 }
@@ -91,7 +91,7 @@
 .header__login {
   display: none;
 
-  @include from-tablet {
+  @include from-nav {
     display: inline-flex;
   }
 }
@@ -131,7 +131,7 @@
     background-color: var(--color-surface-alt);
   }
 
-  @include from-tablet {
+  @include from-nav {
     display: none;
   }
 }
@@ -140,6 +140,11 @@
   position: fixed;
   inset: $header-height-mobile 0 0;
   z-index: 39;
+
+  // The burger is also visible at exactly 768px, where the header is taller.
+  @include from-tablet {
+    inset-block-start: $header-height-tablet;
+  }
   overflow-y: auto;
   background-color: var(--color-bg-footer);
   opacity: 1;
@@ -162,7 +167,7 @@
     }
   }
 
-  @include from-tablet {
+  @include from-nav {
     display: none !important;
   }
 }

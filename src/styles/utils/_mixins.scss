@@ -7,14 +7,10 @@
   }
 }
 
-@mixin from-nav-desktop {
-  @media (min-width: $bp-nav-desktop) {
-    @content;
-  }
-}
-
-@mixin until-nav-desktop {
-  @media (max-width: #{$bp-nav-desktop - 1px}) {
+// Desktop navigation starts strictly above the 768px tablet frame, so the
+// burger menu is shown at exactly 768px (AC: "burger at tablet width ≤ 768px").
+@mixin from-nav {
+  @media (min-width: #{$bp-tablet + 1px}) {
     @content;
   }
 }

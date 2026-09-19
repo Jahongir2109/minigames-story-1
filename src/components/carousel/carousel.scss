@@ -65,10 +65,11 @@
   }
 }
 
+// Arrows are semantically disabled until slide switching is implemented, but
+// keep the Figma "active" look (no dimming) so the layout matches the mockup.
 .carousel__control:disabled {
   cursor: default;
   pointer-events: none;
-  opacity: 0.5;
 }
 
 .carousel__track {
