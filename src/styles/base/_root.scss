@@ -41,7 +41,8 @@
   }
 
   @each $name, $padding in $button-paddings {
-    --button-#{$name}-padding: #{list.nth($padding, 1)} #{list.nth($padding, 2)};
+    --button-#{$name}-padding-block: #{list.nth($padding, 1)};
+    --button-#{$name}-padding-inline: #{list.nth($padding, 2)};
   }
 
   @each $name, $offset in $shadow-levels {
