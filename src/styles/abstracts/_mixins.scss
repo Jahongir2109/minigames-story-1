@@ -71,3 +71,9 @@
   border-radius: fn.corner($radius);
   box-shadow: fn.shadow($shadow);
 }
+
+// Padding of a button size token; the border is part of the padding box in the layouts.
+@mixin button-size($size, $border: 'regular') {
+  padding-block: fn.inner(var(--button-#{$size}-padding-block), fn.border-width($border));
+  padding-inline: fn.inner(var(--button-#{$size}-padding-inline), fn.border-width($border));
+}

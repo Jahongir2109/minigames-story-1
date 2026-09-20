@@ -89,14 +89,6 @@
   @return var(--shadow-#{$name});
 }
 
-@function button-padding($name) {
-  @if not map.has-key(tokens.$button-paddings, $name) {
-    @error 'Unknown button size token "#{$name}".';
-  }
-
-  @return var(--button-#{$name}-padding);
-}
-
 @function z-index($name) {
   @return token(tokens.$z-indexes, $name, 'z-index');
 }
@@ -104,6 +96,17 @@
 // Raw pixel value of a size token (for fluid calculations).
 @function size-value($name) {
   @return token(tokens.$sizes, '#{$name}', 'size');
+}
+
+// Raw pixel value of a font size token (for fluid calculations).
+@function font-size-value($name) {
+  @return token(tokens.$font-sizes, $name, 'font size');
+}
+
+// The Figma strokes are drawn inside the box, the CSS border adds to the padding:
+// subtract the border to keep the outer dimensions of the layout.
+@function inner($padding, $border: border-width('regular')) {
+  @return calc(#{$padding} - #{$border});
 }
 
 // Linear interpolation of a length between two viewport widths, clamped outside of them.
