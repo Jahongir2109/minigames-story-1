@@ -1,0 +1,90 @@
+@use 'abstracts' as *;
+
+.text-field {
+  display: flex;
+  flex-direction: column;
+  gap: size(1);
+
+  &__label {
+    @include text-style('label-large', 'bold');
+    color: color('on-primary');
+  }
+
+  &__control {
+    display: flex;
+    align-items: center;
+    gap: calc(#{size(1)} + #{size('05')});
+    min-height: size(6);
+    padding-inline: size(2);
+    border: border-width('regular') solid color('on-primary');
+    border-radius: corner('medium');
+    background-color: color('white');
+    color: color('on-bg');
+    cursor: text;
+    transition:
+      background-color duration('fast') ease,
+      border-color duration('fast') ease,
+      box-shadow duration('fast') ease;
+
+    @include hover-device {
+      &:hover {
+        background-color: color('surface-low');
+      }
+    }
+
+    // Focused: warm surface and the tertiary accent around the field.
+    &:focus-within {
+      border-color: color('tertiary');
+      background-color: color('surface-low');
+      box-shadow: 0 0 0 border-width('regular') color('secondary');
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    width: calc(#{size(3)} - #{size('05')});
+    height: calc(#{size(3)} - #{size('05')});
+  }
+
+  &__input {
+    flex: 1;
+    min-width: 0;
+    padding-block: size(1);
+    border: 0;
+    background: transparent;
+    color: color('on-primary');
+    font-size: font-size('label-large');
+    line-height: line-height('normal');
+
+    &::placeholder {
+      color: color('on-bg');
+      opacity: 1;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
+
+  &__toggle {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: corner('extra-small');
+    color: color('on-primary');
+    opacity: 0.8;
+    transition: opacity duration('fast') ease;
+
+    @include hover-device {
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__toggle-icon {
+    width: calc(#{size(3)} - #{size('05')});
+    height: calc(#{size(3)} - #{size('05')});
+  }
+}
