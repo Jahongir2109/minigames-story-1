@@ -1,0 +1,114 @@
+@use 'sass:map';
+@use 'breakpoints';
+@use 'functions' as fn;
+
+// ---------------------------------------------------------- Media queries
+// Styles are written mobile-first; `from` adds rules from a breakpoint (exclusive of
+// the previous frame), `until` limits them to that breakpoint and below.
+@mixin from($name) {
+  $width: map.get(breakpoints.$breakpoints, $name);
+
+  @media (min-width: #{$width + 1px}) {
+    @content;
+  }
+}
+
+// Same as `from`, but the breakpoint width itself is included (for the exact design frames).
+@mixin from-inclusive($name) {
+  $width: map.get(breakpoints.$breakpoints, $name);
+
+  @media (min-width: #{$width}) {
+    @content;
+  }
+}
+
+@mixin until($name) {
+  $width: map.get(breakpoints.$breakpoints, $name);
+
+  @media (max-width: #{$width}) {
+    @content;
+  }
+}
+
+@mixin hover-device {
+  @media (hover: hover) and (pointer: fine) {
+    @content;
+  }
+}
+
+// ------------------------------------------------------------- Utilities
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@mixin focus-ring {
+  outline: fn.border-width('regular') solid fn.color('tertiary');
+  outline-offset: fn.size('05');
+}
+
+@mixin container {
+  width: 100%;
+  max-width: breakpoints.$bp-desktop;
+  margin-inline: auto;
+  padding-inline: var(--page-padding);
+}
+
+// Vertical rhythm shared by the page sections: 16px on mobile, 24px on tablet, 40px on desktop.
+@mixin section-inner {
+  display: flex;
+  flex-direction: column;
+  gap: fn.fluid(
+    fn.size-value('2'),
+    fn.size-value('3'),
+    breakpoints.$bp-mobile,
+    breakpoints.$bp-tablet
+  );
+  max-width: breakpoints.$bp-desktop;
+  margin-inline: auto;
+  padding: fn.fluid(
+      fn.size-value('2'),
+      fn.size-value('3'),
+      breakpoints.$bp-mobile,
+      breakpoints.$bp-tablet
+    )
+    var(--page-padding);
+
+  @include from('tablet') {
+    gap: fn.fluid(fn.size-value('3'), fn.size-value('5'));
+    padding-block: fn.fluid(fn.size-value('3'), fn.size-value('5'));
+  }
+}
+
+@mixin text-style($size, $weight: 'regular', $line-height: 'normal') {
+  font-size: fn.font-size($size);
+  font-weight: fn.font-weight($weight);
+  line-height: fn.line-height($line-height);
+}
+
+@mixin truncate-line {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ------------------------------------------------------------ Components
+// Neo-brutalist surface used by cards, dialogs and the hero box.
+@mixin outlined-surface($radius: 'large', $shadow: 'level-2', $border: 'medium') {
+  border: fn.border-width($border) solid fn.color('on-primary');
+  border-radius: fn.corner($radius);
+  box-shadow: fn.shadow($shadow);
+}
+
+// Padding of a button size token; the border is part of the padding box in the layouts.
+@mixin button-size($size, $border: 'regular') {
+  padding-block: fn.inner(var(--button-#{$size}-padding-block), fn.border-width($border));
+  padding-inline: fn.inner(var(--button-#{$size}-padding-inline), fn.border-width($border));
+}

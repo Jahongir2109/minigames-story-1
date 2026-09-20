@@ -1,0 +1,80 @@
+@use 'sass:color';
+@use 'sass:list';
+@use 'sass:map';
+@use '../abstracts' as *;
+
+// Publishes the design tokens as CSS custom properties.
+:root {
+  @each $name, $value in $colors {
+    --color-#{$name}: #{$value};
+  }
+
+  @each $name, $definition in $color-alphas {
+    --color-#{$name}: #{color.change(
+        map.get($colors, list.nth($definition, 1)),
+        $alpha: list.nth($definition, 2)
+      )};
+  }
+
+  @each $name, $value in $sizes {
+    --size-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $corners {
+    --corner-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $font-families {
+    --font-family-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $font-sizes {
+    --font-size-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $font-weights {
+    --font-weight-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $line-heights {
+    --line-height-#{$name}: #{$value};
+  }
+
+  @each $name, $padding in $button-paddings {
+    --button-#{$name}-padding-block: #{list.nth($padding, 1)};
+    --button-#{$name}-padding-inline: #{list.nth($padding, 2)};
+  }
+
+  @each $name, $offset in $shadow-levels {
+    --shadow-#{$name}: #{$offset} #{$offset} 0 var(--color-on-primary);
+  }
+
+  @each $name, $layers in $shadow-soft {
+    $values: ();
+
+    @each $layer in $layers {
+      $values: list.append(
+        $values,
+        '#{list.nth($layer, 1)} #{list.nth($layer, 2)} #{list.nth($layer, 3)} var(--color-#{list.nth($layer, 4)})',
+        comma
+      );
+    }
+
+    --shadow-#{$name}: #{$values};
+  }
+
+  @each $name, $value in $border-widths {
+    --border-width-#{$name}: #{$value};
+  }
+
+  @each $name, $value in $transition-durations {
+    --duration-#{$name}: #{$value};
+  }
+
+  // Horizontal page gutter: 16px on mobile, 40px on tablet, 120px on desktop.
+  --page-padding: #{fluid(size-value('2'), size-value('5'), $bp-mobile, $bp-tablet)};
+
+  @include from('tablet') {
+    --page-padding: #{fluid(size-value('5'), size-value('15'))};
+  }
+}

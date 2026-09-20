@@ -1,0 +1,24 @@
+@use 'abstracts' as *;
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: size(1);
+  color: color('on-primary');
+
+  &--inverse {
+    color: color('white');
+  }
+
+  &__logo {
+    flex-shrink: 0;
+    width: size(4);
+    height: size(4);
+  }
+
+  &__name {
+    font-size: fluid(font-size-value('headline-small'), font-size-value('headline-medium'));
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+  }
+}

@@ -1,0 +1,116 @@
+@use 'abstracts' as *;
+
+// Card proportions of the layouts: with a flex basis of 0 the weights give the exact widths
+// of the design at 768px (105 : 448 : 105) and 1920px (120 : 288 : 816 : 288 : 120).
+$weights-compact: (
+  'far': 0,
+  'near': 105,
+  'active': 448,
+);
+$weights-wide: (
+  'far': 120,
+  'near': 288,
+  'active': 816,
+);
+
+.carousel {
+  &__inner {
+    @include section-inner;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__controls {
+    display: none;
+    gap: size(2);
+
+    @include from('narrow') {
+      display: flex;
+    }
+  }
+
+  &__control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fluid(size-value('5'), size-value('6'));
+    height: fluid(size-value('5'), size-value('6'));
+    border: border-width('regular') solid color('on-primary');
+    border-radius: corner('full');
+    color: color('on-primary');
+    transition:
+      background-color duration('fast') ease,
+      transform duration('fast') ease;
+
+    &--previous {
+      background-color: color('white');
+    }
+
+    &--next {
+      background-color: color('primary');
+    }
+
+    @include hover-device {
+      &--previous:hover {
+        background-color: color('surface');
+      }
+
+      &--next:hover {
+        background-color: color('primary-high');
+      }
+    }
+
+    &:active {
+      transform: scale(0.96);
+    }
+  }
+
+  &__control-icon {
+    width: size(3);
+    height: size(3);
+  }
+
+  &__track {
+    display: flex;
+    gap: size(1);
+    // Room for the card shadow, which would otherwise be clipped.
+    padding: 0 size(1) size('05');
+    overflow: hidden;
+  }
+
+  &__item {
+    // Card height: 200px on mobile, 280px on tablet, 384px on desktop.
+    height: fluid(size-value('12') + size-value('13'), size-value('5') * 7, $bp-mobile, $bp-tablet);
+    min-width: 0;
+
+    @include from('tablet') {
+      height: fluid(size-value('5') * 7, size-value('12') * 4);
+    }
+
+    &--far {
+      display: none;
+
+      @include from('laptop') {
+        display: block;
+      }
+    }
+
+    @each $position, $weight in $weights-compact {
+      &--#{$position} {
+        flex: #{$weight} 1 0;
+      }
+    }
+
+    @include from('laptop') {
+      @each $position, $weight in $weights-wide {
+        &--#{$position} {
+          flex: #{$weight} 1 0;
+        }
+      }
+    }
+  }
+}

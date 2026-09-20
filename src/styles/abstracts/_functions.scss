@@ -1,0 +1,129 @@
+@use 'sass:map';
+@use 'sass:math';
+@use 'tokens';
+@use 'breakpoints';
+
+@function strip-unit($value) {
+  @return math.div($value, ($value * 0 + 1));
+}
+
+// Returns a raw token value or fails the build when the token does not exist.
+@function token($map, $key, $group) {
+  @if not map.has-key($map, $key) {
+    @error 'Unknown #{$group} token "#{$key}".';
+  }
+
+  @return map.get($map, $key);
+}
+
+// var() references to the CSS custom properties generated from the tokens.
+@function color($name) {
+  @if not map.has-key(tokens.$colors, $name) and not map.has-key(tokens.$color-alphas, $name) {
+    @error 'Unknown color token "#{$name}".';
+  }
+
+  @return var(--color-#{$name});
+}
+
+@function size($name) {
+  @if not map.has-key(tokens.$sizes, '#{$name}') {
+    @error 'Unknown size token "#{$name}".';
+  }
+
+  @return var(--size-#{$name});
+}
+
+@function corner($name) {
+  @if not map.has-key(tokens.$corners, $name) {
+    @error 'Unknown corner token "#{$name}".';
+  }
+
+  @return var(--corner-#{$name});
+}
+
+@function font-size($name) {
+  @if not map.has-key(tokens.$font-sizes, $name) {
+    @error 'Unknown font size token "#{$name}".';
+  }
+
+  @return var(--font-size-#{$name});
+}
+
+@function font-weight($name) {
+  @if not map.has-key(tokens.$font-weights, $name) {
+    @error 'Unknown font weight token "#{$name}".';
+  }
+
+  @return var(--font-weight-#{$name});
+}
+
+@function line-height($name) {
+  @if not map.has-key(tokens.$line-heights, $name) {
+    @error 'Unknown line height token "#{$name}".';
+  }
+
+  @return var(--line-height-#{$name});
+}
+
+@function border-width($name) {
+  @if not map.has-key(tokens.$border-widths, $name) {
+    @error 'Unknown border width token "#{$name}".';
+  }
+
+  @return var(--border-width-#{$name});
+}
+
+@function duration($name) {
+  @if not map.has-key(tokens.$transition-durations, $name) {
+    @error 'Unknown duration token "#{$name}".';
+  }
+
+  @return var(--duration-#{$name});
+}
+
+@function shadow($name) {
+  @if not map.has-key(tokens.$shadow-levels, $name) and not map.has-key(tokens.$shadow-soft, $name)
+  {
+    @error 'Unknown shadow token "#{$name}".';
+  }
+
+  @return var(--shadow-#{$name});
+}
+
+@function z-index($name) {
+  @return token(tokens.$z-indexes, $name, 'z-index');
+}
+
+// Raw pixel value of a size token (for fluid calculations).
+@function size-value($name) {
+  @return token(tokens.$sizes, '#{$name}', 'size');
+}
+
+// Raw pixel value of a font size token (for fluid calculations).
+@function font-size-value($name) {
+  @return token(tokens.$font-sizes, $name, 'font size');
+}
+
+// The Figma strokes are drawn inside the box, the CSS border adds to the padding:
+// subtract the border to keep the outer dimensions of the layout.
+@function inner($padding, $border: border-width('regular')) {
+  @return calc(#{$padding} - #{$border});
+}
+
+// Linear interpolation of a length between two viewport widths, clamped outside of them.
+@function fluid(
+  $min-value,
+  $max-value,
+  $min-viewport: breakpoints.$bp-tablet,
+  $max-viewport: breakpoints.$bp-desktop
+) {
+  $slope: math.div(
+    strip-unit($max-value) - strip-unit($min-value),
+    strip-unit($max-viewport) - strip-unit($min-viewport)
+  );
+  $offset: strip-unit($min-value) - $slope * strip-unit($min-viewport);
+  $lower: math.min(strip-unit($min-value), strip-unit($max-value));
+  $upper: math.max(strip-unit($min-value), strip-unit($max-value));
+
+  @return clamp(#{$lower}px, calc(#{$offset}px + #{$slope * 100}vw), #{$upper}px);
+}

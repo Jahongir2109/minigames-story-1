@@ -1,0 +1,110 @@
+@use 'abstracts' as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: size(1);
+  border: border-width('regular') solid color('on-primary');
+  border-radius: corner('small');
+  font-weight: font-weight('bold');
+  white-space: nowrap;
+  transition:
+    background-color duration('fast') ease,
+    color duration('fast') ease,
+    border-color duration('fast') ease,
+    transform duration('fast') ease,
+    box-shadow duration('fast') ease;
+
+  // Sizes: 14px labels on small/medium buttons, 18px on large ones.
+  &--small {
+    @include button-size('small');
+    font-size: font-size('label-large');
+    line-height: line-height('normal');
+  }
+
+  &--medium {
+    @include button-size('medium');
+    font-size: font-size('label-large');
+    line-height: line-height('normal');
+  }
+
+  &--large {
+    @include button-size('large');
+    font-size: font-size('body-large');
+    line-height: line-height('normal');
+  }
+
+  // Grows with the layout: small on mobile, medium on tablet and large on desktop.
+  &--adaptive {
+    @include button-size('small');
+    font-size: font-size('label-medium');
+    line-height: line-height('normal');
+
+    @include from('narrow') {
+      @include button-size('medium');
+      font-size: font-size('label-large');
+    }
+
+    @include from('laptop') {
+      @include button-size('large');
+      font-size: font-size('body-large');
+    }
+  }
+
+  // Variants
+  &--primary {
+    background-color: color('primary');
+    color: color('on-primary');
+  }
+
+  &--outline {
+    background-color: transparent;
+    color: color('on-primary');
+  }
+
+  &--outline-inverse {
+    border-color: color('white');
+    background-color: transparent;
+    color: color('white');
+  }
+
+  &--primary:active:not(:disabled) {
+    background-color: color('primary-high');
+    transform: translateY(#{border-width('thin')});
+  }
+
+  &--outline:active:not(:disabled) {
+    background-color: color('primary-low');
+    transform: translateY(#{border-width('thin')});
+  }
+
+  &--outline-inverse:active:not(:disabled) {
+    background-color: color('bg-footer-lowest');
+    transform: translateY(#{border-width('thin')});
+  }
+
+  @include hover-device {
+    &--primary:hover:not(:disabled) {
+      background-color: color('primary-high');
+    }
+
+    &--outline:hover:not(:disabled) {
+      background-color: color('surface');
+    }
+
+    &--outline-inverse:hover:not(:disabled) {
+      background-color: color('bg-footer-low');
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    width: size(3);
+    height: size(3);
+  }
+}

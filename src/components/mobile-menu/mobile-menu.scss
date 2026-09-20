@@ -1,0 +1,113 @@
+@use 'abstracts' as *;
+
+// Full-screen navigation for tablet and mobile (rendered in the top layer by <dialog>).
+.mobile-menu {
+  flex-direction: column;
+  gap: size(4);
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: size(3);
+  overflow-y: auto;
+  border: 0;
+  background-color: color('bg-footer');
+  color: color('white');
+
+  // Closed state: shifted out of the viewport (fixed, so it never adds page scroll).
+  opacity: 0;
+  transform: translateX(100%);
+  transition:
+    opacity duration('normal') ease,
+    transform duration('normal') ease,
+    overlay duration('normal') ease allow-discrete,
+    display duration('normal') ease allow-discrete;
+
+  &[open] {
+    display: flex;
+    opacity: 1;
+    transform: translateX(0);
+
+    @starting-style {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+
+  &::backdrop {
+    background-color: transparent;
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: size(4);
+    height: size(4);
+    border-radius: corner('small');
+    background-color: color('bg-footer-low');
+    color: color('white');
+    transition: background-color duration('fast') ease;
+
+    @include hover-device {
+      &:hover {
+        background-color: color('bg-footer-lowest');
+      }
+    }
+
+    &:active {
+      background-color: color('bg-footer-lowest');
+    }
+  }
+
+  &__close-icon {
+    width: size(2);
+    height: size(2);
+  }
+
+  &__links {
+    display: flex;
+    flex-direction: column;
+    gap: size(3);
+  }
+
+  &__link {
+    @include text-style('body-large', 'medium');
+    display: inline-block;
+    color: color('on-bg-footer');
+    transition: color duration('fast') ease;
+
+    &[aria-current='page'] {
+      color: color('primary');
+      font-weight: font-weight('bold');
+    }
+
+    @include hover-device {
+      &:hover {
+        color: color('white');
+      }
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: size(2);
+    margin-top: auto;
+  }
+
+  > .mobile-menu__actions > .mobile-menu__button {
+    width: 100%;
+  }
+}
+
+.scroll-locked {
+  overflow: hidden;
+}

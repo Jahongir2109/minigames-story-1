@@ -1,0 +1,98 @@
+@use 'abstracts' as *;
+
+// Cards that are 288px wide (outer size) or wider show the game information (requirement of
+// the task); narrower cards only show the image. A container query measures the content box,
+// so the border is subtracted.
+$info-min-width: 288px - 2 * token($border-widths, 'medium', 'border width');
+
+.game-card {
+  position: relative;
+  container: game-card / inline-size;
+  height: 100%;
+  overflow: hidden;
+  border: border-width('medium') solid color('on-primary');
+  border-radius: corner('large');
+  background-color: color('white');
+  box-shadow: shadow('level-1');
+
+  @include from('laptop') {
+    border-radius: corner('extra-large');
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: auto 0 0;
+    display: none;
+    flex-direction: column;
+    gap: size(1);
+    padding: size(8) size(2) size(2);
+    background: linear-gradient(to top, color('card-gradient-end'), transparent);
+    color: color('white');
+  }
+
+  &--active &__overlay {
+    display: flex;
+  }
+
+  @container game-card (min-width: #{$info-min-width}) {
+    .game-card__overlay {
+      display: flex;
+    }
+  }
+
+  &__title {
+    @include truncate-line;
+    font-size: fluid(
+      font-size-value('label-extra-large'),
+      font-size-value('body-large'),
+      $bp-mobile,
+      $bp-tablet
+    );
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+  }
+
+  &__metrics {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__metric {
+    display: inline-flex;
+    align-items: center;
+    gap: size(1);
+    font-size: fluid(
+      font-size-value('label-large'),
+      font-size-value('label-extra-large'),
+      $bp-mobile,
+      $bp-tablet
+    );
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+
+    &--rating {
+      color: color('white');
+    }
+
+    &--rating .game-card__metric-icon {
+      color: color('primary');
+    }
+
+    &--likes .game-card__metric-icon {
+      color: color('like');
+    }
+  }
+
+  &__metric-icon {
+    flex-shrink: 0;
+    width: size(3);
+    height: size(3);
+  }
+}
