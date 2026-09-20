@@ -1,3 +1,4 @@
+import { createFooter } from '@/components/footer/footer';
 import { createHeader, type Header } from '@/components/header/header';
 import { createMobileMenu, type MobileMenu } from '@/components/mobile-menu/mobile-menu';
 import { createHomePage } from '@/pages/home/home-page';
@@ -23,5 +24,5 @@ export function mountApp(root: HTMLElement): void {
     onSignUp: pending,
   });
 
-  root.replaceChildren(header.element, createHomePage(), menu.element);
+  root.replaceChildren(header.element, createHomePage(), createFooter(), menu.element);
 }
