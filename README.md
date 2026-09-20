@@ -26,15 +26,15 @@ npm run dev
 
 ## Scripts
 
-| Script                 | Description                       |
-| ---------------------- | --------------------------------- |
-| `npm run dev`          | Start the development server      |
+| Script                 | Description                         |
+| ---------------------- | ----------------------------------- |
+| `npm run dev`          | Start the development server        |
 | `npm run build`        | Type-check and build for production |
-| `npm run preview`      | Preview the production build      |
-| `npm run lint`         | Run ESLint                        |
-| `npm run lint:fix`     | Run ESLint and fix what it can    |
-| `npm run format`       | Format the codebase with Prettier |
-| `npm run format:check` | Check formatting with Prettier    |
+| `npm run preview`      | Preview the production build        |
+| `npm run lint`         | Run ESLint                          |
+| `npm run lint:fix`     | Run ESLint and fix what it can      |
+| `npm run format`       | Format the codebase with Prettier   |
+| `npm run format:check` | Check formatting with Prettier      |
 
 ## Git conventions
 
