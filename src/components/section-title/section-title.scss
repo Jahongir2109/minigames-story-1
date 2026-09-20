@@ -1,0 +1,31 @@
+@use 'abstracts' as *;
+
+// Section heading with the yellow accent bar.
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: size(1);
+
+  &__accent {
+    flex-shrink: 0;
+    width: size(1);
+    height: size(3);
+    border: border-width('regular') solid color('on-primary');
+    border-radius: corner('extra-small');
+    background-color: color('primary');
+
+    @include from('tablet') {
+      height: fluid(size-value('3'), size-value('4'));
+    }
+  }
+
+  &__text {
+    font-size: font-size('headline-medium');
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+
+    @include from('tablet') {
+      font-size: fluid(font-size-value('headline-medium'), font-size-value('headline-large'));
+    }
+  }
+}
