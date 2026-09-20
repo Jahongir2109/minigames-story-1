@@ -49,6 +49,20 @@
     --shadow-#{$name}: #{$offset} #{$offset} 0 var(--color-on-primary);
   }
 
+  @each $name, $layers in $shadow-soft {
+    $values: ();
+
+    @each $layer in $layers {
+      $values: list.append(
+        $values,
+        '#{list.nth($layer, 1)} #{list.nth($layer, 2)} #{list.nth($layer, 3)} var(--color-#{list.nth($layer, 4)})',
+        comma
+      );
+    }
+
+    --shadow-#{$name}: #{$values};
+  }
+
   @each $name, $value in $border-widths {
     --border-width-#{$name}: #{$value};
   }
