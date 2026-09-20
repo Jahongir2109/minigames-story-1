@@ -13,6 +13,15 @@
   }
 }
 
+// Same as `from`, but the breakpoint width itself is included (for the exact design frames).
+@mixin from-inclusive($name) {
+  $width: map.get(breakpoints.$breakpoints, $name);
+
+  @media (min-width: #{$width}) {
+    @content;
+  }
+}
+
 @mixin until($name) {
   $width: map.get(breakpoints.$breakpoints, $name);
 
