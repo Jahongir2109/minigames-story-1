@@ -22,11 +22,7 @@
   &__top {
     display: flex;
     flex-direction: column;
-    gap: fluid(size-value('3'), size-value('5'), $bp-mobile, $bp-tablet);
-
-    @include from('tablet') {
-      gap: size(3);
-    }
+    gap: size(3);
 
     @include from('laptop') {
       flex-direction: row;
@@ -87,7 +83,7 @@
   }
 
   &__link {
-    @include text-style('body-small', 'regular', 'relaxed');
+    @include text-style('body-small', 'regular', 'body');
     display: block;
     width: fit-content;
     color: color('on-bg-footer');
@@ -142,7 +138,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: size(1) size(3);
-    padding-top: size(2);
+    padding-top: calc(#{size(1)} + #{size('05')});
     border-top: border-width('thin') solid color('bg-footer-low');
     font-size: fluid(
       font-size-value('label-medium'),
@@ -156,10 +152,14 @@
       justify-content: space-between;
     }
 
-    // The four items only fit in one line from the tablet width.
-    @include from('tablet') {
+    // The four items fit in one line from the tablet width (768px included).
+    @include from-inclusive('tablet') {
       flex-wrap: nowrap;
       white-space: nowrap;
+    }
+
+    @include from('narrow') {
+      padding-top: size(2);
     }
 
     @include from('laptop') {
@@ -206,8 +206,8 @@
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    width: size(3);
-    height: size(3);
+    width: fluid(size-value('3') - size-value('05'), size-value('3'), $bp-mobile, $bp-desktop);
+    height: fluid(size-value('3') - size-value('05'), size-value('3'), $bp-mobile, $bp-desktop);
     border-radius: corner('full');
 
     &--school {
