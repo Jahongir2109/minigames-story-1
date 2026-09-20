@@ -1,0 +1,261 @@
+@use 'abstracts' as *;
+
+// The dialog element is only a transparent frame: the visible box is the surface. That way a
+// click that lands on the dialog itself is always a click on the backdrop.
+.auth-dialog {
+  width: min(#{$dialog-width}, calc(100% - #{size(4)}));
+  max-width: none;
+  max-height: calc(100dvh - #{size(4)});
+  margin: auto;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  color: color('on-primary');
+
+  // Closed state (the dialog is animated in and out with discrete transitions).
+  opacity: 0;
+  transform: translateY(#{size(2)}) scale(0.96);
+  transition:
+    opacity duration('normal') ease,
+    transform duration('normal') ease,
+    overlay duration('normal') ease allow-discrete,
+    display duration('normal') ease allow-discrete;
+
+  &[open] {
+    opacity: 1;
+    transform: none;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(#{size(2)}) scale(0.96);
+    }
+  }
+
+  &::backdrop {
+    background-color: color('dialog-backdrop');
+    opacity: 0;
+    transition:
+      opacity duration('normal') ease,
+      overlay duration('normal') ease allow-discrete,
+      display duration('normal') ease allow-discrete;
+  }
+
+  &[open]::backdrop {
+    opacity: 1;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  &__surface {
+    display: flex;
+    flex-direction: column;
+    gap: size(3);
+    max-height: calc(100dvh - #{size(4)});
+    padding: inner(
+      fluid(size-value('3'), size-value('4'), $bp-mobile, $bp-tablet),
+      border-width('thick')
+    );
+    overflow-y: auto;
+    border: border-width('thick') solid color('on-primary');
+    border-radius: corner('extra-large');
+    background-color: color('bg');
+    box-shadow: size(1) size(1) 0 color('shadow-dialog');
+
+    @include from('tablet') {
+      padding: inner(size(4), border-width('thick'));
+    }
+  }
+
+  // Login / Registration switcher
+  &__tabs {
+    display: flex;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: border-width('medium') solid color('on-primary');
+    border-radius: corner('medium');
+    background-color: color('white');
+  }
+
+  &__tab {
+    flex: 1;
+    // The switcher is 48px tall including its border.
+    min-height: calc(#{size(6)} - 2 * #{border-width('medium')});
+    padding-inline: size(2);
+    background-color: color('white');
+    color: color('on-bg');
+    font-size: font-size('label-extra-large');
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+    transition:
+      background-color duration('normal') ease,
+      color duration('normal') ease;
+
+    &[aria-selected='true'] {
+      background-color: color('on-primary');
+      color: color('white');
+    }
+
+    @include hover-device {
+      &[aria-selected='false']:hover {
+        background-color: color('surface');
+        color: color('on-primary');
+      }
+    }
+
+    &:focus-visible {
+      outline-offset: calc(-1 * #{size('05')});
+    }
+  }
+
+  // Both panels share one grid cell; the inactive one fades and slides out of the way.
+  &__viewport {
+    display: grid;
+    overflow: clip;
+    overflow-clip-margin: size(1);
+    transition: height duration('normal') ease;
+
+    &--instant {
+      transition: none;
+    }
+  }
+
+  &__panel {
+    grid-area: 1 / 1;
+    align-self: start;
+    visibility: hidden;
+    opacity: 0;
+    transition:
+      opacity duration('normal') ease,
+      transform duration('normal') ease,
+      visibility 0s linear duration('normal');
+
+    &--login {
+      transform: translateX(calc(-1 * #{size(3)}));
+    }
+
+    &--register {
+      transform: translateX(#{size(3)});
+    }
+
+    &[data-active='true'] {
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+      transition:
+        opacity duration('normal') ease,
+        transform duration('normal') ease,
+        visibility 0s linear 0s;
+    }
+  }
+}
+
+// Form content of both panels
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: size(3);
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: size(1);
+  }
+
+  &__title {
+    @include text-style('headline-medium', 'bold');
+  }
+
+  &__subtitle {
+    @include text-style('label-large', 'regular');
+    color: color('on-bg');
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: size(3);
+  }
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+    gap: size(2);
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: size(2);
+  }
+
+  // Text buttons ("Forgot Password?", "Register", "Login")
+  &__link {
+    color: color('on-primary');
+    font-size: font-size('label-large');
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+    text-decoration: underline;
+    text-underline-offset: size('05');
+    transition: color duration('fast') ease;
+
+    @include hover-device {
+      &:hover {
+        color: color('tertiary');
+      }
+    }
+
+    &:active {
+      color: color('tertiary');
+      opacity: 0.8;
+    }
+  }
+
+  &__forgot {
+    align-self: flex-end;
+  }
+
+  &__form > .auth-form__actions > .button {
+    width: 100%;
+    min-height: calc(#{size(6)} + #{border-width('regular')});
+    padding-block: 0;
+    border-radius: corner('medium');
+    font-size: font-size('label-extra-large');
+    line-height: line-height('normal');
+  }
+
+  &__form > .auth-form__actions > .auth-form__submit {
+    box-shadow: 0 size('05') 0 color('on-primary');
+  }
+
+  &__form > .auth-form__actions > .auth-form__google {
+    background-color: color('white');
+  }
+
+  &__divider {
+    display: flex;
+    align-items: center;
+    gap: size(2);
+    color: color('on-bg');
+    font-size: font-size('label-medium');
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: border-width('thin');
+      background-color: color('outline-variant');
+    }
+  }
+
+  &__prompt {
+    color: color('on-bg');
+    font-size: font-size('label-large');
+    line-height: line-height('normal');
+    text-align: center;
+  }
+}
