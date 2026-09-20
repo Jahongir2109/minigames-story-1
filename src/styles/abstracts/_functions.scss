@@ -82,7 +82,8 @@
 }
 
 @function shadow($name) {
-  @if not map.has-key(tokens.$shadow-levels, $name) {
+  @if not map.has-key(tokens.$shadow-levels, $name) and not map.has-key(tokens.$shadow-soft, $name)
+  {
     @error 'Unknown shadow token "#{$name}".';
   }
 
