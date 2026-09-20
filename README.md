@@ -17,6 +17,20 @@ It is built for the RS School qualifying stage (Story 1) using only TypeScript, 
 - ESLint (typescript-eslint + Unicorn) and Prettier
 - Husky and commitlint (Git hooks)
 
+## Project structure
+
+```text
+public/                 static files (favicon, game card images)
+src/
+  app/                  application shell (mounts pages and global widgets)
+  pages/                page compositions (home)
+  components/           UI components, each with its own markup (ts) and styles (scss)
+  shared/               DOM helpers, constants and shared types
+  data/                 mock data used until the API is connected
+  assets/icons/         SVG icons imported as raw markup
+  styles/               design tokens, breakpoints, mixins and base styles
+```
+
 ## Getting started
 
 ```bash

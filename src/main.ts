@@ -1,6 +1,6 @@
 import '@fontsource-variable/inter/index.css';
 import './styles/main.scss';
 
-const APP_NAME: string = 'MiniGames';
+import { mountApp } from '@/app/app';
 
-document.body.append(document.createTextNode(APP_NAME));
+mountApp(document.body);
