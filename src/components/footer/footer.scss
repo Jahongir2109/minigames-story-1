@@ -153,8 +153,12 @@
     line-height: line-height('normal');
 
     @include from('narrow') {
-      flex-wrap: nowrap;
       justify-content: space-between;
+    }
+
+    // The four items only fit in one line from the tablet width.
+    @include from('tablet') {
+      flex-wrap: nowrap;
       white-space: nowrap;
     }
 
