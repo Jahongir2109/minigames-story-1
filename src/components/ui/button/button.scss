@@ -71,17 +71,17 @@
 
   &--primary:active:not(:disabled) {
     background-color: color('primary-high');
-    transform: translateY(1px);
+    transform: translateY(#{border-width('thin')});
   }
 
   &--outline:active:not(:disabled) {
     background-color: color('primary-low');
-    transform: translateY(1px);
+    transform: translateY(#{border-width('thin')});
   }
 
   &--outline-inverse:active:not(:disabled) {
     background-color: color('bg-footer-lowest');
-    transform: translateY(1px);
+    transform: translateY(#{border-width('thin')});
   }
 
   @include hover-device {

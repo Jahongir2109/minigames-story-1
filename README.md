@@ -3,6 +3,10 @@
 MiniGames is a single-page web application where players can take a short break and discover a library of casual mini-games.
 It is built for the RS School qualifying stage (Story 1) using only TypeScript, HTML and SCSS — no UI frameworks or ready-made component libraries.
 
+## Live demo
+
+https://minigames-story-1.vercel.app
+
 ## Story 1 scope
 
 - Project setup: Vite, TypeScript, ESLint, Prettier, Husky, Sass tokens
@@ -49,6 +53,13 @@ npm run dev
 | `npm run lint:fix`     | Run ESLint and fix what it can      |
 | `npm run format`       | Format the codebase with Prettier   |
 | `npm run format:check` | Check formatting with Prettier      |
+
+## Design and quality
+
+- Layout follows the Figma design at 375px, 768px and 1920px and resizes fluidly in between; no horizontal scrollbar from 375px to 1920px and wider.
+- Every color, size, radius, shadow, font size and weight comes from the design tokens in `src/styles/abstracts/_tokens.scss` (published as CSS custom properties).
+- Semantic HTML only; the three states of the SPA (Home, open auth dialog, open mobile menu) pass the W3C validator without errors or warnings.
+- Git hooks (Husky): `commit-msg` validates the message with commitlint, `pre-push` runs ESLint and Prettier.
 
 ## Git conventions
 
