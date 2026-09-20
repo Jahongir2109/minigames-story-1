@@ -16,7 +16,7 @@
     transform duration('fast') ease,
     box-shadow duration('fast') ease;
 
-  // Sizes: 14px labels on small/medium buttons, 16px on large ones.
+  // Sizes: 14px labels on small/medium buttons, 18px on large ones.
   &--small {
     @include button-size('small');
     font-size: font-size('label-large');
@@ -31,8 +31,8 @@
 
   &--large {
     @include button-size('large');
-    font-size: font-size('label-extra-large');
-    line-height: line-height('body');
+    font-size: font-size('body-large');
+    line-height: line-height('normal');
   }
 
   // Variants
