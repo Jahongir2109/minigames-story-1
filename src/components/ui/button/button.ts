@@ -4,7 +4,7 @@ import { createElement } from '@/shared/dom/create-element';
 import { createIcon } from '@/shared/dom/create-icon';
 
 export type ButtonVariant = 'primary' | 'outline' | 'outline-inverse';
-export type ButtonSize = 'small' | 'medium' | 'large';
+export type ButtonSize = 'small' | 'medium' | 'large' | 'adaptive';
 
 export interface ButtonOptions {
   label: string;

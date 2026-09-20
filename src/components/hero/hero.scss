@@ -98,21 +98,7 @@
     }
   }
 
-  // The button grows with the layout: small on mobile, medium on tablet, large on desktop.
   > .hero__inner > .hero__card > .hero__button {
     align-self: flex-start;
-    @include button-size('small');
-    font-size: font-size('label-medium');
-    line-height: line-height('normal');
-
-    @include from('narrow') {
-      @include button-size('medium');
-      font-size: font-size('label-large');
-    }
-
-    @include from('laptop') {
-      @include button-size('large');
-      font-size: font-size('body-large');
-    }
   }
 }

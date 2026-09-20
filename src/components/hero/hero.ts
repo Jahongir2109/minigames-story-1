@@ -28,7 +28,7 @@ export function createHero(): HTMLElement {
   const button: HTMLButtonElement = createButton({
     label: 'Browse Library',
     variant: 'primary',
-    size: 'large',
+    size: 'adaptive',
     className: 'hero__button',
   });
 
