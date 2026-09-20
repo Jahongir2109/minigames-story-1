@@ -29,6 +29,7 @@ $colors: (
   'outline': #e5e7eb,
   'outline-variant': #d2d2d2,
   // Additional
+  'shadow-dialog': #111111,
   'avatar-random-1': #e9eef6,
   'avatar-random-2': #a3e2c9,
   'avatar-random-3': #bce3ff,
@@ -194,6 +195,9 @@ $border-widths: (
   'medium': 2.5px,
   'thick': 3px,
 );
+
+// Width of the auth dialog on tablet and desktop.
+$dialog-width: 420px;
 
 $transition-durations: (
   'fast': 150ms,
