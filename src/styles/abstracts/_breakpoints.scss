@@ -1,0 +1,14 @@
+// Layout breakpoints (Figma frames: mobile 375px, tablet 768px, desktop 1920px).
+// Layouts resize fluidly between them.
+$bp-mobile: 375px;
+$bp-tablet: 768px;
+// The desktop composition (wide footer, side-by-side blocks) starts here.
+$bp-laptop: 1024px;
+$bp-desktop: 1920px;
+
+$breakpoints: (
+  'mobile': $bp-mobile,
+  'tablet': $bp-tablet,
+  'laptop': $bp-laptop,
+  'desktop': $bp-desktop,
+);
