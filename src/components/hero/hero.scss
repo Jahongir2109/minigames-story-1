@@ -1,0 +1,118 @@
+@use 'abstracts' as *;
+
+.hero {
+  background: color('bg-footer') url('/assets/images/hero-bg.jpg') center / cover no-repeat;
+
+  &__inner {
+    max-width: $bp-desktop;
+    margin-inline: auto;
+    padding: fluid(size-value('8'), size-value('9'), $bp-mobile, $bp-tablet) var(--page-padding);
+
+    @include from('tablet') {
+      padding-block: fluid(size-value('9'), size-value('14'));
+    }
+  }
+
+  // Neo-brutalist card: the stroke, radius and shadow grow with the layout.
+  &__card {
+    display: flex;
+    flex-direction: column;
+    gap: fluid(size-value('2'), size-value('3'));
+    width: 100%;
+    max-width: fluid(size-value('10') * 6, size-value('10') * 8);
+    padding: inner(size(3), border-width('regular'));
+    border: border-width('regular') solid color('on-primary');
+    border-radius: corner('medium');
+    background-color: color('bg');
+    box-shadow: shadow('level-1');
+
+    @include from('narrow') {
+      padding: inner(size(3), border-width('medium'));
+      border-width: border-width('medium');
+      border-radius: corner('large');
+      box-shadow: shadow('level-2');
+    }
+
+    @include from('laptop') {
+      padding: inner(fluid(size-value('3'), size-value('6')), border-width('thick'));
+      border-width: border-width('thick');
+      border-radius: corner('extra-large');
+      box-shadow: shadow('level-3');
+    }
+  }
+
+  &__title {
+    font-size: fluid(
+      font-size-value('display-small'),
+      font-size-value('display-medium'),
+      $bp-mobile,
+      $bp-tablet
+    );
+    font-weight: font-weight('bold');
+    line-height: line-height('heading');
+
+    @include from('narrow') {
+      line-height: line-height('title');
+    }
+
+    @include from('tablet') {
+      font-size: fluid(font-size-value('display-medium'), font-size-value('display-large'));
+    }
+
+    @include from('laptop') {
+      line-height: line-height('display');
+    }
+  }
+
+  &__description {
+    color: color('on-bg');
+    font-size: fluid(
+      font-size-value('label-medium'),
+      font-size-value('body-small'),
+      $bp-mobile,
+      $bp-tablet
+    );
+    font-weight: font-weight('medium');
+    line-height: line-height('body');
+
+    @include from('tablet') {
+      font-size: fluid(font-size-value('body-small'), font-size-value('body-large'));
+    }
+
+    @include from('laptop') {
+      line-height: line-height('relaxed');
+    }
+  }
+
+  &__text-full {
+    display: none;
+
+    @include from('narrow') {
+      display: inline;
+    }
+  }
+
+  &__text-short {
+    @include from('narrow') {
+      display: none;
+    }
+  }
+
+  // The button grows with the layout: small on mobile, medium on tablet, large on desktop.
+  > .hero__inner > .hero__card > .hero__button {
+    align-self: flex-start;
+    @include button-size('small');
+    font-size: font-size('label-medium');
+    line-height: line-height('normal');
+
+    @include from('narrow') {
+      @include button-size('medium');
+      font-size: font-size('label-large');
+    }
+
+    @include from('laptop') {
+      @include button-size('large');
+      font-size: font-size('body-large');
+    }
+  }
+}
