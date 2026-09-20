@@ -1,0 +1,240 @@
+@use 'abstracts' as *;
+
+$rank-column-mobile: size-value('5');
+$rank-column-wide: size-value('10');
+
+.leaderboard {
+  &__inner {
+    @include section-inner;
+  }
+
+  &__title-suffix {
+    display: none;
+
+    @include from('narrow') {
+      display: inline;
+    }
+  }
+
+  // Compact layouts write some values shorter (e.g. "12d" instead of "12 days").
+  &__full {
+    display: none;
+
+    @include from('laptop') {
+      display: inline;
+    }
+  }
+
+  &__short {
+    @include from('laptop') {
+      display: none;
+    }
+  }
+
+  &__frame {
+    overflow: hidden;
+    border: border-width('medium') solid color('on-primary');
+    border-radius: corner('large');
+    background-color: color('white');
+    box-shadow: shadow('level-1');
+
+    @include from('laptop') {
+      box-shadow: shadow('level-2');
+    }
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-family: var(--font-family-secondary);
+    font-size: font-size('label-large');
+    line-height: line-height('normal');
+
+    @include from('laptop') {
+      font-size: font-size('label-extra-large');
+    }
+  }
+
+  &__cell {
+    padding-inline: var(--cell-padding);
+    text-align: center;
+
+    // The first column holds the rank; the outer paddings are the table padding.
+    &:first-child {
+      width: calc(#{$rank-column-mobile} + var(--table-padding) + var(--cell-padding));
+      padding-inline-start: var(--table-padding);
+
+      @include from('narrow') {
+        width: calc(#{$rank-column-wide} + var(--table-padding) + var(--cell-padding));
+      }
+    }
+
+    &:last-child {
+      padding-inline-end: var(--table-padding);
+    }
+
+    &--games {
+      display: none;
+
+      @include from('narrow') {
+        display: table-cell;
+      }
+    }
+
+    &--favorite {
+      display: none;
+
+      @include from('laptop') {
+        display: table-cell;
+      }
+    }
+
+    &--player {
+      text-align: start;
+    }
+  }
+
+  // Cell paddings follow the layout: 16px on mobile and tablet, 24px on desktop.
+  &__table {
+    --table-padding: #{size(2)};
+    // Half of the gap between the columns: 8px on mobile, growing to 16px on desktop.
+    --cell-padding: #{fluid(size-value('05'), size-value('1'), $bp-mobile, $bp-desktop)};
+
+    @include from('laptop') {
+      --table-padding: #{size(3)};
+    }
+  }
+
+  &__row {
+    color: color('on-primary');
+
+    thead & {
+      background-color: color('tertiary');
+      color: color('white');
+    }
+
+    tbody &:nth-child(odd) {
+      background-color: color('bg');
+    }
+
+    tbody & {
+      border-bottom: border-width('thin') solid color('outline');
+    }
+
+    &--extra {
+      display: none;
+
+      @include from('laptop') {
+        display: table-row;
+      }
+    }
+  }
+
+  // Compact layouts give the player column the remaining width; on desktop all columns are equal.
+  thead &__cell--games,
+  thead &__cell--score,
+  thead &__cell--streak {
+    width: 20%;
+
+    @include from('narrow') {
+      width: 18%;
+    }
+
+    @include from('laptop') {
+      width: auto;
+    }
+  }
+
+  // Header cells
+  thead &__cell {
+    padding-block: size(2);
+    font-size: font-size('label-large');
+    font-weight: font-weight('bold');
+    text-align: center;
+    text-transform: uppercase;
+
+    @include from('laptop') {
+      padding-block: size(3);
+      font-size: font-size('label-extra-large');
+    }
+  }
+
+  // Body cells: 16px paddings around the avatar (the border is part of the row height)
+  tbody &__cell {
+    padding-top: size(2);
+    padding-bottom: inner(size(2), border-width('thin'));
+    font-weight: font-weight('bold');
+  }
+
+  &__rank {
+    &--first {
+      color: color('tertiary');
+
+      @include from('laptop') {
+        color: color('primary');
+      }
+    }
+  }
+
+  &__player {
+    display: flex;
+    align-items: center;
+    gap: size(1);
+
+    @include from('laptop') {
+      gap: calc(#{size(1)} + #{size('05')});
+    }
+  }
+
+  &__avatar {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: size(3);
+    height: size(3);
+    border: border-width('light') solid color('on-primary');
+    border-radius: corner('full');
+    background-color: var(--avatar-color);
+    font-size: font-size('label-small');
+    font-weight: font-weight('bold');
+
+    @include from('narrow') {
+      width: fluid(size-value('3'), size-value('4') - size-value('05'), $bp-narrow, $bp-tablet);
+      height: fluid(size-value('3'), size-value('4') - size-value('05'), $bp-narrow, $bp-tablet);
+    }
+
+    @include from('laptop') {
+      width: size(5);
+      height: size(5);
+      font-size: font-size('label-large');
+    }
+  }
+
+  &__name {
+    @include truncate-line;
+    min-width: 0;
+  }
+
+  &__streak {
+    display: inline-flex;
+    align-items: center;
+    gap: size('05');
+    white-space: nowrap;
+  }
+
+  &__flame {
+    font-family: system-ui, sans-serif;
+  }
+
+  &__favorite {
+    display: inline-block;
+    padding: size('05') calc(#{size(1)} + #{size('05')});
+    border: border-width('light') solid color('on-primary');
+    border-radius: corner('full');
+    font-size: font-size('label-medium');
+    font-weight: font-weight('medium');
+    white-space: nowrap;
+  }
+}
