@@ -73,3 +73,7 @@ button:disabled {
 :focus-visible {
   @include focus-ring;
 }
+
+.visually-hidden {
+  @include visually-hidden;
+}

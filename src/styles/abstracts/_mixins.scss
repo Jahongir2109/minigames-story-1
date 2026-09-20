@@ -52,6 +52,32 @@
   padding-inline: var(--page-padding);
 }
 
+// Vertical rhythm shared by the page sections: 16px on mobile, 24px on tablet, 40px on desktop.
+@mixin section-inner {
+  display: flex;
+  flex-direction: column;
+  gap: fn.fluid(
+    fn.size-value('2'),
+    fn.size-value('3'),
+    breakpoints.$bp-mobile,
+    breakpoints.$bp-tablet
+  );
+  max-width: breakpoints.$bp-desktop;
+  margin-inline: auto;
+  padding: fn.fluid(
+      fn.size-value('2'),
+      fn.size-value('3'),
+      breakpoints.$bp-mobile,
+      breakpoints.$bp-tablet
+    )
+    var(--page-padding);
+
+  @include from('tablet') {
+    gap: fn.fluid(fn.size-value('3'), fn.size-value('5'));
+    padding-block: fn.fluid(fn.size-value('3'), fn.size-value('5'));
+  }
+}
+
 @mixin text-style($size, $weight: 'regular', $line-height: 'normal') {
   font-size: fn.font-size($size);
   font-weight: fn.font-weight($weight);
