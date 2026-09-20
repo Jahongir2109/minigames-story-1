@@ -1,7 +1,7 @@
 import { fileURLToPath, URL } from 'node:url';
-import { defineConfig } from 'vite';
+import { type ConfigEnv, defineConfig, type UserConfig } from 'vite';
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   const isProduction: boolean = mode === 'production';
 
   return {
