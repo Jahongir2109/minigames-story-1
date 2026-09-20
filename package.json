@@ -1,0 +1,19 @@
+{
+  "name": "minigames",
+  "private": true,
+  "version": "0.1.0",
+  "description": "MiniGames - RS School qualifying stage, Story 1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "build:dev": "tsc --noEmit && vite build --mode development",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "sass": "^1.104.1",
+    "typescript": "~6.0",
+    "vite": "^8.3.0"
+  }
+}
