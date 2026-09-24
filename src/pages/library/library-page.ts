@@ -2,6 +2,7 @@ import './library-page.scss';
 
 import { createFilterChips } from '@/components/filter-chips/filter-chips';
 import { createLibraryCard } from '@/components/library-card/library-card';
+import { createPagination } from '@/components/pagination/pagination';
 import { createSortDropdown } from '@/components/sort-dropdown/sort-dropdown';
 import { categories } from '@/data/categories';
 import { games } from '@/data/games';
@@ -74,10 +75,17 @@ function createGameList(options: LibraryPageOptions): HTMLElement {
   });
 }
 
+function createPaginationSection(): HTMLElement {
+  return createElement('div', {
+    className: 'library__pagination',
+    children: [createPagination(Math.ceil(games.length / LIBRARY_PAGE_SIZE))],
+  });
+}
+
 export function createLibraryPage(options: LibraryPageOptions = {}): HTMLElement {
   return createElement('main', {
     className: 'page library',
     attributes: { id: 'main-content', 'aria-labelledby': TITLE_ID },
-    children: [createIntro(), createToolbar(), createGameList(options)],
+    children: [createIntro(), createToolbar(), createGameList(options), createPaginationSection()],
   });
 }

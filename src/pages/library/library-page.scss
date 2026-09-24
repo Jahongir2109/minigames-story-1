@@ -52,6 +52,14 @@
     }
   }
 
+  &__pagination {
+    padding: size(3) var(--page-padding);
+
+    @include from('narrow') {
+      padding-block: size(5);
+    }
+  }
+
   &__title {
     font-size: fluid(
       font-size-value('display-small'),
