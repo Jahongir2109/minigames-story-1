@@ -1,5 +1,6 @@
 import { type AuthDialog, createAuthDialog } from '@/components/auth-dialog/auth-dialog';
 import { createFooter } from '@/components/footer/footer';
+import { createGameDialog, type GameDialog } from '@/components/game-dialog/game-dialog';
 import { createHeader, type Header } from '@/components/header/header';
 import { createMobileMenu, type MobileMenu } from '@/components/mobile-menu/mobile-menu';
 import { createHomePage } from '@/pages/home/home-page';
@@ -14,6 +15,7 @@ import { createRouter, type RouteName, type Router } from './router';
  */
 export function mountApp(root: HTMLElement): void {
   const authDialog: AuthDialog = createAuthDialog();
+  const gameDialog: GameDialog = createGameDialog();
 
   const header: Header = createHeader({
     onLogin: (): void => {
@@ -40,13 +42,24 @@ export function mountApp(root: HTMLElement): void {
   // Replaced by the page of the current route as soon as the router starts.
   const outlet: HTMLElement = createElement('main');
 
-  root.replaceChildren(header.element, outlet, createFooter(), menu.element, authDialog.element);
+  root.replaceChildren(
+    header.element,
+    outlet,
+    createFooter(),
+    menu.element,
+    authDialog.element,
+    gameDialog.element,
+  );
 
   const router: Router = createRouter({
     outlet,
     routes: [
       { name: 'home', hash: HOME_PATH, render: createHomePage },
-      { name: 'library', hash: LIBRARY_PATH, render: createLibraryPage },
+      {
+        name: 'library',
+        hash: LIBRARY_PATH,
+        render: (): HTMLElement => createLibraryPage({ onGameDetails: gameDialog.open }),
+      },
     ],
     onChange: (route: RouteName): void => {
       header.setCurrentRoute(route);
