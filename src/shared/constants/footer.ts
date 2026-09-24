@@ -1,4 +1,4 @@
-import { HOME_PATH } from './links';
+import { HOME_PATH, LIBRARY_PATH } from './links';
 
 export interface FooterLink {
   label: string;
@@ -11,14 +11,14 @@ export interface FooterColumn {
   links: readonly FooterLink[];
 }
 
-// Until the other pages exist every footer link leads to the Home page.
+// Links to pages that do not exist yet lead to the Home page.
 export const FOOTER_COLUMNS: readonly FooterColumn[] = [
   {
     id: 'explore',
     title: 'Explore',
     links: [
       { label: 'Home', href: HOME_PATH },
-      { label: 'Library', href: HOME_PATH },
+      { label: 'Library', href: LIBRARY_PATH },
       { label: 'Categories', href: HOME_PATH },
       { label: 'Tournaments', href: HOME_PATH },
     ],

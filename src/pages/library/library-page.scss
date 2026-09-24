@@ -1,0 +1,93 @@
+@use 'abstracts' as *;
+
+// Side padding comes from the page gutter; the vertical rhythm of the Library sections is
+// 16px on mobile, 24px on tablet and 40px (title) / 16px (toolbar) on desktop.
+.library {
+  &__intro {
+    display: flex;
+    flex-direction: column;
+    gap: size(1);
+    max-width: $bp-desktop;
+    margin-inline: auto;
+    padding: fluid(size-value('2'), size-value('3'), $bp-mobile, $bp-tablet) var(--page-padding);
+
+    @include from('tablet') {
+      padding-block: fluid(size-value('3'), size-value('5'));
+    }
+  }
+
+  // Chips above the sort control on mobile and tablet, side by side on desktop.
+  &__toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: size(2);
+    max-width: $bp-desktop;
+    margin-inline: auto;
+    padding: size(2) var(--page-padding);
+
+    @include from('narrow') {
+      align-items: flex-start;
+    }
+
+    @include from('laptop') {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: size(3);
+    }
+  }
+
+  &__games {
+    max-width: $bp-desktop;
+    margin-inline: auto;
+    padding-inline: var(--page-padding);
+  }
+
+  &__list {
+    display: grid;
+    gap: fluid(size-value('2'), size-value('3'), $bp-mobile, $bp-tablet);
+
+    @include from('wide') {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__pagination {
+    padding: size(3) var(--page-padding);
+
+    @include from('narrow') {
+      padding-block: size(5);
+    }
+  }
+
+  &__title {
+    font-size: fluid(
+      font-size-value('display-small'),
+      font-size-value('display-medium'),
+      $bp-mobile,
+      $bp-tablet
+    );
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+
+    @include from('tablet') {
+      font-size: fluid(font-size-value('display-medium'), font-size-value('display-large'));
+    }
+  }
+
+  &__subtitle {
+    color: color('on-bg');
+    font-size: fluid(
+      font-size-value('body-small'),
+      font-size-value('body-medium'),
+      $bp-mobile,
+      $bp-tablet
+    );
+    font-weight: font-weight('medium');
+    line-height: line-height('normal');
+
+    @include from('tablet') {
+      font-size: fluid(font-size-value('body-medium'), font-size-value('body-large'));
+    }
+  }
+}

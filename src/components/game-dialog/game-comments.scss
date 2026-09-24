@@ -1,0 +1,186 @@
+@use 'abstracts' as *;
+
+$avatar-colors:
+  'primary', 'avatar-random-1', 'avatar-random-2', 'avatar-random-3', 'avatar-random-4',
+  'avatar-random-5';
+
+.game-comments {
+  display: flex;
+  flex-direction: column;
+  gap: size(2);
+
+  &__title {
+    @include text-style('label-extra-large', 'bold');
+  }
+
+  &__form {
+    display: flex;
+    align-items: center;
+    gap: size(2);
+  }
+
+  &__avatar {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: $comment-avatar-size;
+    height: $comment-avatar-size;
+    border: border-width('thin') solid color('on-primary');
+    border-radius: corner('full');
+    @include text-style('label-medium', 'bold');
+
+    @each $color in $avatar-colors {
+      &--#{$color} {
+        background-color: color($color);
+      }
+    }
+  }
+
+  // The avatar of the comment form is larger.
+  &__form > &__avatar {
+    width: size(5);
+    height: size(5);
+    border-width: border-width('light');
+    font-size: font-size('label-large');
+  }
+
+  &__input {
+    flex: 1;
+    min-width: 0;
+    height: size(6);
+    min-height: size(6);
+    max-height: size(11);
+    margin: 0;
+    padding: inner(size(1), border-width('thin')) inner(size(2), border-width('thin'));
+    overflow-y: hidden;
+    resize: none;
+    border: border-width('thin') solid color('on-primary');
+    border-radius: corner('small');
+    background-color: color('white');
+    color: color('on-primary');
+    font: inherit;
+    @include text-style('body-small');
+
+    &::placeholder {
+      color: color('on-bg-low');
+    }
+
+    // The focused state keeps the default size: the thicker border is an inset shadow.
+    &:focus {
+      outline: none;
+      box-shadow: inset 0 0 0 border-width('thin') color('on-primary');
+    }
+  }
+
+  &__send {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: size(5);
+    height: size(5);
+    border: border-width('light') solid color('on-primary');
+    border-radius: corner('small');
+    background-color: color('bg-footer-low');
+    color: color('white');
+    transition:
+      background-color duration('fast') ease,
+      opacity duration('fast') ease;
+
+    @include hover-device {
+      &:hover:not(:disabled) {
+        background-color: color('tertiary');
+      }
+    }
+
+    &:disabled {
+      border-color: transparent;
+      background-color: color('outline-variant');
+      color: color('on-bg');
+      opacity: 0.5;
+    }
+  }
+
+  &__send-icon {
+    width: size(3);
+    height: size(3);
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: size(2);
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: size(1);
+    padding: size(2);
+    border-radius: corner('medium');
+    background-color: color('white');
+    box-shadow: shadow('level-0');
+  }
+
+  &__card-header {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    justify-content: space-between;
+    gap: size(2);
+  }
+
+  &__author {
+    display: flex;
+    align-items: center;
+    gap: size(1);
+    @include text-style('label-large', 'bold');
+  }
+
+  &__date {
+    color: color('on-bg');
+    @include text-style('label-medium');
+  }
+
+  &__text {
+    @include text-style('body-small', 'regular', 'heading');
+  }
+
+  // The like pill hangs into the card padding so its icon lines up with the text.
+  &__like {
+    display: inline-flex;
+    align-items: center;
+    gap: size('05');
+    margin: calc(-1 * #{size('05')}) 0 calc(-1 * #{size('05')}) calc(-1 * #{size(1)});
+    padding: size('05') size(1);
+    border-radius: corner('medium');
+    color: color('on-primary');
+    @include text-style('label-medium', 'bold');
+    transition:
+      background-color duration('fast') ease,
+      color duration('fast') ease;
+
+    @include hover-device {
+      &:hover {
+        background-color: color('surface');
+      }
+    }
+
+    &[aria-pressed='true'] {
+      color: color('like');
+    }
+  }
+
+  &__like-icon {
+    width: size(2);
+    height: size(2);
+    color: color('on-bg');
+    transition: color duration('fast') ease;
+
+    [aria-pressed='true'] > & {
+      color: color('like');
+    }
+  }
+}

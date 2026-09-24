@@ -1,0 +1,58 @@
+@use 'abstracts' as *;
+
+// The chips never wrap: the row is clipped by the section and scrolls without a visible bar.
+.filter-chips {
+  display: flex;
+  gap: size(1);
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  @include from('laptop') {
+    gap: fluid(size-value('1'), size-value('2'), $bp-laptop, $bp-desktop);
+  }
+
+  &--dragging {
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  &__chip {
+    flex-shrink: 0;
+    @include button-size('small');
+    border: border-width('regular') solid color('on-primary');
+    border-radius: corner('extra-large');
+    background-color: color('white');
+    color: color('on-primary');
+    font-size: fluid(
+      font-size-value('label-medium'),
+      font-size-value('label-large'),
+      $bp-mobile,
+      $bp-tablet
+    );
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+    white-space: nowrap;
+    transition: background-color duration('fast') ease;
+
+    @include hover-device {
+      &:hover {
+        background-color: color('surface');
+      }
+    }
+
+    &[aria-pressed='true'] {
+      background-color: color('primary');
+    }
+
+    &:focus-visible {
+      outline-offset: calc(-1 * #{size('05')});
+    }
+  }
+}

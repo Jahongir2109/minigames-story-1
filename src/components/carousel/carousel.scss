@@ -1,18 +1,5 @@
 @use 'abstracts' as *;
 
-// Card proportions of the layouts: with a flex basis of 0 the weights give the exact widths
-// of the design at 768px (105 : 448 : 105) and 1920px (120 : 288 : 816 : 288 : 120).
-$weights-compact: (
-  'far': 0,
-  'near': 105,
-  'active': 448,
-);
-$weights-wide: (
-  'far': 120,
-  'near': 288,
-  'active': 816,
-);
-
 .carousel {
   &__inner {
     @include section-inner;
@@ -74,43 +61,45 @@ $weights-wide: (
     height: size(3);
   }
 
+  // The track clips the cards parked outside of it; the extra block size leaves room for the card
+  // shadow. Card height: 200px on mobile, 280px on tablet, 384px on desktop.
   &__track {
-    display: flex;
-    gap: size(1);
-    // Room for the card shadow, which would otherwise be clipped.
-    padding: 0 size(1) size('05');
+    position: relative;
+    height: calc(
+      #{fluid(size-value('12') + size-value('13'), size-value('5') * 7, $bp-mobile, $bp-tablet)} +
+        #{size('05')}
+    );
     overflow: hidden;
-  }
-
-  &__item {
-    // Card height: 200px on mobile, 280px on tablet, 384px on desktop.
-    height: fluid(size-value('12') + size-value('13'), size-value('5') * 7, $bp-mobile, $bp-tablet);
-    min-width: 0;
+    touch-action: pan-y;
+    user-select: none;
+    cursor: grab;
 
     @include from('tablet') {
-      height: fluid(size-value('5') * 7, size-value('12') * 4);
+      height: calc(#{fluid(size-value('5') * 7, size-value('12') * 4)} + #{size('05')});
     }
 
-    &--far {
-      display: none;
+    &--dragging {
+      cursor: grabbing;
+    }
+  }
 
-      @include from('laptop') {
-        display: block;
-      }
+  // Cards are positioned by the script on the keylines of the layout.
+  &__item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: calc(100% - #{size('05')});
+    transition:
+      transform duration('slow') ease-in-out,
+      width duration('slow') ease-in-out;
+
+    &--instant,
+    .carousel__track--dragging > & {
+      transition: none;
     }
 
-    @each $position, $weight in $weights-compact {
-      &--#{$position} {
-        flex: #{$weight} 1 0;
-      }
-    }
-
-    @include from('laptop') {
-      @each $position, $weight in $weights-wide {
-        &--#{$position} {
-          flex: #{$weight} 1 0;
-        }
-      }
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
     }
   }
 }

@@ -1,9 +1,10 @@
 import './mobile-menu.scss';
 
+import type { RouteName } from '@/app/router';
 import closeIcon from '@/assets/icons/close.svg?raw';
 import { createBrand } from '@/components/brand/brand';
 import { createButton } from '@/components/ui/button/button';
-import { NAVIGATION_LINKS } from '@/shared/constants/navigation';
+import { markCurrentLinks, NAVIGATION_LINKS } from '@/shared/constants/navigation';
 import { createElement } from '@/shared/dom/create-element';
 import { createIcon } from '@/shared/dom/create-icon';
 import { lockScroll, unlockScroll } from '@/shared/dom/scroll-lock';
@@ -25,9 +26,13 @@ export interface MobileMenu {
   element: HTMLDialogElement;
   open: () => void;
   close: () => void;
+  /**
+   * Highlights the navigation link of the page that is open.
+   */
+  setCurrentRoute: (route: RouteName) => void;
 }
 
-function createLinks(): HTMLUListElement {
+function createLinks(anchors: HTMLAnchorElement[]): HTMLUListElement {
   const list: HTMLUListElement = createElement('ul', { className: 'mobile-menu__links' });
 
   for (const link of NAVIGATION_LINKS) {
@@ -37,10 +42,11 @@ function createLinks(): HTMLUListElement {
       attributes: { href: link.href },
     });
 
-    if (link.current) {
-      anchor.setAttribute('aria-current', 'page');
+    if (link.route !== undefined) {
+      anchor.dataset.route = link.route;
     }
 
+    anchors.push(anchor);
     list.append(createElement('li', { children: [anchor] }));
   }
 
@@ -66,13 +72,15 @@ export function createMobileMenu(options: MobileMenuOptions): MobileMenu {
     className: 'mobile-menu__button',
   });
 
+  const brand: HTMLAnchorElement = createBrand({ inverse: true });
   const top: HTMLElement = createElement('div', {
     className: 'mobile-menu__top',
-    children: [createBrand({ inverse: true }), closeButton],
+    children: [brand, closeButton],
   });
+  const anchors: HTMLAnchorElement[] = [];
   const navigation: HTMLElement = createElement('nav', {
     attributes: { 'aria-label': 'Mobile navigation' },
-    children: [createLinks()],
+    children: [createLinks(anchors)],
   });
   const actions: HTMLElement = createElement('div', {
     className: 'mobile-menu__actions',
@@ -106,6 +114,10 @@ export function createMobileMenu(options: MobileMenuOptions): MobileMenu {
   });
 
   closeButton.addEventListener('click', close);
+  // Navigation happens in place, so the menu has to get out of the way of the new page.
+  for (const anchor of [brand, ...anchors]) {
+    anchor.addEventListener('click', close);
+  }
   loginButton.addEventListener('click', (): void => {
     close();
     options.onLogin();
@@ -122,5 +134,9 @@ export function createMobileMenu(options: MobileMenuOptions): MobileMenu {
     }
   });
 
-  return { element, open, close };
+  const setCurrentRoute = (route: RouteName): void => {
+    markCurrentLinks(anchors, route);
+  };
+
+  return { element, open, close, setCurrentRoute };
 }

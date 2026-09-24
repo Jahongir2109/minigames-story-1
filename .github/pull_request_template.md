@@ -2,7 +2,7 @@
 
 <!-- Link to the task description -->
 
-https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/minigames/story-1.md
+https://github.com/rolling-scopes-school/qualifying-stage/blob/main/tasks/minigames/story-2.md
 
 ## Screenshot
 

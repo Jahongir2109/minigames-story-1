@@ -1,0 +1,123 @@
+@use 'abstracts' as *;
+
+// Like the auth dialog, the dialog element is only a transparent frame and the visible box is the
+// surface, so a click that lands on the dialog itself is a click on the backdrop.
+.game-dialog {
+  width: min(#{$game-dialog-width}, 100%);
+  max-width: none;
+  max-height: calc(100dvh - #{size(4)});
+  margin: auto;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  color: color('on-primary');
+
+  // Closed state (the dialog is animated in and out with discrete transitions).
+  opacity: 0;
+  transform: translateY(#{size(3)}) scale(0.96);
+  transition:
+    opacity duration('normal') ease,
+    transform duration('normal') ease,
+    overlay duration('normal') ease allow-discrete,
+    display duration('normal') ease allow-discrete;
+
+  &[open] {
+    opacity: 1;
+    transform: none;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(#{size(3)}) scale(0.96);
+    }
+  }
+
+  // Same dimmed backdrop as the auth dialog.
+  &::backdrop {
+    background-color: color('dialog-backdrop');
+    opacity: 0;
+    transition:
+      opacity duration('normal') ease,
+      overlay duration('normal') ease allow-discrete,
+      display duration('normal') ease allow-discrete;
+  }
+
+  &[open]::backdrop {
+    opacity: 1;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  // The whole dialog content scrolls inside the surface.
+  &__surface {
+    max-height: calc(100dvh - #{size(4)});
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    border: border-width('thin') solid color('outline-variant');
+    border-radius: corner('extra-large');
+    background-color: color('bg');
+    box-shadow: size(1) size(1) 0 color('shadow-dialog');
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__hero {
+    position: relative;
+    height: $game-dialog-hero-height;
+  }
+
+  &__hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__close {
+    position: absolute;
+    top: size(2);
+    right: size(2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: size(4);
+    height: size(4);
+    border: border-width('regular') solid color('on-primary');
+    border-radius: corner('full');
+    background-color: color('white');
+    box-shadow: border-width('regular') border-width('regular') 0 color('shadow-dialog');
+    color: color('on-primary');
+    transition: background-color duration('fast') ease;
+
+    @include from-inclusive('tablet') {
+      width: size(5);
+      height: size(5);
+    }
+
+    @include hover-device {
+      &:hover {
+        background-color: color('surface');
+      }
+    }
+
+    &:active {
+      background-color: color('primary-low');
+    }
+  }
+
+  &__close-icon {
+    width: size(2);
+    height: size(2);
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: size(3);
+    padding: size(3);
+  }
+}
