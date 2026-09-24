@@ -10,9 +10,9 @@ import { formatCount, formatRating } from '@/shared/utils/format';
 export interface GameCardOptions {
   game: Game;
   /**
-   * The card in the middle of the carousel always shows its information.
+   * Makes the whole card a button (it opens the Game Details dialog).
    */
-  active: boolean;
+  onOpen?: () => void;
 }
 
 function createMetric(icon: string, modifier: string, value: string): HTMLElement {
@@ -26,11 +26,16 @@ function createMetric(icon: string, modifier: string, value: string): HTMLElemen
 }
 
 export function createGameCard(options: GameCardOptions): HTMLElement {
-  const { game, active } = options;
+  const { game } = options;
 
   const image: HTMLImageElement = createElement('img', {
     className: 'game-card__image',
-    attributes: { src: game.cardImage, alt: `${game.name} cover`, loading: 'lazy' },
+    attributes: {
+      src: game.cardImage,
+      alt: `${game.name} cover`,
+      loading: 'lazy',
+      draggable: 'false',
+    },
   });
   const title: HTMLHeadingElement = createElement('h3', {
     className: 'game-card__title',
@@ -43,13 +48,26 @@ export function createGameCard(options: GameCardOptions): HTMLElement {
       createMetric(heartIcon, 'likes', formatCount(game.likesCount)),
     ],
   });
+  // Shown only when the card is at least 288px wide (container query in the styles).
   const overlay: HTMLElement = createElement('div', {
     className: 'game-card__overlay',
     children: [title, metrics],
   });
-
-  return createElement('article', {
-    className: active ? 'game-card game-card--active' : 'game-card',
+  const card: HTMLElement = createElement('article', {
+    className: 'game-card',
     children: [image, overlay],
   });
+
+  if (options.onOpen !== undefined) {
+    // A button can not contain the article, so it is stretched over the whole card instead.
+    const openButton: HTMLButtonElement = createElement('button', {
+      className: 'game-card__open',
+      attributes: { type: 'button', 'aria-label': `${game.name}: open details` },
+    });
+
+    openButton.addEventListener('click', options.onOpen);
+    card.append(openButton);
+  }
+
+  return card;
 }

@@ -23,6 +23,19 @@ $info-min-width: 288px - 2 * token($border-widths, 'medium', 'border width');
     width: 100%;
     height: 100%;
     object-fit: cover;
+    pointer-events: none;
+  }
+
+  // Transparent button stretched over the card.
+  &__open {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    cursor: inherit;
+
+    &:focus-visible {
+      outline-offset: calc(-1 * #{size('05')});
+    }
   }
 
   &__overlay {
@@ -34,10 +47,6 @@ $info-min-width: 288px - 2 * token($border-widths, 'medium', 'border width');
     padding: size(8) size(2) size(2);
     background: linear-gradient(to top, color('card-gradient-end'), transparent);
     color: color('white');
-  }
-
-  &--active &__overlay {
-    display: flex;
   }
 
   @container game-card (min-width: #{$info-min-width}) {
