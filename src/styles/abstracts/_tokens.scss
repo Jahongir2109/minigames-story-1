@@ -199,6 +199,12 @@ $border-widths: (
 // Width of the auth dialog on tablet and desktop.
 $dialog-width: 420px;
 
+// Game Details dialog: width on tablet and desktop (full width on mobile) and cover height.
+$game-dialog-width: 600px;
+$game-dialog-hero-height: 220px;
+// Comment author avatar; the comment input grows up to the 88px size token.
+$comment-avatar-size: 28px;
+
 // Minimum width of the Library sort menu.
 $dropdown-width: 200px;
 
