@@ -10,6 +10,12 @@ export interface Game {
   featured: boolean;
 }
 
+export interface GameCategory {
+  slug: string;
+  label: string;
+  isDefault: boolean;
+}
+
 export interface LeaderboardEntry {
   rank: number;
   playerName: string;
