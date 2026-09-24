@@ -1,0 +1,56 @@
+@use 'abstracts' as *;
+
+.game-records {
+  display: flex;
+  flex-direction: column;
+  gap: size(2);
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: size(1);
+    @include text-style('label-extra-large', 'bold');
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: size(1);
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: size(2);
+    padding: size(2);
+    border-radius: corner('small');
+    background-color: color('white');
+  }
+
+  &__player,
+  &__result {
+    display: flex;
+    align-items: center;
+    gap: size(1);
+    @include text-style('label-large', 'bold');
+
+    @include from-inclusive('tablet') {
+      gap: size(2);
+    }
+  }
+
+  &__result {
+    flex-shrink: 0;
+  }
+
+  &__medal {
+    font-size: font-size('body-medium');
+  }
+
+  &__date {
+    color: color('on-bg');
+    font-size: font-size('label-medium');
+    font-weight: font-weight('regular');
+  }
+}

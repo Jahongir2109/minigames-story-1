@@ -8,6 +8,7 @@ import { lockScroll, unlockScroll } from '@/shared/dom/scroll-lock';
 import type { GameDetails } from '@/shared/types/game';
 
 import { createGameInfo } from './game-info';
+import { createGameRecords } from './game-records';
 
 const TITLE_ID: string = 'game-dialog-title';
 
@@ -54,7 +55,7 @@ export function createGameDialog(): GameDialog {
     const game: GameDetails = staticGameDetails;
     const body: HTMLElement = createElement('div', {
       className: 'game-dialog__body',
-      children: [createGameInfo(game, TITLE_ID)],
+      children: [createGameInfo(game, TITLE_ID), createGameRecords(game.topRecords)],
     });
 
     surface.replaceChildren(createHero(game, close), body);
