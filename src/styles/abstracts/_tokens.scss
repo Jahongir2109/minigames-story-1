@@ -170,9 +170,11 @@ $button-paddings: (
 // --------------------------------------------------------------- Shadows
 // "Hard" offset shadows in the on-primary color (level 1-3 from the guidebook).
 $shadow-levels: (
+  // Small widgets and comments of the Game Details dialog.
+  'level-0': 3px,
   'level-1': 4px,
   'level-2': 6px,
-  'level-3': 8px,
+  'level-3': 8px
 );
 
 // Soft shadows of the CTA card and its button (blur radius / offset from the layouts).

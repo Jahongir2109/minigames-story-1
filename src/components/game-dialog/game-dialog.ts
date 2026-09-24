@@ -7,6 +7,10 @@ import { createIcon } from '@/shared/dom/create-icon';
 import { lockScroll, unlockScroll } from '@/shared/dom/scroll-lock';
 import type { GameDetails } from '@/shared/types/game';
 
+import { createGameInfo } from './game-info';
+
+const TITLE_ID: string = 'game-dialog-title';
+
 export interface GameDialog {
   element: HTMLDialogElement;
   open: () => void;
@@ -37,7 +41,7 @@ export function createGameDialog(): GameDialog {
   const surface: HTMLElement = createElement('div', { className: 'game-dialog__surface' });
   const element: HTMLDialogElement = createElement('dialog', {
     className: 'game-dialog',
-    attributes: { 'aria-label': 'Game details' },
+    attributes: { 'aria-labelledby': TITLE_ID },
     children: [surface],
   });
 
@@ -48,7 +52,10 @@ export function createGameDialog(): GameDialog {
   // Rebuilt on every opening, so all interactive state starts from its default.
   const render = (): void => {
     const game: GameDetails = staticGameDetails;
-    const body: HTMLElement = createElement('div', { className: 'game-dialog__body' });
+    const body: HTMLElement = createElement('div', {
+      className: 'game-dialog__body',
+      children: [createGameInfo(game, TITLE_ID)],
+    });
 
     surface.replaceChildren(createHero(game, close), body);
   };
