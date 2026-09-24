@@ -1,12 +1,13 @@
 import './game-dialog.scss';
 
 import closeIcon from '@/assets/icons/close.svg?raw';
-import { staticGameDetails } from '@/data/game-details';
+import { staticGameComments, staticGameDetails } from '@/data/game-details';
 import { createElement } from '@/shared/dom/create-element';
 import { createIcon } from '@/shared/dom/create-icon';
 import { lockScroll, unlockScroll } from '@/shared/dom/scroll-lock';
 import type { GameDetails } from '@/shared/types/game';
 
+import { createGameComments } from './game-comments';
 import { createGameInfo } from './game-info';
 import { createGameRecords } from './game-records';
 
@@ -50,12 +51,17 @@ export function createGameDialog(): GameDialog {
     element.close();
   };
 
-  // Rebuilt on every opening, so all interactive state starts from its default.
+  // Rebuilt on every opening, so the favorite toggle, the comment likes and the draft comment
+  // (with its grown height) start from their defaults.
   const render = (): void => {
     const game: GameDetails = staticGameDetails;
     const body: HTMLElement = createElement('div', {
       className: 'game-dialog__body',
-      children: [createGameInfo(game, TITLE_ID), createGameRecords(game.topRecords)],
+      children: [
+        createGameInfo(game, TITLE_ID),
+        createGameRecords(game.topRecords),
+        createGameComments(staticGameComments),
+      ],
     });
 
     surface.replaceChildren(createHero(game, close), body);
