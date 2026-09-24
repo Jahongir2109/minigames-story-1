@@ -6,6 +6,8 @@ $bp-narrow: 576px;
 $bp-tablet: 768px;
 // The desktop composition (wide footer, side-by-side blocks) starts here.
 $bp-laptop: 1024px;
+// Two Library cards fit side by side from here.
+$bp-wide: 1440px;
 $bp-desktop: 1920px;
 
 $breakpoints: (
@@ -13,5 +15,6 @@ $breakpoints: (
   'narrow': $bp-narrow,
   'tablet': $bp-tablet,
   'laptop': $bp-laptop,
+  'wide': $bp-wide,
   'desktop': $bp-desktop,
 );
