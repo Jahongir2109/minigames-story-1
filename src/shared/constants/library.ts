@@ -12,3 +12,6 @@ export const SORT_OPTIONS: readonly SortOption[] = [
 ];
 
 export const DEFAULT_SORT_VALUE: string = 'rating-desc';
+
+// Cards per Library page (the mockup shows one page of six cards).
+export const LIBRARY_PAGE_SIZE: number = 6;

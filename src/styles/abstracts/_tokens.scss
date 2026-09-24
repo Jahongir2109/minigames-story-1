@@ -202,6 +202,15 @@ $dialog-width: 420px;
 // Minimum width of the Library sort menu.
 $dropdown-width: 200px;
 
+// Library game card (horizontal from tablet: image on the left).
+$library-card: (
+  'image-height-mobile': 160px,
+  'image-width-tablet': 270px,
+  'image-width-desktop': 320px,
+  'height-tablet': 152px,
+  'height-desktop': 200px,
+);
+
 $transition-durations: (
   'fast': 150ms,
   'normal': 250ms,
