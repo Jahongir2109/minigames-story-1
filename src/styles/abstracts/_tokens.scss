@@ -199,6 +199,9 @@ $border-widths: (
 // Width of the auth dialog on tablet and desktop.
 $dialog-width: 420px;
 
+// Minimum width of the Library sort menu.
+$dropdown-width: 200px;
+
 $transition-durations: (
   'fast': 150ms,
   'normal': 250ms,
@@ -206,6 +209,7 @@ $transition-durations: (
 );
 
 $z-indexes: (
+  'dropdown': 5,
   'header': 10,
   'menu': 20,
   'dialog': 30,

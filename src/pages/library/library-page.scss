@@ -16,6 +16,27 @@
     }
   }
 
+  // Chips above the sort control on mobile and tablet, side by side on desktop.
+  &__toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: size(2);
+    max-width: $bp-desktop;
+    margin-inline: auto;
+    padding: size(2) var(--page-padding);
+
+    @include from('narrow') {
+      align-items: flex-start;
+    }
+
+    @include from('laptop') {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: size(3);
+    }
+  }
+
   &__title {
     font-size: fluid(
       font-size-value('display-small'),
