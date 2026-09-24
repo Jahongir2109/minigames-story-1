@@ -1,9 +1,10 @@
 import './header.scss';
 
+import type { RouteName } from '@/app/router';
 import burgerIcon from '@/assets/icons/burger.svg?raw';
 import { createBrand } from '@/components/brand/brand';
 import { createButton } from '@/components/ui/button/button';
-import { NAVIGATION_LINKS } from '@/shared/constants/navigation';
+import { markCurrentLinks, NAVIGATION_LINKS } from '@/shared/constants/navigation';
 import { createElement } from '@/shared/dom/create-element';
 import { createIcon } from '@/shared/dom/create-icon';
 
@@ -16,9 +17,13 @@ export interface HeaderOptions {
 export interface Header {
   element: HTMLElement;
   menuButton: HTMLButtonElement;
+  /**
+   * Highlights the navigation link of the page that is open.
+   */
+  setCurrentRoute: (route: RouteName) => void;
 }
 
-function createNavigation(): HTMLElement {
+function createNavigation(anchors: HTMLAnchorElement[]): HTMLElement {
   const list: HTMLUListElement = createElement('ul', { className: 'header__links' });
 
   for (const link of NAVIGATION_LINKS) {
@@ -28,10 +33,11 @@ function createNavigation(): HTMLElement {
       attributes: { href: link.href },
     });
 
-    if (link.current) {
-      anchor.setAttribute('aria-current', 'page');
+    if (link.route !== undefined) {
+      anchor.dataset.route = link.route;
     }
 
+    anchors.push(anchor);
     list.append(createElement('li', { children: [anchor] }));
   }
 
@@ -76,9 +82,10 @@ export function createHeader(options: HeaderOptions): Header {
     children: [loginButton, signUpButton, menuButton],
   });
 
+  const anchors: HTMLAnchorElement[] = [];
   const end: HTMLElement = createElement('div', {
     className: 'header__end',
-    children: [createNavigation(), actions],
+    children: [createNavigation(anchors), actions],
   });
   const inner: HTMLElement = createElement('div', {
     className: 'header__inner',
@@ -89,5 +96,9 @@ export function createHeader(options: HeaderOptions): Header {
     children: [inner],
   });
 
-  return { element, menuButton };
+  const setCurrentRoute = (route: RouteName): void => {
+    markCurrentLinks(anchors, route);
+  };
+
+  return { element, menuButton, setCurrentRoute };
 }
