@@ -1,6 +1,7 @@
 import './hero.scss';
 
 import { createButton } from '@/components/ui/button/button';
+import { LIBRARY_PATH } from '@/shared/constants/links';
 import { createElement } from '@/shared/dom/create-element';
 
 const HERO_TITLE_ID: string = 'hero-title';
@@ -30,6 +31,10 @@ export function createHero(): HTMLElement {
     variant: 'primary',
     size: 'adaptive',
     className: 'hero__button',
+  });
+
+  button.addEventListener('click', (): void => {
+    location.hash = LIBRARY_PATH;
   });
 
   const card: HTMLElement = createElement('div', {
