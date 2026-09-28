@@ -183,4 +183,9 @@ $avatar-colors:
       color: color('like');
     }
   }
+
+  &__skeleton {
+    height: size(12);
+    border-radius: corner('large');
+  }
 }

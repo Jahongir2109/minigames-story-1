@@ -8,6 +8,7 @@ import { createLibraryPage } from '@/pages/library/library-page';
 import { createNotFoundPage } from '@/pages/not-found/not-found-page';
 import { createElement } from '@/shared/dom/create-element';
 import { HOME_PATH, LIBRARY_PATH } from '@/shared/constants/links';
+import type { Game } from '@/shared/types/game';
 
 import { createRouter, type RouteName, type Router } from './router';
 
@@ -17,6 +18,10 @@ import { createRouter, type RouteName, type Router } from './router';
 export function mountApp(root: HTMLElement): void {
   const authDialog: AuthDialog = createAuthDialog();
   const gameDialog: GameDialog = createGameDialog();
+
+  const openGame = (game: Game): void => {
+    gameDialog.open(game.slug);
+  };
 
   const header: Header = createHeader({
     onLogin: (): void => {
@@ -60,12 +65,12 @@ export function mountApp(root: HTMLElement): void {
       {
         name: 'home',
         path: HOME_PATH,
-        render: (): HTMLElement => createHomePage({ onGameDetails: gameDialog.open }),
+        render: (): HTMLElement => createHomePage({ onGameDetails: openGame }),
       },
       {
         name: 'library',
         path: LIBRARY_PATH,
-        render: (): HTMLElement => createLibraryPage({ onGameDetails: gameDialog.open }),
+        render: (): HTMLElement => createLibraryPage({ onGameDetails: openGame }),
       },
     ],
     onChange: (route: RouteName): void => {

@@ -1,7 +1,13 @@
 import './game-comments.scss';
 
+import { getErrorMessage, isAbortError } from '@/api/client';
+import { fetchGameComments } from '@/api/games';
 import heartIcon from '@/assets/icons/heart-filled.svg?raw';
 import sendIcon from '@/assets/icons/send.svg?raw';
+import { createEmptyState } from '@/components/ui/empty-state/empty-state';
+import { createErrorBanner } from '@/components/ui/error-banner/error-banner';
+import { createSkeleton, createSkeletonRegion } from '@/components/ui/skeleton/skeleton';
+import { showSnackbar } from '@/components/ui/snackbar/snackbar';
 import { createElement } from '@/shared/dom/create-element';
 import { createIcon } from '@/shared/dom/create-icon';
 import type { GameComment } from '@/shared/types/game';
@@ -9,6 +15,8 @@ import { formatRelativeTime } from '@/shared/utils/format';
 
 const TITLE_ID: string = 'game-comments-title';
 const INPUT_ID: string = 'game-comment-input';
+// The latest comments shown in the dialog.
+const COMMENTS_LIMIT: number = 3;
 
 // Avatar colors in the order of the mockup.
 const AVATAR_COLORS: readonly string[] = [
@@ -28,7 +36,7 @@ function createAvatar(name: string, color: string): HTMLSpanElement {
   });
 }
 
-// Each like button toggles on its own and never touches the others.
+// Read-only for guests: liking comments needs an account (Story 4).
 function createLikeButton(comment: GameComment): HTMLButtonElement {
   const count: HTMLSpanElement = createElement('span', { text: String(comment.likesCount) });
   const button: HTMLButtonElement = createElement('button', {
@@ -36,16 +44,11 @@ function createLikeButton(comment: GameComment): HTMLButtonElement {
     attributes: {
       type: 'button',
       'aria-pressed': String(comment.isLikedByCurrentUser),
-      'aria-label': `Like the comment by ${comment.authorName}`,
+      'aria-label': `${String(comment.likesCount)} likes. Log in to like the comment by ${comment.authorName}`,
+      title: 'Log in to like comments',
+      disabled: '',
     },
     children: [createIcon(heartIcon, 'game-comments__like-icon'), count],
-  });
-
-  button.addEventListener('click', (): void => {
-    const isLiked: boolean = button.ariaPressed !== 'true';
-
-    button.ariaPressed = String(isLiked);
-    count.textContent = String(comment.likesCount + (isLiked ? 1 : 0));
   });
 
   return button;
@@ -96,7 +99,13 @@ function autoGrow(textarea: HTMLTextAreaElement): void {
 function createForm(): HTMLFormElement {
   const textarea: HTMLTextAreaElement = createElement('textarea', {
     className: 'game-comments__input',
-    attributes: { id: INPUT_ID, name: 'comment', rows: '1', placeholder: 'Write a comment...' },
+    attributes: {
+      id: INPUT_ID,
+      name: 'comment',
+      rows: '1',
+      placeholder: 'Log in to write a comment',
+      disabled: '',
+    },
   });
   const sendButton: HTMLButtonElement = createElement('button', {
     className: 'game-comments__send',
@@ -124,7 +133,7 @@ function createForm(): HTMLFormElement {
     sendButton.disabled = textarea.value.trim() === '';
   });
 
-  // Sending comments comes with the API.
+  // Sending comments needs an account (Story 4).
   form.addEventListener('submit', (event: SubmitEvent): void => {
     event.preventDefault();
   });
@@ -132,22 +141,82 @@ function createForm(): HTMLFormElement {
   return form;
 }
 
-export function createGameComments(comments: readonly GameComment[]): HTMLElement {
+function createSkeletonList(): HTMLElement {
+  return createSkeletonRegion(
+    'Loading comments',
+    Array.from({ length: COMMENTS_LIMIT }, (): HTMLElement =>
+      createSkeleton('game-comments__skeleton'),
+    ),
+    'game-comments__list',
+  );
+}
+
+/**
+ * Comments section of the Game Details dialog: the latest comments and the total count come from
+ * the API. signal cancels the requests when the dialog closes.
+ */
+export function createGameComments(slug: string, signal: AbortSignal): HTMLElement {
   const title: HTMLHeadingElement = createElement('h3', {
     className: 'game-comments__title',
-    text: `Comments (${String(comments.length)})`,
+    text: 'Comments',
     attributes: { id: TITLE_ID },
   });
-  const list: HTMLUListElement = createElement('ul', {
-    className: 'game-comments__list',
-    children: comments.map((comment: GameComment, index: number): HTMLLIElement =>
-      createComment(comment, index),
-    ),
-  });
+  const content: HTMLElement = createElement('div', { className: 'game-comments__content' });
+
+  const load = async (): Promise<void> => {
+    title.textContent = 'Comments';
+    content.replaceChildren(createSkeletonList());
+
+    try {
+      const response: Awaited<ReturnType<typeof fetchGameComments>> = await fetchGameComments(
+        slug,
+        { limit: COMMENTS_LIMIT, sort: 'newest' },
+        { signal },
+      );
+
+      title.textContent = `Comments (${String(response.meta.totalComments)})`;
+
+      if (response.data.length === 0) {
+        content.replaceChildren(
+          createEmptyState({
+            title: 'No comments yet',
+            message: 'Be the first to share what you think about this game.',
+          }),
+        );
+        return;
+      }
+
+      content.replaceChildren(
+        createElement('ul', {
+          className: 'game-comments__list',
+          children: response.data.map((comment: GameComment, index: number): HTMLLIElement =>
+            createComment(comment, index),
+          ),
+        }),
+      );
+    } catch (error: unknown) {
+      if (isAbortError(error)) {
+        return;
+      }
+
+      content.replaceChildren(
+        createErrorBanner({
+          title: 'Comments could not be loaded',
+          message: getErrorMessage(error),
+          onRetry: (): void => {
+            void load();
+          },
+        }),
+      );
+      showSnackbar({ message: 'Failed to load the comments.', variant: 'error' });
+    }
+  };
+
+  void load();
 
   return createElement('section', {
     className: 'game-comments',
     attributes: { 'aria-labelledby': TITLE_ID },
-    children: [title, createForm(), list],
+    children: [title, createForm(), content],
   });
 }
