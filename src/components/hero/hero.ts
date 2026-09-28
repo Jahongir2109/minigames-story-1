@@ -1,5 +1,6 @@
 import './hero.scss';
 
+import { navigate } from '@/app/navigation';
 import { createButton } from '@/components/ui/button/button';
 import { LIBRARY_PATH } from '@/shared/constants/links';
 import { createElement } from '@/shared/dom/create-element';
@@ -34,7 +35,7 @@ export function createHero(): HTMLElement {
   });
 
   button.addEventListener('click', (): void => {
-    location.hash = LIBRARY_PATH;
+    navigate(LIBRARY_PATH);
   });
 
   const card: HTMLElement = createElement('div', {
