@@ -1,5 +1,6 @@
 import './game-records.scss';
 
+import { createEmptyState } from '@/components/ui/empty-state/empty-state';
 import { createElement } from '@/shared/dom/create-element';
 import type { TopRecord } from '@/shared/types/game';
 import { formatRelativeTime, formatScore } from '@/shared/utils/format';
@@ -51,10 +52,16 @@ export function createGameRecords(records: readonly TopRecord[]): HTMLElement {
       'Top Records',
     ],
   });
-  const list: HTMLOListElement = createElement('ol', {
-    className: 'game-records__list',
-    children: records.map((record: TopRecord): HTMLLIElement => createRecord(record)),
-  });
+  const list: HTMLElement =
+    records.length === 0
+      ? createEmptyState({
+          title: 'No records yet',
+          message: 'Play the game to set the first one.',
+        })
+      : createElement('ol', {
+          className: 'game-records__list',
+          children: records.map((record: TopRecord): HTMLLIElement => createRecord(record)),
+        });
 
   return createElement('section', {
     className: 'game-records',
