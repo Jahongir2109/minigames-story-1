@@ -7,7 +7,10 @@ export interface Game {
   rating: number;
   likesCount: number;
   cardImage: string;
-  featured: boolean;
+  /**
+   * Only in the static seed data; the API returns featured games with `featured=true` instead.
+   */
+  featured?: boolean;
 }
 
 export interface GameCategory {
