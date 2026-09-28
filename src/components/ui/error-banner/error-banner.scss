@@ -1,0 +1,40 @@
+@use 'abstracts' as *;
+
+// Text on the left and the Retry button on the right; stacked on narrow screens.
+.error-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: size(2);
+  padding: size(2) size(3);
+  border: border-width('regular') solid color('error');
+  border-left-width: size(1);
+  border-radius: corner('medium');
+  background-color: color('surface-low');
+
+  @include from('narrow') {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: size('05');
+  }
+
+  &__title {
+    color: color('error');
+    @include text-style('body-medium', 'bold', 'normal');
+  }
+
+  &__message {
+    color: color('on-bg');
+    @include text-style('body-small', 'medium', 'body');
+  }
+
+  &__retry {
+    flex-shrink: 0;
+  }
+}
