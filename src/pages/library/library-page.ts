@@ -277,9 +277,9 @@ export function createLibraryPage(options: LibraryPageOptions): HTMLElement {
 
   // ------------------------------------------------------------------- URL state
   // A broken sort or page in the address is replaced by its default, without a history entry.
-  const fixUrl = (): void => {
+  const fixUrl = (target: LibraryState): void => {
     if (hasInvalidLibraryQuery()) {
-      history.replaceState(history.state, '', buildLibraryUrl(state, location.search));
+      history.replaceState(history.state, '', buildLibraryUrl(target, location.search));
     }
   };
 
@@ -294,7 +294,7 @@ export function createLibraryPage(options: LibraryPageOptions): HTMLElement {
 
     const next: LibraryState = readLibraryState();
 
-    fixUrl();
+    fixUrl(next);
 
     // Opening or closing a dialog changes the URL but not the list.
     if (isSameLibraryState(next, state)) {
@@ -307,7 +307,7 @@ export function createLibraryPage(options: LibraryPageOptions): HTMLElement {
     void loadGames();
   });
 
-  fixUrl();
+  fixUrl(state);
   void loadGames();
 
   return element;
