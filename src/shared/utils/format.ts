@@ -36,7 +36,7 @@ const MAX_WEEKS: number = 3;
 const MAX_MONTHS: number = 11;
 
 function pluralize(count: number, unit: string): string {
-  return ` ${unit}${count === 1 ? '' : 's'} ago`;
+  return `${String(count)} ${unit}${count === 1 ? '' : 's'} ago`;
 }
 
 /**
@@ -51,7 +51,7 @@ export function formatRelativeTime(isoDate: string, now: Date = new Date()): str
   }
 
   if (seconds < HOUR) {
-    return ` min ago`;
+    return `${String(Math.floor(seconds / MINUTE))} min ago`;
   }
 
   if (seconds < DAY) {
