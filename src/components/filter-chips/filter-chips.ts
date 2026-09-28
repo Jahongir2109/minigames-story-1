@@ -12,7 +12,7 @@ function createChip(category: GameCategory): HTMLButtonElement {
     text: category.label,
     attributes: {
       type: 'button',
-      'aria-pressed': String(category.isDefault),
+      'aria-pressed': 'false',
       'data-category': category.slug,
     },
   });
@@ -84,28 +84,48 @@ function enableDragScroll(row: HTMLElement): void {
   );
 }
 
+export interface FilterChips {
+  element: HTMLElement;
+  /**
+   * Marks the chip of slug as active (the Library page calls it whenever its URL changes).
+   */
+  setValue: (slug: string) => void;
+}
+
 /**
- * Category filter: exactly one chip is active. Filtering the list comes with the API.
+ * Category filter: exactly one chip is active. A click only reports the category; the owner
+ * decides the active chip with setValue.
  */
-export function createFilterChips(categories: readonly GameCategory[]): HTMLElement {
+export function createFilterChips(
+  categories: readonly GameCategory[],
+  value: string,
+  onChange: (slug: string) => void,
+): FilterChips {
   const chips: HTMLButtonElement[] = categories.map((category: GameCategory): HTMLButtonElement =>
     createChip(category),
   );
-  const row: HTMLElement = createElement('div', {
+  const element: HTMLElement = createElement('div', {
     className: 'filter-chips',
     attributes: { role: 'group', 'aria-label': 'Filter games by category' },
     children: chips,
   });
 
+  const setValue = (slug: string): void => {
+    for (const chip of chips) {
+      chip.setAttribute('aria-pressed', String(chip.dataset.category === slug));
+    }
+  };
+
   for (const chip of chips) {
     chip.addEventListener('click', (): void => {
-      for (const other of chips) {
-        other.setAttribute('aria-pressed', String(other === chip));
+      if (chip.dataset.category !== undefined && chip.ariaPressed !== 'true') {
+        onChange(chip.dataset.category);
       }
     });
   }
 
-  enableDragScroll(row);
+  setValue(value);
+  enableDragScroll(element);
 
-  return row;
+  return { element, setValue };
 }
