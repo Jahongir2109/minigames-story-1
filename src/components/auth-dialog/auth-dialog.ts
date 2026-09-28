@@ -5,6 +5,13 @@ import { lockScroll, unlockScroll } from '@/shared/dom/scroll-lock';
 
 import { type AuthMode, createLoginForm, createRegisterForm } from './auth-forms';
 
+export interface AuthDialogOptions {
+  /**
+   * Called when the user switches between Login and Register inside the dialog.
+   */
+  onModeChange?: (mode: AuthMode) => void;
+}
+
 export interface AuthDialog {
   element: HTMLDialogElement;
   open: (mode: AuthMode) => void;
@@ -35,7 +42,7 @@ function getNextMode(mode: AuthMode): AuthMode {
   return mode === 'login' ? 'register' : 'login';
 }
 
-export function createAuthDialog(): AuthDialog {
+export function createAuthDialog(options: AuthDialogOptions = {}): AuthDialog {
   let currentMode: AuthMode = 'login';
 
   const tabs: Record<AuthMode, HTMLButtonElement> = {
@@ -43,8 +50,8 @@ export function createAuthDialog(): AuthDialog {
     register: createTab(TABS[1]),
   };
   const panels: Record<AuthMode, HTMLElement> = {
-    login: createPanel('login', createLoginForm({ onSwitch: setMode })),
-    register: createPanel('register', createRegisterForm({ onSwitch: setMode })),
+    login: createPanel('login', createLoginForm({ onSwitch: selectMode })),
+    register: createPanel('register', createRegisterForm({ onSwitch: selectMode })),
   };
 
   const tabList: HTMLElement = createElement('div', {
@@ -83,7 +90,7 @@ export function createAuthDialog(): AuthDialog {
     });
 
     tab.addEventListener('click', (): void => {
-      setMode(definition.mode);
+      selectMode(definition.mode);
     });
 
     return tab;
@@ -119,6 +126,16 @@ export function createAuthDialog(): AuthDialog {
     syncHeight();
   }
 
+  // A switch made by the user inside the dialog (tabs, keyboard, the links under the forms).
+  function selectMode(mode: AuthMode): void {
+    if (mode === currentMode) {
+      return;
+    }
+
+    setMode(mode);
+    options.onModeChange?.(mode);
+  }
+
   tabList.addEventListener('keydown', (event: KeyboardEvent): void => {
     const keys: readonly string[] = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
 
@@ -131,7 +148,7 @@ export function createAuthDialog(): AuthDialog {
     const target: AuthMode =
       event.key === 'Home' ? 'login' : event.key === 'End' ? 'register' : getNextMode(currentMode);
 
-    setMode(target);
+    selectMode(target);
     tabs[target].focus();
   });
 
@@ -142,10 +159,16 @@ export function createAuthDialog(): AuthDialog {
   resizeObserver.observe(panels.register);
 
   const open = (mode: AuthMode): void => {
-    if (!element.open) {
-      element.showModal();
-      lockScroll();
+    if (element.open) {
+      if (mode !== currentMode) {
+        setMode(mode);
+      }
+
+      return;
     }
+
+    element.showModal();
+    lockScroll();
 
     // Measure without animating, so the dialog does not grow from zero height.
     viewport.classList.add(INSTANT_CLASS);
