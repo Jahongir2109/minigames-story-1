@@ -6,6 +6,10 @@ export interface NavigateOptions {
    * Back button must not return to).
    */
   replace?: boolean;
+  /**
+   * Stored with the history entry (`history.state`). A replaced entry keeps its state by default.
+   */
+  state?: unknown;
 }
 
 function isSameUrl(target: URL): boolean {
@@ -27,9 +31,9 @@ export function navigate(url: string, options: NavigateOptions = {}): void {
   }
 
   if (options.replace === true) {
-    history.replaceState(null, '', target);
+    history.replaceState('state' in options ? options.state : history.state, '', target);
   } else {
-    history.pushState(null, '', target);
+    history.pushState(options.state ?? null, '', target);
   }
 
   dispatchEvent(new Event(NAVIGATE_EVENT));

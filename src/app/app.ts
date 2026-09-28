@@ -1,4 +1,5 @@
 import { type AuthDialog, createAuthDialog } from '@/components/auth-dialog/auth-dialog';
+import type { AuthMode } from '@/components/auth-dialog/auth-forms';
 import { createFooter } from '@/components/footer/footer';
 import { createGameDialog, type GameDialog } from '@/components/game-dialog/game-dialog';
 import { createHeader, type Header } from '@/components/header/header';
@@ -10,25 +11,44 @@ import { createElement } from '@/shared/dom/create-element';
 import { HOME_PATH, LIBRARY_PATH } from '@/shared/constants/links';
 import type { Game } from '@/shared/types/game';
 
+import { closeDialogUrl, getDialogParameter, openDialogUrl } from './dialog-url';
+import { onLocationChange } from './navigation';
 import { createRouter, type RouteName, type Router } from './router';
+
+function isAuthMode(value: string | undefined): value is AuthMode {
+  return value === 'login' || value === 'register';
+}
+
+// The dialogs follow the URL: opening one writes it into the URL, and closing one (button,
+// backdrop, Escape) removes it again.
+function openAuth(mode: AuthMode): void {
+  openDialogUrl('auth', mode);
+}
+
+function openGame(game: Game): void {
+  openDialogUrl('game', game.slug);
+}
 
 /**
  * Builds the whole page from TypeScript: the static HTML document only contains the script tag.
  */
 export function mountApp(root: HTMLElement): void {
-  const authDialog: AuthDialog = createAuthDialog();
+  const authDialog: AuthDialog = createAuthDialog({ onModeChange: openAuth });
   const gameDialog: GameDialog = createGameDialog();
 
-  const openGame = (game: Game): void => {
-    gameDialog.open(game.slug);
-  };
+  authDialog.element.addEventListener('close', (): void => {
+    closeDialogUrl('auth');
+  });
+  gameDialog.element.addEventListener('close', (): void => {
+    closeDialogUrl('game');
+  });
 
   const header: Header = createHeader({
     onLogin: (): void => {
-      authDialog.open('login');
+      openAuth('login');
     },
     onSignUp: (): void => {
-      authDialog.open('register');
+      openAuth('register');
     },
     onMenuOpen: (): void => {
       menu.open();
@@ -38,10 +58,10 @@ export function mountApp(root: HTMLElement): void {
   const menu: MobileMenu = createMobileMenu({
     trigger: header.menuButton,
     onLogin: (): void => {
-      authDialog.open('login');
+      openAuth('login');
     },
     onSignUp: (): void => {
-      authDialog.open('register');
+      openAuth('register');
     },
   });
 
@@ -79,5 +99,25 @@ export function mountApp(root: HTMLElement): void {
     },
   });
 
+  // Opens, switches or closes the dialogs to match the URL (links, Back / Forward, reloads).
+  const syncDialogs = (): void => {
+    const slug: string | undefined = getDialogParameter('game');
+    const mode: string | undefined = getDialogParameter('auth');
+
+    if (slug === undefined) {
+      gameDialog.close();
+    } else {
+      gameDialog.open(slug);
+    }
+
+    if (isAuthMode(mode)) {
+      authDialog.open(mode);
+    } else {
+      authDialog.close();
+    }
+  };
+
   router.start();
+  onLocationChange(syncDialogs);
+  syncDialogs();
 }
