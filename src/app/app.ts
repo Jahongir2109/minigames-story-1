@@ -5,6 +5,7 @@ import { createHeader, type Header } from '@/components/header/header';
 import { createMobileMenu, type MobileMenu } from '@/components/mobile-menu/mobile-menu';
 import { createHomePage } from '@/pages/home/home-page';
 import { createLibraryPage } from '@/pages/library/library-page';
+import { createNotFoundPage } from '@/pages/not-found/not-found-page';
 import { createElement } from '@/shared/dom/create-element';
 import { HOME_PATH, LIBRARY_PATH } from '@/shared/constants/links';
 
@@ -54,6 +55,7 @@ export function mountApp(root: HTMLElement): void {
   const router: Router = createRouter({
     outlet,
     root,
+    notFound: createNotFoundPage,
     routes: [
       {
         name: 'home',
