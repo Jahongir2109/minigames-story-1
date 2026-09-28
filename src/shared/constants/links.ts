@@ -1,6 +1,6 @@
-// Pages are addressed with the URL hash, so switching between them never reloads the page.
-export const HOME_PATH: string = '#/';
-export const LIBRARY_PATH: string = '#/library';
+// Pages have real URL paths; the router switches between them with the History API.
+export const HOME_PATH: string = '/';
+export const LIBRARY_PATH: string = '/library';
 
 export const RS_SCHOOL_COURSE_URL: string = 'https://rs.school/courses/short-track';
 
