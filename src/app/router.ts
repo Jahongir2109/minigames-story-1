@@ -1,20 +1,34 @@
-export type RouteName = 'home' | 'library';
+import { interceptLinks, onLocationChange } from './navigation';
+
+export type RouteName = 'home' | 'library' | 'not-found';
 
 export interface Route {
   name: RouteName;
   /**
-   * The URL hash of the page, e.g. `#/library`.
+   * The URL path of the page, e.g. `/library`.
    */
-  hash: string;
+  path: string;
+  /**
+   * Other paths that open the same page, e.g. `/home` for `/`.
+   */
+  aliases?: readonly string[];
   render: () => HTMLElement;
 }
 
 export interface RouterOptions {
   routes: readonly Route[];
   /**
+   * Renders the page of every path that has no route.
+   */
+  notFound: () => HTMLElement;
+  /**
    * The element of the current page; it is replaced on every navigation.
    */
   outlet: HTMLElement;
+  /**
+   * The element whose app links are handled by the router.
+   */
+  root: HTMLElement;
   onChange: (route: RouteName) => void;
 }
 
@@ -22,37 +36,47 @@ export interface Router {
   start: () => void;
 }
 
-// Unknown or empty hashes (the first visit, in-page anchors) show the first route.
-function findRoute(routes: readonly Route[], hash: string): Route | undefined {
-  return routes.find((route: Route): boolean => route.hash === hash) ?? routes[0];
+// `/library/` and `/library` are the same page.
+function normalizePath(path: string): string {
+  return path.length > 1 ? path.replace(/\/+$/, '') : path;
+}
+
+function findRoute(routes: readonly Route[], path: string): Route | undefined {
+  return routes.find(
+    (route: Route): boolean => route.path === path || route.aliases?.includes(path) === true,
+  );
 }
 
 /**
- * Minimal client-side router: the pages are switched by rendering them from TypeScript when the
- * URL hash changes, so there is no page reload.
+ * Client-side router on the History API: the pages are switched by rendering them from TypeScript
+ * when the URL path changes, so there is no page reload and every page has its own address.
  */
 export function createRouter(options: RouterOptions): Router {
   let outlet: HTMLElement = options.outlet;
-  let currentRoute: RouteName | undefined;
+  let currentPath: string | undefined;
 
+  // A change of the query string only (filters, dialogs) keeps the page; the page follows the
+  // URL itself. Different unknown paths still re-render the 404 page.
   const render = (): void => {
-    const route: Route | undefined = findRoute(options.routes, location.hash);
+    const path: string = normalizePath(location.pathname);
 
-    if (route === undefined || route.name === currentRoute) {
+    if (path === currentPath) {
       return;
     }
 
-    const page: HTMLElement = route.render();
+    const route: Route | undefined = findRoute(options.routes, path);
+    const page: HTMLElement = route === undefined ? options.notFound() : route.render();
 
     outlet.replaceWith(page);
     outlet = page;
-    currentRoute = route.name;
+    currentPath = path;
     scrollTo({ top: 0 });
-    options.onChange(route.name);
+    options.onChange(route?.name ?? 'not-found');
   };
 
   const start = (): void => {
-    addEventListener('hashchange', render);
+    interceptLinks(options.root);
+    onLocationChange(render);
     render();
   };
 

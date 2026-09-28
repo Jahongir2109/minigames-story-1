@@ -1,5 +1,18 @@
 @use 'abstracts' as *;
 
+// Card height: 200px on mobile, 280px on tablet, 384px on desktop; the extra block size leaves
+// room for the card shadow.
+@mixin track-height {
+  height: calc(
+    #{fluid(size-value('12') + size-value('13'), size-value('5') * 7, $bp-mobile, $bp-tablet)} +
+      #{size('05')}
+  );
+
+  @include from('tablet') {
+    height: calc(#{fluid(size-value('5') * 7, size-value('12') * 4)} + #{size('05')});
+  }
+}
+
 .carousel {
   &__inner {
     @include section-inner;
@@ -61,25 +74,42 @@
     height: size(3);
   }
 
-  // The track clips the cards parked outside of it; the extra block size leaves room for the card
-  // shadow. Card height: 200px on mobile, 280px on tablet, 384px on desktop.
+  // The track clips the cards parked outside of it.
   &__track {
     position: relative;
-    height: calc(
-      #{fluid(size-value('12') + size-value('13'), size-value('5') * 7, $bp-mobile, $bp-tablet)} +
-        #{size('05')}
-    );
     overflow: hidden;
     touch-action: pan-y;
     user-select: none;
     cursor: grab;
-
-    @include from('tablet') {
-      height: calc(#{fluid(size-value('5') * 7, size-value('12') * 4)} + #{size('05')});
-    }
+    @include track-height;
 
     &--dragging {
       cursor: grabbing;
+    }
+  }
+
+  // Loading placeholder of the same height as the slider: one card on mobile, three from tablet.
+  &__skeleton {
+    display: flex;
+    gap: size(3);
+    @include track-height;
+  }
+
+  &__skeleton-card {
+    flex: 1;
+    height: calc(100% - #{size('05')});
+    border-radius: corner('large');
+
+    &:not(:nth-child(2)) {
+      display: none;
+
+      @include from('narrow') {
+        display: block;
+      }
+    }
+
+    &:nth-child(2) {
+      flex-grow: 2;
     }
   }
 

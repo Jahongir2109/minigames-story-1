@@ -223,6 +223,8 @@ $transition-durations: (
   'fast': 150ms,
   'normal': 250ms,
   'slow': 400ms,
+  // One sweep of the skeleton loader shimmer.
+  'shimmer': 1400ms,
 );
 
 $z-indexes: (

@@ -1,5 +1,6 @@
 import './sort-dropdown.scss';
 
+import type { SortValue } from '@/api/games';
 import arrowDropDownIcon from '@/assets/icons/arrow-drop-down.svg?raw';
 import checkIcon from '@/assets/icons/check.svg?raw';
 import type { SortOption } from '@/shared/constants/library';
@@ -25,11 +26,23 @@ function createOption(option: SortOption, isSelected: boolean): HTMLLIElement {
   });
 }
 
+export interface SortDropdown {
+  element: HTMLElement;
+  /**
+   * Shows `value` as the chosen option (the Library page calls it whenever its URL changes).
+   */
+  setValue: (value: SortValue) => void;
+}
+
 /**
- * Custom select for the sort method: the chosen option is always shown in the control.
- * Sorting the list comes with the API.
+ * Custom select for the sort method: the chosen option is always shown in the control. Choosing
+ * an option only reports it; the owner decides the value with `setValue`.
  */
-export function createSortDropdown(options: readonly SortOption[], value: string): HTMLElement {
+export function createSortDropdown(
+  options: readonly SortOption[],
+  value: SortValue,
+  onChange: (value: SortValue) => void,
+): SortDropdown {
   const current: HTMLSpanElement = createElement('span', { className: 'sort-dropdown__value' });
   const toggle: HTMLButtonElement = createElement('button', {
     className: 'sort-dropdown__toggle',
@@ -59,8 +72,17 @@ export function createSortDropdown(options: readonly SortOption[], value: string
   });
 
   list.hidden = true;
-  current.textContent =
-    options.find((option: SortOption): boolean => option.value === value)?.label ?? '';
+
+  const setValue = (next: SortValue): void => {
+    for (const item of items) {
+      item.setAttribute('aria-selected', String(item.dataset.value === next));
+    }
+
+    current.textContent =
+      options.find((option: SortOption): boolean => option.value === next)?.label ?? '';
+  };
+
+  setValue(value);
 
   const isOpen = (): boolean => toggle.getAttribute('aria-expanded') === 'true';
 
@@ -89,12 +111,15 @@ export function createSortDropdown(options: readonly SortOption[], value: string
   };
 
   const select = (item: HTMLLIElement): void => {
-    for (const other of items) {
-      other.setAttribute('aria-selected', String(other === item));
-    }
-
-    current.textContent = item.textContent;
     close(true);
+
+    const option: SortOption | undefined = options.find(
+      (candidate: SortOption): boolean => candidate.value === item.dataset.value,
+    );
+
+    if (option !== undefined && item.ariaSelected !== 'true') {
+      onChange(option.value);
+    }
   };
 
   toggle.addEventListener('click', (): void => {
@@ -186,5 +211,5 @@ export function createSortDropdown(options: readonly SortOption[], value: string
 
   document.addEventListener('pointerdown', handleOutsidePress);
 
-  return element;
+  return { element, setValue };
 }

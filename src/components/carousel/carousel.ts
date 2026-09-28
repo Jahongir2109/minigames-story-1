@@ -2,8 +2,18 @@ import './carousel.scss';
 
 import arrowBackIcon from '@/assets/icons/arrow-back.svg?raw';
 import arrowForwardIcon from '@/assets/icons/arrow-forward.svg?raw';
+import {
+  createLatestRequest,
+  getErrorMessage,
+  isAbortError,
+  type LatestRequest,
+} from '@/api/client';
+import { fetchFeaturedGames } from '@/api/games';
 import { createSectionTitle } from '@/components/section-title/section-title';
-import { featuredGames } from '@/data/games';
+import { createEmptyState } from '@/components/ui/empty-state/empty-state';
+import { createErrorBanner } from '@/components/ui/error-banner/error-banner';
+import { createSkeleton, createSkeletonRegion } from '@/components/ui/skeleton/skeleton';
+import { showSnackbar } from '@/components/ui/snackbar/snackbar';
 import { createElement } from '@/shared/dom/create-element';
 import { createIcon } from '@/shared/dom/create-icon';
 import type { Game } from '@/shared/types/game';
@@ -25,6 +35,8 @@ const DRAG_THRESHOLD: number = 6;
 // A swipe this long always moves at least one card, even before the half-step point.
 const SWIPE_THRESHOLD: number = 40;
 const INSTANT_CLASS: string = 'carousel__item--instant';
+// Placeholder cards while the featured games load (only the middle one is shown on mobile).
+const SKELETON_CARDS: number = 3;
 
 export interface CarouselOptions {
   /**
@@ -45,12 +57,30 @@ function createControl(
   });
 }
 
+interface Slider {
+  track: HTMLUListElement;
+  controls: readonly HTMLButtonElement[];
+}
+
+function createSkeletonCards(): HTMLElement {
+  return createSkeletonRegion(
+    'Loading new games',
+    Array.from({ length: SKELETON_CARDS }, (): HTMLElement =>
+      createSkeleton('carousel__skeleton-card'),
+    ),
+    'carousel__skeleton',
+  );
+}
+
 /**
  * "New Games" slider: an endless loop of the featured games that moves with the arrows, a swipe
  * and autoplay (one card every 4 seconds). Cards grow towards the middle.
  */
-export function createCarousel(options: CarouselOptions): HTMLElement {
-  const games: readonly Game[] = featuredGames;
+function createSlider(
+  games: readonly Game[],
+  section: HTMLElement,
+  onGameDetails: (game: Game) => void,
+): Slider {
   const count: number = games.length;
 
   const previousButton: HTMLButtonElement = createControl(
@@ -67,7 +97,7 @@ export function createCarousel(options: CarouselOptions): HTMLElement {
         createGameCard({
           game,
           onOpen: (): void => {
-            options.onGameDetails(game);
+            onGameDetails(game);
           },
         }),
       ],
@@ -77,25 +107,6 @@ export function createCarousel(options: CarouselOptions): HTMLElement {
     className: 'carousel__track',
     attributes: { 'aria-label': 'New games' },
     children: items,
-  });
-  const header: HTMLElement = createElement('div', {
-    className: 'carousel__header',
-    children: [
-      createSectionTitle('New Games', TITLE_ID),
-      createElement('div', {
-        className: 'carousel__controls',
-        children: [previousButton, nextButton],
-      }),
-    ],
-  });
-  const inner: HTMLElement = createElement('div', {
-    className: 'carousel__inner',
-    children: [header, track],
-  });
-  const element: HTMLElement = createElement('section', {
-    className: 'carousel',
-    attributes: { 'aria-labelledby': TITLE_ID },
-    children: [inner],
   });
 
   // Index of the card in the middle; fractional while the user drags.
@@ -128,7 +139,7 @@ export function createCarousel(options: CarouselOptions): HTMLElement {
 
   const timer: AutoplayTimer = createAutoplayTimer(AUTOPLAY_INTERVAL, (): void => {
     // The Home page is rebuilt on every visit, so a detached slider retires itself.
-    if (!element.isConnected) {
+    if (!section.isConnected || !track.isConnected) {
       timer.stop();
       resizeObserver.disconnect();
       return;
@@ -248,6 +259,73 @@ export function createCarousel(options: CarouselOptions): HTMLElement {
 
   resizeObserver.observe(track);
   timer.restart();
+
+  return { track, controls: [previousButton, nextButton] };
+}
+
+/**
+ * "New Games" section: the featured games come from the API; the slider area shows a skeleton
+ * while they load, an error banner with Retry when the request fails and a placeholder when the
+ * list is empty.
+ */
+export function createCarousel(options: CarouselOptions): HTMLElement {
+  const controls: HTMLElement = createElement('div', { className: 'carousel__controls' });
+  const header: HTMLElement = createElement('div', {
+    className: 'carousel__header',
+    children: [createSectionTitle('New Games', TITLE_ID), controls],
+  });
+  const body: HTMLElement = createElement('div', { className: 'carousel__body' });
+  const inner: HTMLElement = createElement('div', {
+    className: 'carousel__inner',
+    children: [header, body],
+  });
+  const element: HTMLElement = createElement('section', {
+    className: 'carousel',
+    attributes: { 'aria-labelledby': TITLE_ID },
+    children: [inner],
+  });
+  const request: LatestRequest = createLatestRequest();
+
+  const load = async (): Promise<void> => {
+    controls.replaceChildren();
+    body.replaceChildren(createSkeletonCards());
+
+    try {
+      const games: Game[] = await fetchFeaturedGames({ signal: request.next() });
+
+      if (games.length === 0) {
+        body.replaceChildren(
+          createEmptyState({
+            title: 'No new games yet',
+            message: 'Fresh games will appear here soon.',
+          }),
+        );
+        return;
+      }
+
+      const slider: Slider = createSlider(games, element, options.onGameDetails);
+
+      controls.replaceChildren(...slider.controls);
+      body.replaceChildren(slider.track);
+    } catch (error: unknown) {
+      if (isAbortError(error)) {
+        return;
+      }
+
+      body.replaceChildren(
+        createErrorBanner({
+          title: 'New games could not be loaded',
+          message: getErrorMessage(error),
+          onRetry: (): void => {
+            void load();
+          },
+        }),
+      );
+      showSnackbar({ message: 'Failed to load new games.', variant: 'error' });
+    }
+  };
+
+  void load();
 
   return element;
 }

@@ -31,6 +31,17 @@ $rank-column-wide: size-value('10');
     }
   }
 
+  &__skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: size(3);
+    padding: size(3);
+  }
+
+  &__skeleton-row {
+    height: size(4);
+  }
+
   &__frame {
     overflow: hidden;
     border: border-width('medium') solid color('on-primary');

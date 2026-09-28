@@ -1,0 +1,57 @@
+@use 'abstracts' as *;
+
+// Centered message between the header and the footer; the "404" mark is twice the display size.
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: size(2);
+  max-width: $bp-desktop;
+  min-height: 60vh;
+  margin-inline: auto;
+  padding: size(10) var(--page-padding);
+  text-align: center;
+
+  &__code {
+    color: color('primary');
+    font-size: fluid(
+      font-size-value('display-large'),
+      font-size-value('display-large') * 2,
+      $bp-mobile,
+      $bp-tablet
+    );
+    font-weight: font-weight('extra-bold');
+    line-height: line-height('display');
+    -webkit-text-stroke: border-width('regular') color('on-primary');
+  }
+
+  &__title {
+    font-size: fluid(
+      font-size-value('display-small'),
+      font-size-value('display-medium'),
+      $bp-mobile,
+      $bp-tablet
+    );
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+  }
+
+  &__description {
+    max-width: $game-dialog-width;
+    color: color('on-bg');
+    @include text-style('body-medium', 'medium', 'body');
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: size(2);
+    margin-top: size(2);
+  }
+
+  &__link {
+    text-decoration: none;
+  }
+}
