@@ -8,7 +8,7 @@ import { createHomePage } from '@/pages/home/home-page';
 import { createLibraryPage } from '@/pages/library/library-page';
 import { createNotFoundPage } from '@/pages/not-found/not-found-page';
 import { createElement } from '@/shared/dom/create-element';
-import { HOME_PATH, LIBRARY_PATH } from '@/shared/constants/links';
+import { HOME_ALIAS_PATH, HOME_PATH, LIBRARY_PATH } from '@/shared/constants/links';
 import type { Game } from '@/shared/types/game';
 
 import { closeDialogUrl, getDialogParameter, openDialogUrl } from './dialog-url';
@@ -85,6 +85,7 @@ export function mountApp(root: HTMLElement): void {
       {
         name: 'home',
         path: HOME_PATH,
+        aliases: [HOME_ALIAS_PATH],
         render: (): HTMLElement => createHomePage({ onGameDetails: openGame }),
       },
       {

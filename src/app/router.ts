@@ -8,6 +8,10 @@ export interface Route {
    * The URL path of the page, e.g. `/library`.
    */
   path: string;
+  /**
+   * Other paths that open the same page, e.g. `/home` for `/`.
+   */
+  aliases?: readonly string[];
   render: () => HTMLElement;
 }
 
@@ -38,7 +42,9 @@ function normalizePath(path: string): string {
 }
 
 function findRoute(routes: readonly Route[], path: string): Route | undefined {
-  return routes.find((route: Route): boolean => route.path === path);
+  return routes.find(
+    (route: Route): boolean => route.path === path || route.aliases?.includes(path) === true,
+  );
 }
 
 /**
