@@ -53,15 +53,16 @@ export function mountApp(root: HTMLElement): void {
 
   const router: Router = createRouter({
     outlet,
+    root,
     routes: [
       {
         name: 'home',
-        hash: HOME_PATH,
+        path: HOME_PATH,
         render: (): HTMLElement => createHomePage({ onGameDetails: gameDialog.open }),
       },
       {
         name: 'library',
-        hash: LIBRARY_PATH,
+        path: LIBRARY_PATH,
         render: (): HTMLElement => createLibraryPage({ onGameDetails: gameDialog.open }),
       },
     ],
