@@ -1,7 +1,17 @@
 import './leaderboard.scss';
 
+import {
+  createLatestRequest,
+  getErrorMessage,
+  isAbortError,
+  type LatestRequest,
+} from '@/api/client';
+import { fetchLeaderboard } from '@/api/games';
 import { createSectionTitle } from '@/components/section-title/section-title';
-import { leaderboard } from '@/data/leaderboard';
+import { createEmptyState } from '@/components/ui/empty-state/empty-state';
+import { createErrorBanner } from '@/components/ui/error-banner/error-banner';
+import { createSkeleton, createSkeletonRegion } from '@/components/ui/skeleton/skeleton';
+import { showSnackbar } from '@/components/ui/snackbar/snackbar';
 import { createElement } from '@/shared/dom/create-element';
 import type { LeaderboardEntry } from '@/shared/types/game';
 import { formatCount } from '@/shared/utils/format';
@@ -10,6 +20,8 @@ import { getInitials } from '@/shared/utils/player';
 const TITLE_ID: string = 'leaderboard-title';
 const FIRST_PLACE: number = 1;
 const FIRST_EXTRA_ROW_INDEX: number = 3;
+// Placeholder rows while the leaderboard loads (the design shows the top five players).
+const SKELETON_ROWS: number = 5;
 
 // The design colors the avatars by rank (first place uses the primary yellow).
 const AVATAR_COLORS: readonly string[] = [
@@ -145,6 +157,39 @@ function createRow(entry: LeaderboardEntry, index: number): HTMLTableRowElement 
   });
 }
 
+function createTable(entries: readonly LeaderboardEntry[]): HTMLElement {
+  const caption: HTMLTableCaptionElement = createElement('caption', {
+    className: 'visually-hidden',
+    text: 'Top players of the week ranked by total score',
+  });
+  const body: HTMLTableSectionElement = createElement('tbody', {
+    children: entries.map((entry: LeaderboardEntry, index: number): HTMLTableRowElement =>
+      createRow(entry, index),
+    ),
+  });
+  const table: HTMLTableElement = createElement('table', {
+    className: 'leaderboard__table',
+    children: [caption, createHead(), body],
+  });
+
+  return createElement('div', { className: 'leaderboard__frame', children: [table] });
+}
+
+function createSkeletonTable(): HTMLElement {
+  const rows: HTMLElement[] = Array.from({ length: SKELETON_ROWS }, (): HTMLElement =>
+    createSkeleton('leaderboard__skeleton-row'),
+  );
+
+  return createSkeletonRegion(
+    'Loading top players',
+    rows,
+    'leaderboard__frame leaderboard__skeleton',
+  );
+}
+
+/**
+ * "Top Players This Week" table; the rows come from the API.
+ */
 export function createLeaderboard(): HTMLElement {
   const title: HTMLElement = createSectionTitle('Top Players This Week', TITLE_ID);
   const heading: Element | null = title.querySelector('h2');
@@ -157,27 +202,46 @@ export function createLeaderboard(): HTMLElement {
     );
   }
 
-  const caption: HTMLTableCaptionElement = createElement('caption', {
-    className: 'visually-hidden',
-    text: 'Top players of the week ranked by total score',
-  });
-  const body: HTMLTableSectionElement = createElement('tbody', {
-    children: leaderboard.map((entry: LeaderboardEntry, index: number): HTMLTableRowElement =>
-      createRow(entry, index),
-    ),
-  });
-  const table: HTMLTableElement = createElement('table', {
-    className: 'leaderboard__table',
-    children: [caption, createHead(), body],
-  });
-  const frame: HTMLElement = createElement('div', {
-    className: 'leaderboard__frame',
-    children: [table],
-  });
+  const content: HTMLElement = createElement('div', { className: 'leaderboard__content' });
   const inner: HTMLElement = createElement('div', {
     className: 'leaderboard__inner',
-    children: [title, frame],
+    children: [title, content],
   });
+  const request: LatestRequest = createLatestRequest();
+
+  const load = async (): Promise<void> => {
+    content.replaceChildren(createSkeletonTable());
+
+    try {
+      const entries: LeaderboardEntry[] = await fetchLeaderboard({ signal: request.next() });
+
+      content.replaceChildren(
+        entries.length === 0
+          ? createEmptyState({
+              title: 'No players yet',
+              message: 'Play a game this week to be the first on the board.',
+            })
+          : createTable(entries),
+      );
+    } catch (error: unknown) {
+      if (isAbortError(error)) {
+        return;
+      }
+
+      content.replaceChildren(
+        createErrorBanner({
+          title: 'Top players could not be loaded',
+          message: getErrorMessage(error),
+          onRetry: (): void => {
+            void load();
+          },
+        }),
+      );
+      showSnackbar({ message: 'Failed to load the leaderboard.', variant: 'error' });
+    }
+  };
+
+  void load();
 
   return createElement('section', {
     className: 'leaderboard',
