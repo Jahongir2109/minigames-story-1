@@ -1,9 +1,11 @@
+import type { SortValue } from '@/api/games';
+
 export interface SortOption {
-  value: string;
+  value: SortValue;
   label: string;
 }
 
-// Sort methods of the Library toolbar (from the guidebook). Sorting itself comes with the API.
+// Sort methods of the Library toolbar (from the guidebook); the API sorts the list.
 export const SORT_OPTIONS: readonly SortOption[] = [
   { value: 'rating-asc', label: 'Rating ↑' },
   { value: 'rating-desc', label: 'Rating ↓' },
@@ -11,7 +13,7 @@ export const SORT_OPTIONS: readonly SortOption[] = [
   { value: 'name-desc', label: 'Name Z→A' },
 ];
 
-export const DEFAULT_SORT_VALUE: string = 'rating-desc';
+export const DEFAULT_SORT_VALUE: SortValue = 'rating-desc';
 
 // Cards per Library page (the mockup shows one page of six cards).
 export const LIBRARY_PAGE_SIZE: number = 6;

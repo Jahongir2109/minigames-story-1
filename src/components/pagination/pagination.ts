@@ -30,12 +30,21 @@ function createArrow(label: string, icon: string, step: number): HTMLButtonEleme
   });
 }
 
+export interface Pagination {
+  element: HTMLElement;
+  /**
+   * Rebuilds the controls from the metadata of the API response. An empty list still shows page 1.
+   */
+  update: (page: number, totalPages: number) => void;
+}
+
 /**
- * Page switcher of the Library. It only updates its own state for now: the cards come from the
- * API later.
+ * Page switcher of the Library, built from the page / 	otalPages metadata of the API. A click
+ * only reports the requested page; the owner loads it and calls update.
  */
-export function createPagination(totalPages: number): HTMLElement {
+export function createPagination(onChange: (page: number) => void): Pagination {
   let currentPage: number = 1;
+  let totalPages: number = 1;
   const wideQuery: MediaQueryList = matchMedia(WIDE_QUERY);
 
   const previous: HTMLButtonElement = createArrow('Previous page', chevronBackIcon, -1);
@@ -59,9 +68,9 @@ export function createPagination(totalPages: number): HTMLElement {
     }
 
     button.addEventListener('click', (): void => {
-      goTo(page);
-      // The buttons are rebuilt, so keep the keyboard focus on the new current page.
-      pages.querySelector<HTMLButtonElement>('[aria-current="page"]')?.focus();
+      if (page !== currentPage) {
+        onChange(page);
+      }
     });
 
     return createElement('li', { children: [button] });
@@ -69,28 +78,41 @@ export function createPagination(totalPages: number): HTMLElement {
 
   const render = (): void => {
     const size: number = wideQuery.matches ? MAX_PAGES_WIDE : MAX_PAGES_MOBILE;
+    // Keeps the keyboard focus on the page control that was used after the buttons are rebuilt.
+    const wasFocused: boolean = element.contains(document.activeElement);
 
     pages.replaceChildren(
-      ...getVisiblePages(currentPage, totalPages, size).map((page: number): HTMLLIElement =>
-        createPageButton(page),
+      ...getVisiblePages(Math.min(currentPage, totalPages), totalPages, size).map(
+        (page: number): HTMLLIElement => createPageButton(page),
       ),
     );
     previous.disabled = currentPage <= 1;
     next.disabled = currentPage >= totalPages;
+
+    const active: Element | null = document.activeElement;
+    const hasLostFocus: boolean =
+      !element.contains(active) || (active instanceof HTMLButtonElement && active.disabled);
+
+    if (wasFocused && hasLostFocus) {
+      pages.querySelector<HTMLButtonElement>('[aria-current="page"]')?.focus();
+    }
   };
 
-  function goTo(page: number): void {
-    currentPage = Math.min(Math.max(page, 1), totalPages);
+  const update = (page: number, total: number): void => {
+    totalPages = Math.max(total, 1);
+    currentPage = Math.max(page, 1);
     render();
-  }
+  };
 
   for (const arrow of [previous, next]) {
     arrow.addEventListener('click', (): void => {
-      goTo(currentPage + Number(arrow.dataset.step));
+      const target: number = Math.min(
+        Math.max(currentPage + Number(arrow.dataset.step), 1),
+        totalPages,
+      );
 
-      // A disabled button loses the focus; move it to the current page instead.
-      if (arrow.disabled) {
-        pages.querySelector<HTMLButtonElement>('[aria-current="page"]')?.focus();
+      if (target !== currentPage) {
+        onChange(target);
       }
     });
   }
@@ -108,5 +130,5 @@ export function createPagination(totalPages: number): HTMLElement {
   wideQuery.addEventListener('change', handleBreakpointChange);
   render();
 
-  return element;
+  return { element, update };
 }
