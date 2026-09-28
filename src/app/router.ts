@@ -1,6 +1,6 @@
 import { interceptLinks, onLocationChange } from './navigation';
 
-export type RouteName = 'home' | 'library';
+export type RouteName = 'home' | 'library' | 'not-found';
 
 export interface Route {
   name: RouteName;
@@ -13,6 +13,10 @@ export interface Route {
 
 export interface RouterOptions {
   routes: readonly Route[];
+  /**
+   * Renders the page of every path that has no route.
+   */
+  notFound: () => HTMLElement;
   /**
    * The element of the current page; it is replaced on every navigation.
    */
@@ -33,11 +37,8 @@ function normalizePath(path: string): string {
   return path.length > 1 ? path.replace(/\/+$/, '') : path;
 }
 
-// Unknown paths show the first route.
 function findRoute(routes: readonly Route[], path: string): Route | undefined {
-  const normalized: string = normalizePath(path);
-
-  return routes.find((route: Route): boolean => route.path === normalized) ?? routes[0];
+  return routes.find((route: Route): boolean => route.path === path);
 }
 
 /**
@@ -46,24 +47,25 @@ function findRoute(routes: readonly Route[], path: string): Route | undefined {
  */
 export function createRouter(options: RouterOptions): Router {
   let outlet: HTMLElement = options.outlet;
-  let currentRoute: RouteName | undefined;
+  let currentPath: string | undefined;
 
   // A change of the query string only (filters, dialogs) keeps the page; the page follows the
-  // URL itself.
+  // URL itself. Different unknown paths still re-render the 404 page.
   const render = (): void => {
-    const route: Route | undefined = findRoute(options.routes, location.pathname);
+    const path: string = normalizePath(location.pathname);
 
-    if (route === undefined || route.name === currentRoute) {
+    if (path === currentPath) {
       return;
     }
 
-    const page: HTMLElement = route.render();
+    const route: Route | undefined = findRoute(options.routes, path);
+    const page: HTMLElement = route === undefined ? options.notFound() : route.render();
 
     outlet.replaceWith(page);
     outlet = page;
-    currentRoute = route.name;
+    currentPath = path;
     scrollTo({ top: 0 });
-    options.onChange(route.name);
+    options.onChange(route?.name ?? 'not-found');
   };
 
   const start = (): void => {
