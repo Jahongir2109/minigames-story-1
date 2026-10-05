@@ -12,7 +12,7 @@
   animation: spinner-turn duration('spin') linear infinite;
 
   @media (prefers-reduced-motion: reduce) {
-    animation-duration: calc(#{duration('spin')} * 4);
+    animation-duration: duration('spin-reduced');
   }
 }
 
