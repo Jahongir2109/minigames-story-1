@@ -1,7 +1,7 @@
 # MiniGames
 
 MiniGames is a single-page web application where players can take a short break and discover a library of casual mini-games.
-It is built for the RS School qualifying stage (Stories 1–3) using only TypeScript, HTML and SCSS — no UI frameworks, routers or ready-made component libraries.
+It is built for the RS School qualifying stage (Stories 1–4) using only TypeScript, HTML and SCSS — no UI frameworks, routers or ready-made component libraries.
 
 ## Live demo
 
@@ -31,6 +31,16 @@ It is built for the RS School qualifying stage (Stories 1–3) using only TypeSc
 - The URL is the single source of truth for the Library controls and the dialogs, e.g. `/library?category=puzzle&sort=rating-desc&page=2&game=<slug>` or `/?auth=login`; deep links, Back and Forward restore the same state
 - Comments are read-only for guests; authentication, favorites and posting comments come with Story 4
 
+## Story 4 scope
+
+- Login and Registration with Firebase Authentication (email / password and Google), real-time form validation and dialogs that stay locked while a request runs
+- The signed-in profile (avatar photo or initials, name, Log Out) in the header and the mobile menu
+- A 5-minute app session (below); logout and expiry return to Guest Mode
+- Auth never opens for a signed-in user: the `auth` parameter is removed from the URL and a Snackbar explains why
+- Favorites (`POST /api/games/{slug}/favorite`), comments (`POST /api/games/{slug}/comments`) and comment likes (`POST /api/comments/{id}/like`) for signed-in users; the UI changes only from the server answer, the control is locked while its request runs and a request with an unknown result is never repeated automatically
+- A protected action of a guest (or after expiry) sends nothing and shows Auth over Game Details, which comes back when Auth closes
+- Unit tests with Vitest for the application logic
+
 ## App session
 
 - After a successful sign-in the app keeps its own session in `localStorage` under the key **`minigames:jahongir2109-minigames:app-session`**
@@ -45,6 +55,8 @@ It is built for the RS School qualifying stage (Stories 1–3) using only TypeSc
 - Vite (development server and production build)
 - ESLint (typescript-eslint + Unicorn) and Prettier
 - Husky and commitlint (Git hooks)
+- Firebase Authentication (email / password and Google)
+- Vitest and happy-dom (unit tests)
 
 ## Project structure
 
@@ -53,11 +65,13 @@ public/                 static files (favicon, game card images)
 src/
   api/                  typed REST API client and endpoint functions
   app/                  application shell, History API router and URL state of the dialogs
+  auth/                 Firebase sign-in, app session, profile helpers and the protected action guard
   pages/                page compositions (home, library, 404)
   components/           UI components, each with its own markup (ts) and styles (scss)
   shared/               DOM helpers, constants and shared types
   assets/icons/         SVG icons imported as raw markup
   styles/               design tokens, breakpoints, mixins and base styles
+  test-utils/           test setup and the fake REST API used by the unit tests
 ```
 
 ## Getting started
@@ -70,15 +84,26 @@ npm run dev
 
 ## Scripts
 
-| Script                 | Description                         |
-| ---------------------- | ----------------------------------- |
-| `npm run dev`          | Start the development server        |
-| `npm run build`        | Type-check and build for production |
-| `npm run preview`      | Preview the production build        |
-| `npm run lint`         | Run ESLint                          |
-| `npm run lint:fix`     | Run ESLint and fix what it can      |
-| `npm run format`       | Format the codebase with Prettier   |
-| `npm run format:check` | Check formatting with Prettier      |
+| Script                  | Description                         |
+| ----------------------- | ----------------------------------- |
+| `npm run dev`           | Start the development server        |
+| `npm run build`         | Type-check and build for production |
+| `npm run preview`       | Preview the production build        |
+| `npm run lint`          | Run ESLint                          |
+| `npm run lint:fix`      | Run ESLint and fix what it can      |
+| `npm run format`        | Format the codebase with Prettier   |
+| `npm run format:check`  | Check formatting with Prettier      |
+| `npm test`              | Run all unit tests once             |
+| `npm run test:watch`    | Run the unit tests in watch mode    |
+| `npm run test:coverage` | Run the unit tests with coverage    |
+
+## Unit tests
+
+- [Vitest](https://vitest.dev) with the [happy-dom](https://github.com/capricorn86/happy-dom) browser environment and the V8 coverage provider; the configuration is the `test` section of `vite.config.ts`
+- Tests live next to the code as `*.test.ts`; Firebase and the REST API are mocked (`src/test-utils/api.ts`), so no credentials or network are needed
+- `npm run test:coverage` prints the coverage table in the terminal and writes an HTML report to `coverage/`
+- Every `src/**/*.ts` file is measured, also files that no test imports; the only exclusions (each explained in `vite.config.ts`) are the tests, the test helpers, the `main.ts` bootstrap, type declarations and static constant data
+- Current result: 353 tests, 98.13% statements, 92.4% branches
 
 ## Design and quality
 
