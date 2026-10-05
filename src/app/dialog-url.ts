@@ -17,10 +17,11 @@ function isDialogEntry(state: unknown): state is DialogHistoryState {
   return typeof state === 'object' && state !== null && 'isDialog' in state;
 }
 
+// Only the query changes: the path and the hash of the page stay.
 function buildUrl(parameters: URLSearchParams): string {
   const query: string = parameters.toString();
 
-  return `${location.pathname}${query === '' ? '' : `?${query}`}`;
+  return `${location.pathname}${query === '' ? '' : `?${query}`}${location.hash}`;
 }
 
 export function getDialogParameter(key: DialogKey): string | undefined {
