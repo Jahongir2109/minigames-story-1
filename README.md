@@ -31,6 +31,13 @@ It is built for the RS School qualifying stage (Stories 1–3) using only TypeSc
 - The URL is the single source of truth for the Library controls and the dialogs, e.g. `/library?category=puzzle&sort=rating-desc&page=2&game=<slug>` or `/?auth=login`; deep links, Back and Forward restore the same state
 - Comments are read-only for guests; authentication, favorites and posting comments come with Story 4
 
+## App session
+
+- After a successful sign-in the app keeps its own session in `localStorage` under the key **`minigames:jahongir2109-minigames:app-session`**
+- The value is one JSON object: `displayName`, `email`, `authenticatedAt` (milliseconds) and `avatarUrl` when available; passwords and Firebase tokens are never stored
+- The session lasts a fixed 5 minutes from the sign-in; reloading or using the app does not extend it
+- It is checked on startup, when the page becomes visible again, on every navigation and before protected actions; an expired or broken value is removed, Firebase `signOut()` is called and the app switches to Guest Mode (an expiry shows one Snackbar)
+
 ## Tech stack
 
 - TypeScript (strict mode)
@@ -57,6 +64,7 @@ src/
 
 ```bash
 npm install
+cp .env.example .env.local   # fill in the Firebase web app config
 npm run dev
 ```
 
