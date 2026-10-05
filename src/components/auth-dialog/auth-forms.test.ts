@@ -1,6 +1,21 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { type AuthForm, createLoginForm, createRegisterForm } from './auth-forms';
+import type { LoginRequest, RegisterRequest } from '@/auth/auth-service';
+
+import {
+  type AuthForm,
+  type AuthFormOptions,
+  createLoginForm,
+  createRegisterForm,
+} from './auth-forms';
+
+function loginOptions(): AuthFormOptions<LoginRequest> {
+  return { onSwitch: vi.fn(), onSubmit: vi.fn(), onGoogle: vi.fn() };
+}
+
+function registerOptions(): AuthFormOptions<RegisterRequest> {
+  return { onSwitch: vi.fn(), onSubmit: vi.fn(), onGoogle: vi.fn() };
+}
 
 function getInput(form: AuthForm, id: string): HTMLInputElement {
   const input: HTMLInputElement | null = form.element.querySelector(`#${id}`);
@@ -35,7 +50,7 @@ function type(form: AuthForm, id: string, value: string): void {
 
 describe('createLoginForm', () => {
   it('enables Login for a valid email and a 6+ character password', () => {
-    const form: AuthForm = createLoginForm({ onSwitch: vi.fn() });
+    const form: AuthForm = createLoginForm(loginOptions());
 
     type(form, 'login-email', 'alex@minigames.com');
     type(form, 'login-password', 'short');
@@ -49,7 +64,7 @@ describe('createLoginForm', () => {
   });
 
   it('shows the errors of empty fields on submit without reloading the page', () => {
-    const form: AuthForm = createLoginForm({ onSwitch: vi.fn() });
+    const form: AuthForm = createLoginForm(loginOptions());
     const event: SubmitEvent = new SubmitEvent('submit', { cancelable: true });
 
     form.element.querySelector('form')?.dispatchEvent(event);
@@ -61,7 +76,7 @@ describe('createLoginForm', () => {
 
   it('switches to Register from the prompt', () => {
     const onSwitch: (mode: 'login' | 'register') => void = vi.fn();
-    const form: AuthForm = createLoginForm({ onSwitch });
+    const form: AuthForm = createLoginForm({ ...loginOptions(), onSwitch });
 
     form.element.querySelector<HTMLButtonElement>('.auth-form__switch')?.click();
 
@@ -69,7 +84,7 @@ describe('createLoginForm', () => {
   });
 
   it('clears the fields and errors on reset', () => {
-    const form: AuthForm = createLoginForm({ onSwitch: vi.fn() });
+    const form: AuthForm = createLoginForm(loginOptions());
 
     type(form, 'login-email', 'wrong');
     form.reset();
@@ -88,7 +103,7 @@ function fillValidRegistration(form: AuthForm): void {
 
 describe('createRegisterForm', () => {
   it('enables Create Account only when every field is valid', () => {
-    const form: AuthForm = createRegisterForm({ onSwitch: vi.fn() });
+    const form: AuthForm = createRegisterForm(registerOptions());
 
     expect(getSubmit(form).disabled).toBe(true);
 
@@ -98,7 +113,7 @@ describe('createRegisterForm', () => {
   });
 
   it('applies the username and password strength rules', () => {
-    const form: AuthForm = createRegisterForm({ onSwitch: vi.fn() });
+    const form: AuthForm = createRegisterForm(registerOptions());
 
     type(form, 'register-username', 'cozy');
     type(form, 'register-password', 'secret1');
@@ -108,7 +123,7 @@ describe('createRegisterForm', () => {
   });
 
   it('revalidates the confirmation when the password changes', () => {
-    const form: AuthForm = createRegisterForm({ onSwitch: vi.fn() });
+    const form: AuthForm = createRegisterForm(registerOptions());
 
     fillValidRegistration(form);
     type(form, 'register-password', 'Secret2!');
@@ -119,10 +134,101 @@ describe('createRegisterForm', () => {
 
   it('switches to Login from the prompt', () => {
     const onSwitch: (mode: 'login' | 'register') => void = vi.fn();
-    const form: AuthForm = createRegisterForm({ onSwitch });
+    const form: AuthForm = createRegisterForm({ ...registerOptions(), onSwitch });
 
     form.element.querySelector<HTMLButtonElement>('.auth-form__switch')?.click();
 
     expect(onSwitch).toHaveBeenCalledWith('login');
+  });
+});
+
+function submitForm(form: AuthForm): void {
+  form.element
+    .querySelector('form')
+    ?.dispatchEvent(new SubmitEvent('submit', { cancelable: true }));
+}
+
+describe('auth form actions', () => {
+  it('submits the trimmed login values of a valid form', () => {
+    const options: AuthFormOptions<LoginRequest> = loginOptions();
+    const form: AuthForm = createLoginForm(options);
+
+    type(form, 'login-email', '  alex@minigames.com ');
+    type(form, 'login-password', 'simple');
+    submitForm(form);
+
+    expect(options.onSubmit).toHaveBeenCalledExactlyOnceWith({
+      kind: 'login',
+      email: 'alex@minigames.com',
+      password: 'simple',
+    });
+  });
+
+  it('does not submit an invalid form', () => {
+    const options: AuthFormOptions<LoginRequest> = loginOptions();
+    const form: AuthForm = createLoginForm(options);
+
+    type(form, 'login-email', 'alex');
+    submitForm(form);
+
+    expect(options.onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('submits the registration values with the username', () => {
+    const options: AuthFormOptions<RegisterRequest> = registerOptions();
+    const form: AuthForm = createRegisterForm(options);
+
+    fillValidRegistration(form);
+    submitForm(form);
+
+    expect(options.onSubmit).toHaveBeenCalledExactlyOnceWith({
+      kind: 'register',
+      username: 'CozyGamer99',
+      email: 'cozy@minigames.com',
+      password: 'Secret1!',
+    });
+  });
+
+  it('starts the Google sign-in from both forms', () => {
+    const login: AuthFormOptions<LoginRequest> = loginOptions();
+    const register: AuthFormOptions<RegisterRequest> = registerOptions();
+
+    createLoginForm(login).element.querySelector<HTMLButtonElement>('.auth-form__google')?.click();
+    createRegisterForm(register)
+      .element.querySelector<HTMLButtonElement>('.auth-form__google')
+      ?.click();
+
+    expect(login.onGoogle).toHaveBeenCalledTimes(1);
+    expect(register.onGoogle).toHaveBeenCalledTimes(1);
+  });
+
+  it('locks every field and action while pending and unlocks them afterwards', () => {
+    const form: AuthForm = createRegisterForm(registerOptions());
+
+    fillValidRegistration(form);
+    form.setPending(true);
+
+    const controls: HTMLInputElement[] = [
+      ...form.element.querySelectorAll<HTMLInputElement>('input, button'),
+    ];
+
+    expect(controls.every((control: HTMLInputElement): boolean => control.disabled)).toBe(true);
+    expect(getSubmit(form).textContent).toBe('Please wait…');
+    expect(form.element.getAttribute('aria-busy')).toBe('true');
+
+    form.setPending(false);
+
+    expect(controls.some((control: HTMLInputElement): boolean => control.disabled)).toBe(false);
+    expect(getSubmit(form).textContent).toBe('Create Account');
+  });
+
+  it('keeps the submit disabled after unlocking an invalid form', () => {
+    const form: AuthForm = createLoginForm(loginOptions());
+
+    form.setPending(true);
+    form.setPending(false);
+
+    expect(getSubmit(form).disabled).toBe(true);
+    expect(getInput(form, 'login-email').disabled).toBe(false);
   });
 });
