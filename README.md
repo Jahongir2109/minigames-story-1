@@ -5,6 +5,7 @@ It is built for the RS School qualifying stage (Stories 1–4) using only TypeSc
 
 ## Live demo
 
+- Story 4: https://minigames-story-4.vercel.app
 - Story 3: https://minigames-story-3.vercel.app
 - Story 2: https://minigames-story-2.vercel.app
 - Story 1: https://minigames-story-1.vercel.app
