@@ -104,7 +104,7 @@ npm run dev
 - Tests live next to the code as `*.test.ts`; Firebase and the REST API are mocked (`src/test-utils/api.ts`), so no credentials or network are needed
 - `npm run test:coverage` prints the coverage table in the terminal and writes an HTML report to `coverage/`
 - Every `src/**/*.ts` file is measured, also files that no test imports; the only exclusions (each explained in `vite.config.ts`) are the tests, the test helpers, the `main.ts` bootstrap, type declarations and static constant data
-- Current result: 353 tests, 98.13% statements, 92.4% branches
+- Current result: 358 tests, 98.13% statements, 92.43% branches
 
 ## Design and quality
 
