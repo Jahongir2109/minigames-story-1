@@ -22,6 +22,26 @@ export function getProfileName(profile: Pick<UserProfile, 'displayName' | 'email
   return localPart === '' ? FALLBACK_PROFILE_NAME : localPart;
 }
 
+export const AUTHOR_NAME_MIN_LENGTH: number = 2;
+export const AUTHOR_NAME_MAX_LENGTH: number = 30;
+
+/**
+ * The comment author name accepted by the API (2–30 characters): the display name, else the part
+ * of the email before `@` (a Google profile may have neither in range), else a generic name. A
+ * longer name is shortened.
+ */
+export function getCommentAuthorName(profile: Pick<UserProfile, 'displayName' | 'email'>): string {
+  const candidates: readonly string[] = [
+    profile.displayName,
+    profile.email.split('@', 1)[0] ?? '',
+  ].map((candidate: string): string => candidate.trim().slice(0, AUTHOR_NAME_MAX_LENGTH).trimEnd());
+
+  return (
+    candidates.find((candidate: string): boolean => candidate.length >= AUTHOR_NAME_MIN_LENGTH) ??
+    FALLBACK_PROFILE_NAME
+  );
+}
+
 /**
  * Avatar initials: the first letter or digit of the first word, or of each of the first two words.
  * Empty when the name has no letters or digits (a generic avatar is shown then).

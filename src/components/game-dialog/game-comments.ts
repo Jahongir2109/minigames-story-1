@@ -3,8 +3,8 @@ import './game-comments.scss';
 import { getErrorMessage, isAbortError } from '@/api/client';
 import { fetchGameComments } from '@/api/games';
 import heartIcon from '@/assets/icons/heart-filled.svg?raw';
-import sendIcon from '@/assets/icons/send.svg?raw';
 import type { AppSession } from '@/auth/session';
+import type { RequireSession } from '@/auth/session-guard';
 import { createEmptyState } from '@/components/ui/empty-state/empty-state';
 import { createErrorBanner } from '@/components/ui/error-banner/error-banner';
 import { createSkeleton, createSkeletonRegion } from '@/components/ui/skeleton/skeleton';
@@ -14,8 +14,9 @@ import { createIcon } from '@/shared/dom/create-icon';
 import type { GameComment } from '@/shared/types/game';
 import { formatRelativeTime } from '@/shared/utils/format';
 
+import { createCommentForm } from './comment-form';
+
 const TITLE_ID: string = 'game-comments-title';
-const INPUT_ID: string = 'game-comment-input';
 // The latest comments shown in the dialog.
 const COMMENTS_LIMIT: number = 3;
 
@@ -81,67 +82,6 @@ function createComment(comment: GameComment, index: number): HTMLLIElement {
   return createElement('li', { children: [article] });
 }
 
-/**
- * Grows the textarea with its content up to its CSS max-height (88px); only then the internal
- * scrollbar appears.
- */
-function autoGrow(textarea: HTMLTextAreaElement): void {
-  const borders: number = textarea.offsetHeight - textarea.clientHeight;
-  const maxHeight: number = Number(getComputedStyle(textarea).maxHeight.replace('px', ''));
-
-  textarea.style.height = 'auto';
-
-  const contentHeight: number = textarea.scrollHeight + borders;
-
-  textarea.style.height = `${String(contentHeight)}px`;
-  textarea.style.overflowY = contentHeight > maxHeight ? 'auto' : 'hidden';
-}
-
-function createForm(): HTMLFormElement {
-  const textarea: HTMLTextAreaElement = createElement('textarea', {
-    className: 'game-comments__input',
-    attributes: {
-      id: INPUT_ID,
-      name: 'comment',
-      rows: '1',
-      placeholder: 'Log in to write a comment',
-      disabled: '',
-    },
-  });
-  const sendButton: HTMLButtonElement = createElement('button', {
-    className: 'game-comments__send',
-    attributes: { type: 'submit', 'aria-label': 'Send comment' },
-    children: [createIcon(sendIcon, 'game-comments__send-icon')],
-  });
-  const form: HTMLFormElement = createElement('form', {
-    className: 'game-comments__form',
-    children: [
-      createAvatar('User', 'primary'),
-      createElement('label', {
-        className: 'visually-hidden',
-        text: 'Write a comment',
-        attributes: { for: INPUT_ID },
-      }),
-      textarea,
-      sendButton,
-    ],
-  });
-
-  sendButton.disabled = true;
-
-  textarea.addEventListener('input', (): void => {
-    autoGrow(textarea);
-    sendButton.disabled = textarea.value.trim() === '';
-  });
-
-  // Sending comments needs an account (Story 4).
-  form.addEventListener('submit', (event: SubmitEvent): void => {
-    event.preventDefault();
-  });
-
-  return form;
-}
-
 function createSkeletonList(): HTMLElement {
   return createSkeletonRegion(
     'Loading comments',
@@ -154,14 +94,20 @@ function createSkeletonList(): HTMLElement {
 
 /**
  * Comments section of the Game Details dialog: the latest comments and the total count come from
- * the API, with the like state of the signed-in user. signal cancels the requests when the dialog
- * closes.
+ * the API, with the like state of the signed-in user, who can also write comments.
  */
-export function createGameComments(
-  slug: string,
-  signal: AbortSignal,
-  user?: AppSession,
-): HTMLElement {
+export interface GameCommentsOptions {
+  slug: string;
+  /**
+   * Cancels the requests when the dialog closes.
+   */
+  signal: AbortSignal;
+  user: AppSession | undefined;
+  requireSession: RequireSession;
+}
+
+export function createGameComments(options: GameCommentsOptions): HTMLElement {
+  const { slug, signal, user } = options;
   const title: HTMLHeadingElement = createElement('h3', {
     className: 'game-comments__title',
     text: 'Comments',
@@ -223,6 +169,17 @@ export function createGameComments(
   return createElement('section', {
     className: 'game-comments',
     attributes: { 'aria-labelledby': TITLE_ID },
-    children: [title, createForm(), content],
+    children: [
+      title,
+      createCommentForm({
+        slug,
+        user,
+        requireSession: options.requireSession,
+        onPosted: (): void => {
+          void load();
+        },
+      }),
+      content,
+    ],
   });
 }

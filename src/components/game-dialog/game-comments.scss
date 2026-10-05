@@ -37,6 +37,12 @@ $avatar-colors:
     }
   }
 
+  // The guest avatar of the comment form shows a person icon.
+  &__avatar-icon {
+    width: size(3);
+    height: size(3);
+  }
+
   // The avatar of the comment form is larger.
   &__form > &__avatar {
     width: size(5);
@@ -64,6 +70,11 @@ $avatar-colors:
 
     &::placeholder {
       color: color('on-bg-low');
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      background-color: color('surface-low');
     }
 
     // The focused state keeps the default size: the thicker border is an inset shadow.

@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { FALLBACK_PROFILE_NAME, getProfileInitials, getProfileName } from './profile';
+import {
+  FALLBACK_PROFILE_NAME,
+  getCommentAuthorName,
+  getProfileInitials,
+  getProfileName,
+} from './profile';
 
 describe('getProfileName', () => {
   it('prefers the trimmed display name', () => {
@@ -46,5 +51,48 @@ describe('getProfileInitials', () => {
     expect(getProfileInitials('')).toBe('');
     expect(getProfileInitials('  ')).toBe('');
     expect(getProfileInitials('--- !!!')).toBe('');
+  });
+});
+
+describe('getCommentAuthorName', () => {
+  it('uses the trimmed display name', () => {
+    expect(getCommentAuthorName({ displayName: ' ForestDweller ', email: 'f@rs.school' })).toBe(
+      'ForestDweller',
+    );
+  });
+
+  it('falls back to the email local part when the display name is too short', () => {
+    expect(getCommentAuthorName({ displayName: 'A', email: 'alex.pro@gmail.com' })).toBe(
+      'alex.pro',
+    );
+    expect(getCommentAuthorName({ displayName: '', email: 'alex.pro@gmail.com' })).toBe('alex.pro');
+  });
+
+  it('shortens a long name to 30 characters', () => {
+    const name: string = getCommentAuthorName({
+      displayName: 'Maximilian Alexander von Habsburg',
+      email: 'max@rs.school',
+    });
+
+    expect(name).toBe('Maximilian Alexander von Habsb');
+    expect(name).toHaveLength(30);
+  });
+
+  it('does not end a shortened name with a space', () => {
+    expect(
+      getCommentAuthorName({ displayName: 'Abcdefghijklmnopqrstuvwxyzabc def', email: '' }),
+    ).toBe('Abcdefghijklmnopqrstuvwxyzabc');
+  });
+
+  it('skips a name that becomes too short after shortening', () => {
+    expect(
+      getCommentAuthorName({ displayName: `A${' '.repeat(40)}B`, email: 'alex@rs.school' }),
+    ).toBe('alex');
+  });
+
+  it('uses a generic name when nothing fits', () => {
+    expect(getCommentAuthorName({ displayName: 'A', email: 'b@rs.school' })).toBe(
+      FALLBACK_PROFILE_NAME,
+    );
   });
 });
