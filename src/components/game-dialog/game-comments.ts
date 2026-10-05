@@ -14,29 +14,16 @@ import { createIcon } from '@/shared/dom/create-icon';
 import type { GameComment } from '@/shared/types/game';
 import { formatRelativeTime } from '@/shared/utils/format';
 
+import {
+  type AvatarColorPicker,
+  createAvatarColorPicker,
+  createCommentAvatar,
+} from './comment-avatar';
 import { createCommentForm } from './comment-form';
 
 const TITLE_ID: string = 'game-comments-title';
 // The latest comments shown in the dialog.
 const COMMENTS_LIMIT: number = 3;
-
-// Avatar colors in the order of the mockup.
-const AVATAR_COLORS: readonly string[] = [
-  'avatar-random-3',
-  'primary',
-  'avatar-random-1',
-  'avatar-random-2',
-  'avatar-random-4',
-  'avatar-random-5',
-];
-
-function createAvatar(name: string, color: string): HTMLSpanElement {
-  return createElement('span', {
-    className: `game-comments__avatar game-comments__avatar--${color}`,
-    text: name.charAt(0).toUpperCase(),
-    attributes: { 'aria-hidden': 'true' },
-  });
-}
 
 // Read-only for guests: liking comments needs an account (Story 4).
 function createLikeButton(comment: GameComment): HTMLButtonElement {
@@ -56,11 +43,10 @@ function createLikeButton(comment: GameComment): HTMLButtonElement {
   return button;
 }
 
-function createComment(comment: GameComment, index: number): HTMLLIElement {
-  const color: string = AVATAR_COLORS[index % AVATAR_COLORS.length] ?? 'primary';
+function createComment(comment: GameComment, color: string): HTMLLIElement {
   const author: HTMLHeadingElement = createElement('h4', {
     className: 'game-comments__author',
-    children: [createAvatar(comment.authorName, color), comment.authorName],
+    children: [createCommentAvatar(comment.authorName, color), comment.authorName],
   });
   const date: HTMLTimeElement = createElement('time', {
     className: 'game-comments__date',
@@ -114,6 +100,8 @@ export function createGameComments(options: GameCommentsOptions): HTMLElement {
     attributes: { id: TITLE_ID },
   });
   const content: HTMLElement = createElement('div', { className: 'game-comments__content' });
+  // One color per commenter for as long as this section is mounted.
+  const pickAvatarColor: AvatarColorPicker = createAvatarColorPicker();
 
   const load = async (): Promise<void> => {
     title.textContent = 'Comments';
@@ -141,8 +129,8 @@ export function createGameComments(options: GameCommentsOptions): HTMLElement {
       content.replaceChildren(
         createElement('ul', {
           className: 'game-comments__list',
-          children: response.data.map((comment: GameComment, index: number): HTMLLIElement =>
-            createComment(comment, index),
+          children: response.data.map((comment: GameComment): HTMLLIElement =>
+            createComment(comment, pickAvatarColor(comment.authorName)),
           ),
         }),
       );
