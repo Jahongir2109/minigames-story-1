@@ -8,6 +8,7 @@ import { createFooter } from '@/components/footer/footer';
 import { createGameDialog, type GameDialog } from '@/components/game-dialog/game-dialog';
 import { createHeader, type Header } from '@/components/header/header';
 import { createMobileMenu, type MobileMenu } from '@/components/mobile-menu/mobile-menu';
+import { showSnackbar } from '@/components/ui/snackbar/snackbar';
 import { createHomePage } from '@/pages/home/home-page';
 import { createLibraryPage } from '@/pages/library/library-page';
 import { createNotFoundPage } from '@/pages/not-found/not-found-page';
@@ -15,22 +16,19 @@ import { createElement } from '@/shared/dom/create-element';
 import { HOME_ALIAS_PATH, HOME_PATH, LIBRARY_PATH } from '@/shared/constants/links';
 import type { Game } from '@/shared/types/game';
 
-import { closeDialogUrl, getDialogParameter, openDialogUrl } from './dialog-url';
+import { ALREADY_AUTHENTICATED_MESSAGE, createDialogSync } from './dialog-sync';
+import { closeDialogUrl, openDialogUrl } from './dialog-url';
 import { onLocationChange } from './navigation';
 import { createRouter, type RouteName, type Router } from './router';
 
-function isAuthMode(value: string | undefined): value is AuthMode {
-  return value === 'login' || value === 'register';
-}
-
 // The dialogs follow the URL: opening one writes it into the URL, and closing one (button,
 // backdrop, Escape) removes it again.
-function openAuth(mode: AuthMode): void {
-  openDialogUrl('auth', mode);
-}
-
 function openGame(game: Game): void {
   openDialogUrl('game', game.slug);
+}
+
+function notifyAlreadyAuthenticated(): void {
+  showSnackbar({ message: ALREADY_AUTHENTICATED_MESSAGE, variant: 'info' });
 }
 
 /**
@@ -38,17 +36,31 @@ function openGame(game: Game): void {
  */
 export function mountApp(root: HTMLElement): void {
   const session: SessionStore = createAppSessionStore();
+
+  // Auth never opens for a signed-in user.
+  const openAuth = (mode: AuthMode): void => {
+    if (session.check() === undefined) {
+      openDialogUrl('auth', mode);
+    } else {
+      notifyAlreadyAuthenticated();
+    }
+  };
+
   const authDialog: AuthDialog = createAuthDialog({
-    onModeChange: openAuth,
+    onModeChange: (mode: AuthMode): void => {
+      openDialogUrl('auth', mode);
+    },
     authenticate: (request: AuthRequest): Promise<boolean> => didAuthenticate(session, request),
   });
-  const gameDialog: GameDialog = createGameDialog();
+  const gameDialog: GameDialog = createGameDialog({
+    session,
+    onClose: (): void => {
+      closeDialogUrl('game');
+    },
+  });
 
   authDialog.element.addEventListener('close', (): void => {
     closeDialogUrl('auth');
-  });
-  gameDialog.element.addEventListener('close', (): void => {
-    closeDialogUrl('game');
   });
 
   const header: Header = createHeader({
@@ -120,23 +132,12 @@ export function mountApp(root: HTMLElement): void {
     },
   });
 
-  // Opens, switches or closes the dialogs to match the URL (links, Back / Forward, reloads).
-  const syncDialogs = (): void => {
-    const slug: string | undefined = getDialogParameter('game');
-    const mode: string | undefined = getDialogParameter('auth');
-
-    if (slug === undefined) {
-      gameDialog.close();
-    } else {
-      gameDialog.open(slug);
-    }
-
-    if (isAuthMode(mode)) {
-      authDialog.open(mode);
-    } else {
-      authDialog.close();
-    }
-  };
+  const syncDialogs: () => void = createDialogSync({
+    authDialog,
+    gameDialog,
+    session,
+    onAlreadyAuthenticated: notifyAlreadyAuthenticated,
+  });
 
   // Registered before the router, so every navigation sees an up-to-date session.
   watchSession(session);
