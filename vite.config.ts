@@ -27,6 +27,10 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       include: ['src/**/*.test.ts'],
       // Most of the app builds DOM nodes, so the tests run in a simulated browser.
       environment: 'happy-dom',
+      // Unhandled link clicks must not load real pages in the tests (there is no server).
+      environmentOptions: {
+        happyDOM: { settings: { navigation: { disableMainFrameNavigation: true } } },
+      },
       setupFiles: ['src/test-utils/setup.ts'],
       restoreMocks: true,
       unstubGlobals: true,
