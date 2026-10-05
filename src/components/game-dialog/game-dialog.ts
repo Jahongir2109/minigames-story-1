@@ -138,7 +138,7 @@ export function createGameDialog(options: GameDialogOptions): GameDialog {
       children: [
         createGameInfo(game, TITLE_ID, options.requireSession),
         createGameRecords(game.topRecords),
-        createGameComments(slug, signal, user),
+        createGameComments({ slug, signal, user, requireSession: options.requireSession }),
       ],
     });
 
