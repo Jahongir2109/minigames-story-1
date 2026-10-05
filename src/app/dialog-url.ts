@@ -30,26 +30,63 @@ export function getDialogParameter(key: DialogKey): string | undefined {
   return value === null || value === '' ? undefined : value;
 }
 
+export interface OpenDialogOptions {
+  /**
+   * Keeps the dialog that is already in the URL under the new one (Auth over Game Details), so
+   * closing the new dialog goes back to it.
+   */
+  stack?: boolean;
+}
+
 /**
- * Opens a dialog by writing it into the URL; the app opens the dialog from the URL. Only one
+ * Opens a dialog by writing it into the URL; the app opens the dialog from the URL. Normally one
  * dialog is in the URL at a time. A dialog that is already open (e.g. the auth mode tabs) replaces
  * its history entry instead of adding one.
  */
-export function openDialogUrl(key: DialogKey, value: string): void {
+export function openDialogUrl(
+  key: DialogKey,
+  value: string,
+  options: OpenDialogOptions = {},
+): void {
   const parameters: URLSearchParams = new URLSearchParams(location.search);
+
+  if (parameters.has(key)) {
+    parameters.set(key, value);
+    navigate(buildUrl(parameters), { replace: true });
+    return;
+  }
+
+  const state: DialogHistoryState = { isDialog: true };
   const isDialogOpen: boolean = DIALOG_KEYS.some((dialog: DialogKey): boolean =>
     parameters.has(dialog),
   );
 
-  for (const dialog of DIALOG_KEYS) {
-    parameters.delete(dialog);
+  if (options.stack !== true) {
+    for (const dialog of DIALOG_KEYS) {
+      parameters.delete(dialog);
+    }
   }
 
   parameters.set(key, value);
+  navigate(
+    buildUrl(parameters),
+    isDialogOpen && options.stack !== true ? { replace: true } : { state },
+  );
+}
 
-  const state: DialogHistoryState = { isDialog: true };
+/**
+ * Removes a dialog that must not open (e.g. Auth for a signed-in user) from the current history
+ * entry, without a reload and without a new Back entry.
+ */
+export function removeDialogUrl(key: DialogKey): void {
+  const parameters: URLSearchParams = new URLSearchParams(location.search);
 
-  navigate(buildUrl(parameters), isDialogOpen ? { replace: true } : { state });
+  if (!parameters.has(key)) {
+    return;
+  }
+
+  parameters.delete(key);
+  navigate(buildUrl(parameters), { replace: true });
 }
 
 /**
@@ -69,6 +106,5 @@ export function closeDialogUrl(key: DialogKey): void {
     return;
   }
 
-  parameters.delete(key);
-  navigate(buildUrl(parameters), { replace: true });
+  removeDialogUrl(key);
 }
