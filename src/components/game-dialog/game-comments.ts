@@ -4,6 +4,7 @@ import { getErrorMessage, isAbortError } from '@/api/client';
 import { fetchGameComments } from '@/api/games';
 import heartIcon from '@/assets/icons/heart-filled.svg?raw';
 import sendIcon from '@/assets/icons/send.svg?raw';
+import type { AppSession } from '@/auth/session';
 import { createEmptyState } from '@/components/ui/empty-state/empty-state';
 import { createErrorBanner } from '@/components/ui/error-banner/error-banner';
 import { createSkeleton, createSkeletonRegion } from '@/components/ui/skeleton/skeleton';
@@ -153,9 +154,14 @@ function createSkeletonList(): HTMLElement {
 
 /**
  * Comments section of the Game Details dialog: the latest comments and the total count come from
- * the API. signal cancels the requests when the dialog closes.
+ * the API, with the like state of the signed-in user. signal cancels the requests when the dialog
+ * closes.
  */
-export function createGameComments(slug: string, signal: AbortSignal): HTMLElement {
+export function createGameComments(
+  slug: string,
+  signal: AbortSignal,
+  user?: AppSession,
+): HTMLElement {
   const title: HTMLHeadingElement = createElement('h3', {
     className: 'game-comments__title',
     text: 'Comments',
@@ -170,7 +176,7 @@ export function createGameComments(slug: string, signal: AbortSignal): HTMLEleme
     try {
       const response: Awaited<ReturnType<typeof fetchGameComments>> = await fetchGameComments(
         slug,
-        { limit: COMMENTS_LIMIT, sort: 'newest' },
+        { limit: COMMENTS_LIMIT, sort: 'newest', userEmail: user?.email },
         { signal },
       );
 

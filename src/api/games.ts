@@ -66,7 +66,7 @@ export interface GameDetailsQuery {
   /**
    * The signed-in user: personalizes `isLikedByCurrentUser`. Guests omit it.
    */
-  userEmail?: string;
+  userEmail?: string | undefined;
 }
 
 export interface CommentsQuery {
@@ -75,7 +75,7 @@ export interface CommentsQuery {
   /**
    * The signed-in user: personalizes `isLikedByCurrentUser` of every comment. Guests omit it.
    */
-  userEmail?: string;
+  userEmail?: string | undefined;
 }
 
 export interface FavoriteState {
