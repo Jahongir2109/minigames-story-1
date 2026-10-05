@@ -86,6 +86,20 @@ describe('validateNewPassword', () => {
   it('accepts a strong password', () => {
     expect(validateNewPassword('Secret1!')).toBeUndefined();
     expect(validateNewPassword('Sec_ret9')).toBeUndefined();
+    expect(validateNewPassword('A1~{}[]')).toBeUndefined();
+  });
+
+  it.each(['Secret1! x', 'Parol1!ж', 'Secret1!é', 'Secret1!🍄'])(
+    'rejects characters other than English letters, digits and specials in %s',
+    (password: string) => {
+      expect(validateNewPassword(password)).toBe(
+        'Password may contain English letters, digits and special characters only.',
+      );
+    },
+  );
+
+  it('keeps the login password free of these rules', () => {
+    expect(validateLoginPassword('пароль 1')).toBeUndefined();
   });
 });
 
