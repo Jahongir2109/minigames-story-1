@@ -227,6 +227,8 @@ $transition-durations: (
   'shimmer': 1400ms,
   // One turn of the loading spinner of pending buttons.
   'spin': 800ms,
+  // The same turn slowed down for users who prefer reduced motion.
+  'spin-reduced': 3200ms,
 );
 
 $z-indexes: (
