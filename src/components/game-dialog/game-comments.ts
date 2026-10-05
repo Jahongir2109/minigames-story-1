@@ -2,7 +2,6 @@ import './game-comments.scss';
 
 import { getErrorMessage, isAbortError } from '@/api/client';
 import { fetchGameComments } from '@/api/games';
-import heartIcon from '@/assets/icons/heart-filled.svg?raw';
 import type { AppSession } from '@/auth/session';
 import type { RequireSession } from '@/auth/session-guard';
 import { createEmptyState } from '@/components/ui/empty-state/empty-state';
@@ -10,7 +9,6 @@ import { createErrorBanner } from '@/components/ui/error-banner/error-banner';
 import { createSkeleton, createSkeletonRegion } from '@/components/ui/skeleton/skeleton';
 import { showSnackbar } from '@/components/ui/snackbar/snackbar';
 import { createElement } from '@/shared/dom/create-element';
-import { createIcon } from '@/shared/dom/create-icon';
 import type { GameComment } from '@/shared/types/game';
 import { formatRelativeTime } from '@/shared/utils/format';
 
@@ -20,30 +18,17 @@ import {
   createCommentAvatar,
 } from './comment-avatar';
 import { createCommentForm } from './comment-form';
+import { createCommentLikeButton } from './comment-like-button';
 
 const TITLE_ID: string = 'game-comments-title';
 // The latest comments shown in the dialog.
 const COMMENTS_LIMIT: number = 3;
 
-// Read-only for guests: liking comments needs an account (Story 4).
-function createLikeButton(comment: GameComment): HTMLButtonElement {
-  const count: HTMLSpanElement = createElement('span', { text: String(comment.likesCount) });
-  const button: HTMLButtonElement = createElement('button', {
-    className: 'game-comments__like',
-    attributes: {
-      type: 'button',
-      'aria-pressed': String(comment.isLikedByCurrentUser),
-      'aria-label': `${String(comment.likesCount)} likes. Log in to like the comment by ${comment.authorName}`,
-      title: 'Log in to like comments',
-      disabled: '',
-    },
-    children: [createIcon(heartIcon, 'game-comments__like-icon'), count],
-  });
-
-  return button;
-}
-
-function createComment(comment: GameComment, color: string): HTMLLIElement {
+function createComment(
+  comment: GameComment,
+  color: string,
+  requireSession: RequireSession,
+): HTMLLIElement {
   const author: HTMLHeadingElement = createElement('h4', {
     className: 'game-comments__author',
     children: [createCommentAvatar(comment.authorName, color), comment.authorName],
@@ -61,7 +46,7 @@ function createComment(comment: GameComment, color: string): HTMLLIElement {
         children: [author, date],
       }),
       createElement('p', { className: 'game-comments__text', text: comment.text }),
-      createLikeButton(comment),
+      createCommentLikeButton({ comment, requireSession }),
     ],
   });
 
@@ -80,7 +65,7 @@ function createSkeletonList(): HTMLElement {
 
 /**
  * Comments section of the Game Details dialog: the latest comments and the total count come from
- * the API, with the like state of the signed-in user, who can also write comments.
+ * the API, with the like state of the signed-in user, who can also like and write comments.
  */
 export interface GameCommentsOptions {
   slug: string;
@@ -130,7 +115,7 @@ export function createGameComments(options: GameCommentsOptions): HTMLElement {
         createElement('ul', {
           className: 'game-comments__list',
           children: response.data.map((comment: GameComment): HTMLLIElement =>
-            createComment(comment, pickAvatarColor(comment.authorName)),
+            createComment(comment, pickAvatarColor(comment.authorName), options.requireSession),
           ),
         }),
       );

@@ -182,6 +182,17 @@ $avatar-colors:
     &[aria-pressed='true'] {
       color: color('like');
     }
+
+    &:disabled {
+      cursor: progress;
+    }
+
+    // The pending spinner takes the place of the 16px heart.
+    .spinner {
+      width: size(2);
+      height: size(2);
+      border-width: border-width('regular');
+    }
   }
 
   &__like-icon {
