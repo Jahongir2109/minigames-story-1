@@ -2,7 +2,9 @@ import { FirebaseError } from 'firebase/app';
 import {
   type Auth,
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
+  signInWithPopup,
   updateProfile,
   type User,
   type UserCredential,
@@ -71,6 +73,32 @@ export async function registerWithEmail(
   await updateProfile(credential.user, { displayName: request.username });
 
   return { ...toUserProfile(credential.user), displayName: request.username };
+}
+
+/**
+ * Signs in with a Google account in a pop-up; the Google name and photo become the profile.
+ */
+export async function signInWithGoogle(auth: Auth): Promise<UserProfile> {
+  const provider: GoogleAuthProvider = new GoogleAuthProvider();
+
+  provider.setCustomParameters({ prompt: 'select_account' });
+
+  const credential: UserCredential = await signInWithPopup(auth, provider);
+
+  return toUserProfile(credential.user);
+}
+
+const CANCELLATION_CODES: ReadonlySet<string> = new Set<string>([
+  'auth/popup-closed-by-user',
+  'auth/cancelled-popup-request',
+  'auth/user-cancelled',
+]);
+
+/**
+ * The user closed or cancelled the Google window: not an error, just no sign-in.
+ */
+export function isAuthCancellation(error: unknown): boolean {
+  return error instanceof FirebaseError && CANCELLATION_CODES.has(error.code);
 }
 
 const ERROR_MESSAGES: Readonly<Record<string, string>> = {
