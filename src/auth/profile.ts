@@ -32,16 +32,14 @@ export const AUTHOR_NAME_MAX_LENGTH: number = 30;
  */
 export function getCommentAuthorName(profile: Pick<UserProfile, 'displayName' | 'email'>): string {
   const candidates: readonly string[] = [
-    profile.displayName.trim(),
-    profile.email.split('@', 1)[0]?.trim() ?? '',
-  ];
-  const name: string | undefined = candidates.find(
-    (candidate: string): boolean => candidate.length >= AUTHOR_NAME_MIN_LENGTH,
-  );
+    profile.displayName,
+    profile.email.split('@', 1)[0] ?? '',
+  ].map((candidate: string): string => candidate.trim().slice(0, AUTHOR_NAME_MAX_LENGTH).trimEnd());
 
-  return name === undefined
-    ? FALLBACK_PROFILE_NAME
-    : name.slice(0, AUTHOR_NAME_MAX_LENGTH).trimEnd();
+  return (
+    candidates.find((candidate: string): boolean => candidate.length >= AUTHOR_NAME_MIN_LENGTH) ??
+    FALLBACK_PROFILE_NAME
+  );
 }
 
 /**

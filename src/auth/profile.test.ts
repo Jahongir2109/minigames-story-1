@@ -84,6 +84,12 @@ describe('getCommentAuthorName', () => {
     ).toBe('Abcdefghijklmnopqrstuvwxyzabc');
   });
 
+  it('skips a name that becomes too short after shortening', () => {
+    expect(
+      getCommentAuthorName({ displayName: `A${' '.repeat(40)}B`, email: 'alex@rs.school' }),
+    ).toBe('alex');
+  });
+
   it('uses a generic name when nothing fits', () => {
     expect(getCommentAuthorName({ displayName: 'A', email: 'b@rs.school' })).toBe(
       FALLBACK_PROFILE_NAME,
