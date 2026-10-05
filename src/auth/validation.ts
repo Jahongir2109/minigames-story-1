@@ -13,8 +13,11 @@ const EMAIL_PATTERN: RegExp = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)*\.[a-z]{2,}$/i;
 const USERNAME_PATTERN: RegExp = /^[A-Z][A-Za-z\d]*$/;
 const UPPERCASE_PATTERN: RegExp = /[A-Z]/;
 const DIGIT_PATTERN: RegExp = /\d/;
-// Anything that is not an English letter, a digit or whitespace counts as a special character.
-const SPECIAL_PATTERN: RegExp = /[^A-Za-z\d\s]/;
+// A new password may contain only English letters, digits and the special characters of the
+// printable ASCII range (`!` to `~`); spaces and letters of other alphabets are not allowed.
+const PASSWORD_CHARACTERS_PATTERN: RegExp = /^[!-~]+$/;
+// Within the allowed characters, everything that is not an English letter or a digit is special.
+const SPECIAL_PATTERN: RegExp = /[^A-Za-z\d]/;
 
 export const validateEmail: Validator = (value: string): string | undefined => {
   const email: string = value.trim();
@@ -59,6 +62,10 @@ export const validateNewPassword: Validator = (value: string): string | undefine
 
   if (lengthError !== undefined) {
     return lengthError;
+  }
+
+  if (!PASSWORD_CHARACTERS_PATTERN.test(value)) {
+    return 'Password may contain English letters, digits and special characters only.';
   }
 
   if (!UPPERCASE_PATTERN.test(value)) {
