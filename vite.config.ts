@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { fileURLToPath, URL } from 'node:url';
 import { type ConfigEnv, defineConfig, type UserConfig } from 'vite';
 
@@ -21,6 +22,31 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       target: 'es2022',
       minify: isProduction,
       sourcemap: !isProduction,
+    },
+    test: {
+      include: ['src/**/*.test.ts'],
+      // Most of the app builds DOM nodes, so the tests run in a simulated browser.
+      environment: 'happy-dom',
+      restoreMocks: true,
+      unstubGlobals: true,
+      coverage: {
+        provider: 'v8',
+        reporter: ['text', 'html'],
+        // Every application source file is measured, including the ones no test imports.
+        include: ['src/**/*.ts'],
+        exclude: [
+          // The tests themselves.
+          'src/**/*.test.ts',
+          // Bootstrap only: imports the global styles and calls mountApp().
+          'src/main.ts',
+          // Type declarations only, no runtime code.
+          'src/shared/types/**',
+          // Static data (footer, sort options, URLs) with no logic.
+          'src/shared/constants/footer.ts',
+          'src/shared/constants/library.ts',
+          'src/shared/constants/links.ts',
+        ],
+      },
     },
   };
 });
