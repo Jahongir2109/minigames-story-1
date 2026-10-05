@@ -121,7 +121,7 @@ export function createGameDialog(): GameDialog {
     surface.replaceChildren(...createSkeletonContent(createCloseButton(close)));
 
     try {
-      const game: GameDetails = await fetchGameDetails(slug, { signal });
+      const game: GameDetails = await fetchGameDetails(slug, {}, { signal });
 
       showGame(game, slug, signal);
     } catch (error: unknown) {
