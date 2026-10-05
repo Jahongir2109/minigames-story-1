@@ -39,7 +39,16 @@ function createPasswordToggle(input: HTMLInputElement): HTMLButtonElement {
   return toggle;
 }
 
-export function createTextField(options: TextFieldOptions): HTMLElement {
+export interface TextField {
+  element: HTMLElement;
+  input: HTMLInputElement;
+  /**
+   * Shows the message under the field and marks it invalid; `undefined` clears the error.
+   */
+  setError: (message: string | undefined) => void;
+}
+
+export function createTextField(options: TextFieldOptions): TextField {
   const label: HTMLLabelElement = createElement('label', {
     className: 'text-field__label',
     text: options.label,
@@ -65,5 +74,26 @@ export function createTextField(options: TextFieldOptions): HTMLElement {
     control.append(createPasswordToggle(input));
   }
 
-  return createElement('div', { className: 'text-field', children: [label, control] });
+  const errorId: string = `${options.id}-error`;
+  const error: HTMLParagraphElement = createElement('p', {
+    className: 'text-field__error',
+    attributes: { id: errorId, 'aria-live': 'polite' },
+  });
+  const element: HTMLElement = createElement('div', {
+    className: 'text-field',
+    children: [label, control, error],
+  });
+
+  const setError = (message: string | undefined): void => {
+    const isInvalid: boolean = message !== undefined;
+
+    error.textContent = message ?? '';
+    element.dataset.invalid = String(isInvalid);
+    input.setAttribute('aria-invalid', String(isInvalid));
+  };
+
+  // The message element is empty while the value is valid.
+  input.setAttribute('aria-describedby', errorId);
+
+  return { element, input, setError };
 }

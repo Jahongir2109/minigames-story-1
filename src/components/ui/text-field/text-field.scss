@@ -83,6 +83,19 @@
     }
   }
 
+  &[data-invalid='true'] &__control {
+    border-color: color('error');
+  }
+
+  &__error {
+    @include text-style('body-small', 'regular');
+    color: color('error');
+
+    &:empty {
+      display: none;
+    }
+  }
+
   &__toggle-icon {
     width: calc(#{size(3)} - #{size('05')});
     height: calc(#{size(3)} - #{size('05')});
