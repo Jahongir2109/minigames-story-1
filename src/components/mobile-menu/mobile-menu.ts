@@ -2,8 +2,10 @@ import './mobile-menu.scss';
 
 import type { RouteName } from '@/app/router';
 import closeIcon from '@/assets/icons/close.svg?raw';
+import type { AppSession } from '@/auth/session';
 import { createBrand } from '@/components/brand/brand';
 import { createButton } from '@/components/ui/button/button';
+import { createUserProfile } from '@/components/user-profile/user-profile';
 import { markCurrentLinks, NAVIGATION_LINKS } from '@/shared/constants/navigation';
 import { createElement } from '@/shared/dom/create-element';
 import { createIcon } from '@/shared/dom/create-icon';
@@ -20,6 +22,7 @@ export interface MobileMenuOptions {
   trigger: HTMLButtonElement;
   onLogin: () => void;
   onSignUp: () => void;
+  onLogout: () => void;
 }
 
 export interface MobileMenu {
@@ -30,6 +33,10 @@ export interface MobileMenu {
    * Highlights the navigation link of the page that is open.
    */
   setCurrentRoute: (route: RouteName) => void;
+  /**
+   * Shows the profile of the signed-in user, or the Log In / Sign Up actions for a guest.
+   */
+  setSession: (session: AppSession | undefined) => void;
 }
 
 function createLinks(anchors: HTMLAnchorElement[]): HTMLUListElement {
@@ -138,5 +145,23 @@ export function createMobileMenu(options: MobileMenuOptions): MobileMenu {
     markCurrentLinks(anchors, route);
   };
 
-  return { element, open, close, setCurrentRoute };
+  const setSession = (session: AppSession | undefined): void => {
+    if (session === undefined) {
+      actions.replaceChildren(loginButton, signUpButton);
+      return;
+    }
+
+    actions.replaceChildren(
+      createUserProfile({
+        session,
+        variant: 'menu',
+        onLogout: (): void => {
+          close();
+          options.onLogout();
+        },
+      }),
+    );
+  };
+
+  return { element, open, close, setCurrentRoute, setSession };
 }

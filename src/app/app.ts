@@ -1,7 +1,7 @@
 import { createAppSessionStore, watchSession } from '@/auth/app-session';
 import type { AuthRequest } from '@/auth/auth-service';
-import { didAuthenticate } from '@/auth/authenticate';
-import type { SessionStore } from '@/auth/session';
+import { didAuthenticate, logOut } from '@/auth/authenticate';
+import type { AppSession, SessionStore } from '@/auth/session';
 import { type AuthDialog, createAuthDialog } from '@/components/auth-dialog/auth-dialog';
 import type { AuthMode } from '@/components/auth-dialog/auth-forms';
 import { createFooter } from '@/components/footer/footer';
@@ -61,6 +61,9 @@ export function mountApp(root: HTMLElement): void {
     onMenuOpen: (): void => {
       menu.open();
     },
+    onLogout: (): void => {
+      void logOut(session);
+    },
   });
   // The menu closes itself before it asks for the dialog.
   const menu: MobileMenu = createMobileMenu({
@@ -71,6 +74,15 @@ export function mountApp(root: HTMLElement): void {
     onSignUp: (): void => {
       openAuth('register');
     },
+    onLogout: (): void => {
+      void logOut(session);
+    },
+  });
+
+  // The header and the menu follow the session: sign-in, logout and expiry.
+  session.subscribe((current: AppSession | undefined): void => {
+    header.setSession(current);
+    menu.setSession(current);
   });
 
   // Replaced by the page of the current route as soon as the router starts.

@@ -2,7 +2,7 @@ import { FirebaseError } from 'firebase/app';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import type { AuthRequest } from './auth-service';
-import { didAuthenticate } from './authenticate';
+import { didAuthenticate, LOGOUT_ERROR_MESSAGE, LOGOUT_MESSAGE, logOut } from './authenticate';
 import type { SessionStore, UserProfile } from './session';
 
 interface Mocks {
@@ -109,6 +109,35 @@ describe('didAuthenticate', () => {
     expect(mocks.showSnackbar).toHaveBeenCalledWith({
       message: 'Google sign-in was cancelled.',
       variant: 'info',
+    });
+  });
+});
+
+describe('logOut', () => {
+  it('ends the session and confirms the logout', async () => {
+    const session: SessionStore & { start: Mock<SessionStore['start']> } = createSession();
+
+    vi.mocked(session.end).mockResolvedValue();
+
+    await logOut(session);
+
+    expect(session.end).toHaveBeenCalledTimes(1);
+    expect(mocks.showSnackbar).toHaveBeenCalledWith({
+      message: LOGOUT_MESSAGE,
+      variant: 'success',
+    });
+  });
+
+  it('reports a failed Firebase sign-out', async () => {
+    const session: SessionStore & { start: Mock<SessionStore['start']> } = createSession();
+
+    vi.mocked(session.end).mockRejectedValue(new Error('network'));
+
+    await logOut(session);
+
+    expect(mocks.showSnackbar).toHaveBeenCalledWith({
+      message: LOGOUT_ERROR_MESSAGE,
+      variant: 'error',
     });
   });
 });

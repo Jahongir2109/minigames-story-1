@@ -2,8 +2,10 @@ import './header.scss';
 
 import type { RouteName } from '@/app/router';
 import burgerIcon from '@/assets/icons/burger.svg?raw';
+import type { AppSession } from '@/auth/session';
 import { createBrand } from '@/components/brand/brand';
 import { createButton } from '@/components/ui/button/button';
+import { createUserProfile } from '@/components/user-profile/user-profile';
 import { markCurrentLinks, NAVIGATION_LINKS } from '@/shared/constants/navigation';
 import { createElement } from '@/shared/dom/create-element';
 import { createIcon } from '@/shared/dom/create-icon';
@@ -12,6 +14,7 @@ export interface HeaderOptions {
   onLogin: () => void;
   onSignUp: () => void;
   onMenuOpen: () => void;
+  onLogout: () => void;
 }
 
 export interface Header {
@@ -21,6 +24,10 @@ export interface Header {
    * Highlights the navigation link of the page that is open.
    */
   setCurrentRoute: (route: RouteName) => void;
+  /**
+   * Shows the profile of the signed-in user, or the Log In / Sign Up actions for a guest.
+   */
+  setSession: (session: AppSession | undefined) => void;
 }
 
 function createNavigation(anchors: HTMLAnchorElement[]): HTMLElement {
@@ -100,5 +107,17 @@ export function createHeader(options: HeaderOptions): Header {
     markCurrentLinks(anchors, route);
   };
 
-  return { element, menuButton, setCurrentRoute };
+  const setSession = (session: AppSession | undefined): void => {
+    if (session === undefined) {
+      actions.replaceChildren(loginButton, signUpButton, menuButton);
+      return;
+    }
+
+    actions.replaceChildren(
+      createUserProfile({ session, variant: 'header', onLogout: options.onLogout }),
+      menuButton,
+    );
+  };
+
+  return { element, menuButton, setCurrentRoute, setSession };
 }
