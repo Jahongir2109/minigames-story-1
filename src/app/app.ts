@@ -1,5 +1,13 @@
 import { createAppSessionStore, watchSession } from '@/auth/app-session';
-import type { SessionStore } from '@/auth/session';
+import {
+  type AuthRequest,
+  getAuthErrorMessage,
+  registerWithEmail,
+  signInWithEmail,
+} from '@/auth/auth-service';
+import { getFirebaseAuth } from '@/auth/firebase';
+import type { SessionStore, UserProfile } from '@/auth/session';
+import { showSnackbar } from '@/components/ui/snackbar/snackbar';
 import { type AuthDialog, createAuthDialog } from '@/components/auth-dialog/auth-dialog';
 import type { AuthMode } from '@/components/auth-dialog/auth-forms';
 import { createFooter } from '@/components/footer/footer';
@@ -31,12 +39,56 @@ function openGame(game: Game): void {
   openDialogUrl('game', game.slug);
 }
 
+async function signIn(request: AuthRequest): Promise<UserProfile | undefined> {
+  switch (request.kind) {
+    case 'login': {
+      return signInWithEmail(getFirebaseAuth(), request);
+    }
+    case 'register': {
+      return registerWithEmail(getFirebaseAuth(), request);
+    }
+    case 'google': {
+      showSnackbar({ message: 'Google sign-in is not available yet.', variant: 'info' });
+      return undefined;
+    }
+  }
+}
+
+/**
+ * Signs in with Firebase, then starts the app session; failures are reported with a Snackbar and
+ * leave the dialog open for a retry.
+ */
+async function didAuthenticate(session: SessionStore, request: AuthRequest): Promise<boolean> {
+  try {
+    const profile: UserProfile | undefined = await signIn(request);
+
+    if (profile === undefined) {
+      return false;
+    }
+
+    session.start(profile);
+    showSnackbar({
+      message: request.kind === 'register' ? 'Your account is ready. Welcome!' : 'Welcome back!',
+      variant: 'success',
+    });
+
+    return true;
+  } catch (error: unknown) {
+    showSnackbar({ message: getAuthErrorMessage(error), variant: 'error' });
+
+    return false;
+  }
+}
+
 /**
  * Builds the whole page from TypeScript: the static HTML document only contains the script tag.
  */
 export function mountApp(root: HTMLElement): void {
   const session: SessionStore = createAppSessionStore();
-  const authDialog: AuthDialog = createAuthDialog({ onModeChange: openAuth });
+  const authDialog: AuthDialog = createAuthDialog({
+    onModeChange: openAuth,
+    authenticate: (request: AuthRequest): Promise<boolean> => didAuthenticate(session, request),
+  });
   const gameDialog: GameDialog = createGameDialog();
 
   authDialog.element.addEventListener('close', (): void => {
