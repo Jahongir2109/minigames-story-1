@@ -1,4 +1,11 @@
 export const API_BASE_URL: string = 'https://faxb76kxra.execute-api.eu-central-1.amazonaws.com/api';
+// A mutation that takes longer than this is given up; its result on the server is unknown then.
+export const MUTATION_TIMEOUT_MS: number = 15_000;
+
+const NETWORK_ERROR_MESSAGE: string =
+  'Could not reach the server. Check your connection and try again.';
+const TIMEOUT_MESSAGE: string = 'The server did not answer in time.';
+const GATEWAY_TIMEOUT_STATUS: number = 504;
 
 export type QueryParameters = Readonly<Record<string, string | number | boolean | undefined>>;
 
@@ -16,6 +23,14 @@ export class ApiError extends Error {
 
   get isNotFound(): boolean {
     return this.status === 404;
+  }
+
+  /**
+   * The request may or may not have reached the server (lost connection, timeout), so a mutation
+   * may already be applied. Such requests are never repeated automatically.
+   */
+  get isOutcomeUnknown(): boolean {
+    return this.status === 0 || this.status === GATEWAY_TIMEOUT_STATUS;
   }
 }
 
@@ -58,6 +73,16 @@ async function readErrorMessage(response: Response): Promise<string> {
   return response.statusText || `Request failed with status ${String(response.status)}`;
 }
 
+async function readJson<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    throw new ApiError(response.status, await readErrorMessage(response));
+  }
+
+  const body: unknown = await response.json();
+
+  return body as T;
+}
+
 /**
  * Sends a GET request to the MiniGames REST API and returns the parsed JSON body.
  * Aborted requests reject with the original `AbortError` (check it with `isAbortError`).
@@ -75,16 +100,38 @@ export async function getJson<T>(path: string, options: RequestOptions = {}): Pr
       throw error;
     }
 
-    throw new ApiError(0, 'Could not reach the server. Check your connection and try again.');
+    throw new ApiError(0, NETWORK_ERROR_MESSAGE);
   }
 
-  if (!response.ok) {
-    throw new ApiError(response.status, await readErrorMessage(response));
+  return readJson(response);
+}
+
+/**
+ * Sends a JSON POST request (a mutation) and returns the parsed JSON body. A lost connection or a
+ * request that runs longer than `MUTATION_TIMEOUT_MS` rejects with an error whose
+ * `isOutcomeUnknown` is `true`; the caller must not repeat it automatically.
+ */
+export async function postJson<T>(path: string, body: unknown): Promise<T> {
+  const controller: AbortController = new AbortController();
+  const timer: ReturnType<typeof setTimeout> = setTimeout((): void => {
+    controller.abort();
+  }, MUTATION_TIMEOUT_MS);
+  let response: Response;
+
+  try {
+    response = await fetch(buildUrl(path), {
+      method: 'POST',
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: controller.signal,
+    });
+  } catch (error: unknown) {
+    throw new ApiError(0, isAbortError(error) ? TIMEOUT_MESSAGE : NETWORK_ERROR_MESSAGE);
+  } finally {
+    clearTimeout(timer);
   }
 
-  const body: unknown = await response.json();
-
-  return body as T;
+  return readJson(response);
 }
 
 /**
