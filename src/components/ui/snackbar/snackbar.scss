@@ -41,6 +41,10 @@
   }
 
   &--info {
+    border-left-color: color('on-bg-footer');
+  }
+
+  &--warning {
     border-left-color: color('primary');
   }
 

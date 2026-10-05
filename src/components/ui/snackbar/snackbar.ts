@@ -4,7 +4,7 @@ import closeIcon from '@/assets/icons/close.svg?raw';
 import { createElement } from '@/shared/dom/create-element';
 import { createIcon } from '@/shared/dom/create-icon';
 
-export type SnackbarVariant = 'info' | 'success' | 'error';
+export type SnackbarVariant = 'info' | 'success' | 'warning' | 'error';
 
 export interface SnackbarOptions {
   message: string;

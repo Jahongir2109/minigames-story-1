@@ -27,6 +27,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       include: ['src/**/*.test.ts'],
       // Most of the app builds DOM nodes, so the tests run in a simulated browser.
       environment: 'happy-dom',
+      setupFiles: ['src/test-utils/setup.ts'],
       restoreMocks: true,
       unstubGlobals: true,
       coverage: {
@@ -37,6 +38,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         exclude: [
           // The tests themselves.
           'src/**/*.test.ts',
+          // Test helpers (fake API, fixtures) used only by the tests.
+          'src/test-utils/**',
           // Bootstrap only: imports the global styles and calls mountApp().
           'src/main.ts',
           // Type declarations only, no runtime code.
