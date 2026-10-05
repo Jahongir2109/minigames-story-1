@@ -225,6 +225,8 @@ $transition-durations: (
   'slow': 400ms,
   // One sweep of the skeleton loader shimmer.
   'shimmer': 1400ms,
+  // One turn of the loading spinner of pending buttons.
+  'spin': 800ms,
 );
 
 $z-indexes: (
