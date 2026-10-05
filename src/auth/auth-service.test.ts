@@ -4,8 +4,10 @@ import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import {
   getAuthErrorMessage,
+  isAuthCancellation,
   registerWithEmail,
   signInWithEmail,
+  signInWithGoogle,
   toUserProfile,
 } from './auth-service';
 
@@ -13,12 +15,21 @@ interface FirebaseAuthMocks {
   signInWithEmailAndPassword: Mock<(...parameters: unknown[]) => Promise<UserCredential>>;
   createUserWithEmailAndPassword: Mock<(...parameters: unknown[]) => Promise<UserCredential>>;
   updateProfile: Mock<(...parameters: unknown[]) => Promise<void>>;
+  signInWithPopup: Mock<(...parameters: unknown[]) => Promise<UserCredential>>;
+  GoogleAuthProvider: Mock<() => { setCustomParameters: Mock<(parameters: object) => void> }>;
 }
 
 const mocks: FirebaseAuthMocks = vi.hoisted((): FirebaseAuthMocks => ({
   signInWithEmailAndPassword: vi.fn(),
   createUserWithEmailAndPassword: vi.fn(),
   updateProfile: vi.fn(),
+  signInWithPopup: vi.fn(),
+  // A regular function, so the service can call it with `new`.
+  GoogleAuthProvider: vi.fn(function GoogleAuthProvider(): {
+    setCustomParameters: Mock<(parameters: object) => void>;
+  } {
+    return { setCustomParameters: vi.fn() };
+  }),
 }));
 
 vi.mock('firebase/auth', () => mocks);
@@ -132,6 +143,45 @@ describe('registerWithEmail', () => {
         password: 'Secret1!',
       }),
     ).rejects.toBeInstanceOf(FirebaseError);
+  });
+});
+
+describe('signInWithGoogle', () => {
+  it('signs in with a Google pop-up that lets the user pick an account', async () => {
+    mocks.signInWithPopup.mockResolvedValue(
+      credential({
+        displayName: 'Alex Pro',
+        email: 'alex@gmail.com',
+        photoURL: 'https://lh3/photo.jpg',
+      }),
+    );
+
+    await expect(signInWithGoogle(AUTH)).resolves.toEqual({
+      displayName: 'Alex Pro',
+      email: 'alex@gmail.com',
+      avatarUrl: 'https://lh3/photo.jpg',
+    });
+
+    const provider: unknown = mocks.GoogleAuthProvider.mock.results[0]?.value;
+
+    expect(mocks.signInWithPopup).toHaveBeenCalledWith(AUTH, provider);
+    expect(
+      (provider as { setCustomParameters: Mock<(parameters: object) => void> }).setCustomParameters,
+    ).toHaveBeenCalledWith({ prompt: 'select_account' });
+  });
+
+  it('passes a closed pop-up on as a cancellation', async () => {
+    mocks.signInWithPopup.mockRejectedValue(new FirebaseError('auth/popup-closed-by-user', ''));
+
+    await expect(signInWithGoogle(AUTH)).rejects.toSatisfy(isAuthCancellation);
+  });
+});
+
+describe('isAuthCancellation', () => {
+  it('recognizes only the cancelled pop-up codes', () => {
+    expect(isAuthCancellation(new FirebaseError('auth/cancelled-popup-request', ''))).toBe(true);
+    expect(isAuthCancellation(new FirebaseError('auth/popup-blocked', ''))).toBe(false);
+    expect(isAuthCancellation(new Error('auth/popup-closed-by-user'))).toBe(false);
   });
 });
 
