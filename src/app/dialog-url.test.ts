@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { afterAll, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import { closeDialogUrl, getDialogParameter, openDialogUrl, removeDialogUrl } from './dialog-url';
 import { onLocationChange } from './navigation';
@@ -7,16 +7,16 @@ function currentUrl(): string {
   return `${location.pathname}${location.search}${location.hash}`;
 }
 
-let listener: Mock<() => void>;
-let stopListening: () => void;
+// Counts the URL changes that the app would react to.
+const listener: Mock<() => void> = vi.fn();
+const stopListening: () => void = onLocationChange(listener);
 
 beforeEach(() => {
   history.replaceState(null, '', '/library?category=puzzle#top');
-  listener = vi.fn();
-  stopListening = onLocationChange(listener);
+  listener.mockClear();
 });
 
-afterEach(() => {
+afterAll(() => {
   stopListening();
 });
 
@@ -97,7 +97,7 @@ describe('removeDialogUrl', () => {
 
 describe('closeDialogUrl', () => {
   it('goes back to the page when the app opened the dialog', () => {
-    const back: Mock<() => void> = vi.spyOn(history, 'back').mockImplementation(() => {});
+    const back: Mock<() => void> = vi.spyOn(history, 'back').mockReturnValue();
 
     openDialogUrl('game', 'tukoni');
     closeDialogUrl('game');
