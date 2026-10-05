@@ -1,3 +1,5 @@
+import { createAppSessionStore, watchSession } from '@/auth/app-session';
+import type { SessionStore } from '@/auth/session';
 import { type AuthDialog, createAuthDialog } from '@/components/auth-dialog/auth-dialog';
 import type { AuthMode } from '@/components/auth-dialog/auth-forms';
 import { createFooter } from '@/components/footer/footer';
@@ -33,6 +35,7 @@ function openGame(game: Game): void {
  * Builds the whole page from TypeScript: the static HTML document only contains the script tag.
  */
 export function mountApp(root: HTMLElement): void {
+  const session: SessionStore = createAppSessionStore();
   const authDialog: AuthDialog = createAuthDialog({ onModeChange: openAuth });
   const gameDialog: GameDialog = createGameDialog();
 
@@ -118,6 +121,8 @@ export function mountApp(root: HTMLElement): void {
     }
   };
 
+  // Registered before the router, so every navigation sees an up-to-date session.
+  watchSession(session);
   router.start();
   onLocationChange(syncDialogs);
   syncDialogs();
