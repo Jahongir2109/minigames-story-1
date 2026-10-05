@@ -2,6 +2,7 @@ import googleIcon from '@/assets/icons/google.svg?raw';
 import lockIcon from '@/assets/icons/lock.svg?raw';
 import mailIcon from '@/assets/icons/mail.svg?raw';
 import userIcon from '@/assets/icons/user.svg?raw';
+import type { LoginRequest, RegisterRequest } from '@/auth/auth-service';
 import {
   validateEmail,
   validateLoginPassword,
@@ -17,8 +18,13 @@ import { createFormValidation, type FormValidation } from './form-validation';
 
 export type AuthMode = 'login' | 'register';
 
-export interface AuthFormOptions {
+export interface AuthFormOptions<T> {
   onSwitch: (mode: AuthMode) => void;
+  /**
+   * Called with the trimmed values when a valid form is submitted.
+   */
+  onSubmit: (request: T) => void;
+  onGoogle: () => void;
 }
 
 export interface AuthForm {
@@ -27,7 +33,13 @@ export interface AuthForm {
    * Clears the fields and their errors.
    */
   reset: () => void;
+  /**
+   * Locks every field and action while an authentication request is pending.
+   */
+  setPending: (isPending: boolean) => void;
 }
+
+const PENDING_LABEL: string = 'Please wait…';
 
 function createHeading(title: string, subtitle: string): HTMLElement {
   return createElement('header', {
@@ -54,14 +66,18 @@ function createDivider(): HTMLElement {
   });
 }
 
-function createGoogleButton(label: string): HTMLButtonElement {
-  return createButton({
+function createGoogleButton(label: string, onClick: () => void): HTMLButtonElement {
+  const button: HTMLButtonElement = createButton({
     label,
     variant: 'outline',
     size: 'large',
     icon: googleIcon,
     className: 'auth-form__google',
   });
+
+  button.addEventListener('click', onClick);
+
+  return button;
 }
 
 function createSwitchPrompt(
@@ -83,6 +99,7 @@ function createForm(
   label: string,
   children: readonly HTMLElement[],
   validation: FormValidation,
+  onValidSubmit: () => void,
 ): HTMLFormElement {
   const form: HTMLFormElement = createElement('form', {
     className: 'auth-form__form',
@@ -93,9 +110,37 @@ function createForm(
   form.addEventListener('submit', (event: SubmitEvent): void => {
     event.preventDefault();
     validation.showAllErrors();
+
+    if (validation.isValid()) {
+      onValidSubmit();
+    }
   });
 
   return form;
+}
+
+/**
+ * While a request is pending every input and button of the form is disabled and the submit button
+ * says so; afterwards the submit button follows the validation again.
+ */
+function createPendingSwitch(
+  element: HTMLElement,
+  submit: HTMLButtonElement,
+  validation: FormValidation,
+): (isPending: boolean) => void {
+  const label: string = submit.textContent;
+
+  return (isPending: boolean): void => {
+    for (const control of element.querySelectorAll<HTMLInputElement | HTMLButtonElement>(
+      'input, button',
+    )) {
+      control.disabled = isPending;
+    }
+
+    element.setAttribute('aria-busy', String(isPending));
+    submit.textContent = isPending ? PENDING_LABEL : label;
+    submit.disabled = isPending || !validation.isValid();
+  };
 }
 
 function createSubmitButton(label: string): HTMLButtonElement {
@@ -108,7 +153,7 @@ function createSubmitButton(label: string): HTMLButtonElement {
   });
 }
 
-export function createLoginForm(options: AuthFormOptions): AuthForm {
+export function createLoginForm(options: AuthFormOptions<LoginRequest>): AuthForm {
   const email: TextField = createTextField({
     id: 'login-email',
     name: 'email',
@@ -135,7 +180,11 @@ export function createLoginForm(options: AuthFormOptions): AuthForm {
   const submit: HTMLButtonElement = createSubmitButton('Login');
   const actions: HTMLElement = createElement('div', {
     className: 'auth-form__actions',
-    children: [submit, createDivider(), createGoogleButton('Continue with Google')],
+    children: [
+      submit,
+      createDivider(),
+      createGoogleButton('Continue with Google', options.onGoogle),
+    ],
   });
   const validation: FormValidation = createFormValidation(
     [
@@ -147,7 +196,13 @@ export function createLoginForm(options: AuthFormOptions): AuthForm {
     ],
     submit,
   );
-  const form: HTMLFormElement = createForm('Login', [fields, actions], validation);
+  const form: HTMLFormElement = createForm('Login', [fields, actions], validation, (): void => {
+    options.onSubmit({
+      kind: 'login',
+      email: email.input.value.trim(),
+      password: password.input.value,
+    });
+  });
 
   const element: HTMLElement = createElement('div', {
     className: 'auth-form',
@@ -160,10 +215,14 @@ export function createLoginForm(options: AuthFormOptions): AuthForm {
     ],
   });
 
-  return { element, reset: validation.reset };
+  return {
+    element,
+    reset: validation.reset,
+    setPending: createPendingSwitch(element, submit, validation),
+  };
 }
 
-export function createRegisterForm(options: AuthFormOptions): AuthForm {
+export function createRegisterForm(options: AuthFormOptions<RegisterRequest>): AuthForm {
   const username: TextField = createTextField({
     id: 'register-username',
     name: 'username',
@@ -207,7 +266,11 @@ export function createRegisterForm(options: AuthFormOptions): AuthForm {
   const submit: HTMLButtonElement = createSubmitButton('Create Account');
   const actions: HTMLElement = createElement('div', {
     className: 'auth-form__actions',
-    children: [submit, createDivider(), createGoogleButton('Sign up with Google')],
+    children: [
+      submit,
+      createDivider(),
+      createGoogleButton('Sign up with Google', options.onGoogle),
+    ],
   });
   const validation: FormValidation = createFormValidation(
     [
@@ -229,7 +292,19 @@ export function createRegisterForm(options: AuthFormOptions): AuthForm {
     ],
     submit,
   );
-  const form: HTMLFormElement = createForm('Registration', [fields, actions], validation);
+  const form: HTMLFormElement = createForm(
+    'Registration',
+    [fields, actions],
+    validation,
+    (): void => {
+      options.onSubmit({
+        kind: 'register',
+        username: username.input.value,
+        email: email.input.value.trim(),
+        password: password.input.value,
+      });
+    },
+  );
 
   const element: HTMLElement = createElement('div', {
     className: 'auth-form',
@@ -242,5 +317,9 @@ export function createRegisterForm(options: AuthFormOptions): AuthForm {
     ],
   });
 
-  return { element, reset: validation.reset };
+  return {
+    element,
+    reset: validation.reset,
+    setPending: createPendingSwitch(element, submit, validation),
+  };
 }
