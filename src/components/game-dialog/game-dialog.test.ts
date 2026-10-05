@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
-import { createSessionStore, type SessionStore } from '@/auth/session';
+import { type AppSession, createSessionStore, type SessionStore } from '@/auth/session';
 import {
   type ApiRequest,
   type ApiStub,
@@ -30,7 +30,7 @@ function setup(): Setup {
     signOut: (): Promise<void> => Promise.resolve(),
   });
   const onClose: Mock<() => void> = vi.fn();
-  const dialog: GameDialog = createGameDialog({ session, onClose });
+  const dialog: GameDialog = createGameDialog({ session, requireSession: vi.fn(), onClose });
 
   document.body.append(dialog.element);
 
@@ -201,6 +201,41 @@ describe('createGameDialog', () => {
     await vi.waitFor(() => {
       expect(onClose).toHaveBeenCalledTimes(2);
     });
+  });
+
+  it('updates the likes of the game from the favorite answer', async () => {
+    stubApi((request: ApiRequest): Response => {
+      if (request.path.endsWith('/favorite')) {
+        return json({ data: { isFavorited: true, likesCount: 1500 } });
+      }
+
+      return request.path.endsWith('/comments')
+        ? commentsResponse([], 0)
+        : json({ data: { ...GAME, isLikedByCurrentUser: false } });
+    });
+    const session: SessionStore = createSessionStore({
+      storage: localStorage,
+      signOut: (): Promise<void> => Promise.resolve(),
+    });
+    const dialog: GameDialog = createGameDialog({
+      session,
+      requireSession: (): AppSession | undefined => session.check(),
+      onClose: vi.fn(),
+    });
+
+    document.body.append(dialog.element);
+    session.start(PROFILE);
+    dialog.open(GAME.slug);
+    await waitForTitle(dialog, GAME.name);
+
+    dialog.element.querySelector<HTMLButtonElement>('.game-info__favorite')?.click();
+
+    await vi.waitFor(() => {
+      expect(dialog.element.querySelector('.game-info__stat--likes')?.textContent).toContain(
+        '1.5K',
+      );
+    });
+    expect(dialog.element.querySelector('.game-info__favorite')?.ariaPressed).toBe('true');
   });
 
   it('shows "not found" for an unknown game', async () => {

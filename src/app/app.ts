@@ -2,6 +2,7 @@ import { createAppSessionStore, watchSession } from '@/auth/app-session';
 import type { AuthRequest } from '@/auth/auth-service';
 import { didAuthenticate, logOut } from '@/auth/authenticate';
 import type { AppSession, SessionStore } from '@/auth/session';
+import { createSessionGuard, type RequireSession } from '@/auth/session-guard';
 import { type AuthDialog, createAuthDialog } from '@/components/auth-dialog/auth-dialog';
 import type { AuthMode } from '@/components/auth-dialog/auth-forms';
 import { createFooter } from '@/components/footer/footer';
@@ -46,6 +47,17 @@ export function mountApp(root: HTMLElement): void {
     }
   };
 
+  // A protected action of a guest shows Auth over Game Details, which comes back when Auth closes.
+  const requireSession: RequireSession = createSessionGuard({
+    store: session,
+    onAuthRequired: (): void => {
+      openDialogUrl('auth', 'login', { stack: true });
+    },
+    warn: (message: string): void => {
+      showSnackbar({ message, variant: 'warning' });
+    },
+  });
+
   const authDialog: AuthDialog = createAuthDialog({
     onModeChange: (mode: AuthMode): void => {
       openDialogUrl('auth', mode);
@@ -54,6 +66,7 @@ export function mountApp(root: HTMLElement): void {
   });
   const gameDialog: GameDialog = createGameDialog({
     session,
+    requireSession,
     onClose: (): void => {
       closeDialogUrl('game');
     },

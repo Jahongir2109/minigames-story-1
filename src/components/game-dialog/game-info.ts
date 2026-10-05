@@ -2,20 +2,20 @@ import './game-info.scss';
 
 import heartIcon from '@/assets/icons/heart-filled.svg?raw';
 import starIcon from '@/assets/icons/star-filled.svg?raw';
+import type { RequireSession } from '@/auth/session-guard';
 import { createElement } from '@/shared/dom/create-element';
 import { createIcon } from '@/shared/dom/create-icon';
 import type { GameDetails } from '@/shared/types/game';
 import { formatCount, formatRating } from '@/shared/utils/format';
 
-const ADD_LABEL: string = 'Add to Favorites';
-const REMOVE_LABEL: string = 'Remove from Favorites';
+import { createFavoriteButton } from './favorite-button';
 
 interface Spec {
   label: string;
   value: string;
 }
 
-function createStat(icon: string, modifier: string, label: string, value: string): HTMLElement {
+function createStat(icon: string, modifier: string, label: string, value: Node): HTMLElement {
   return createElement('p', {
     className: `game-info__stat game-info__stat--${modifier}`,
     children: [
@@ -48,47 +48,36 @@ function createSpecs(game: GameDetails): HTMLDListElement {
   });
 }
 
-// Icon-only on mobile, so the button keeps its accessible name in `aria-label`.
-function createFavoriteButton(): HTMLButtonElement {
-  const label: HTMLSpanElement = createElement('span', {
-    className: 'game-info__favorite-label',
-    text: ADD_LABEL,
-    attributes: { 'aria-hidden': 'true' },
-  });
-  const button: HTMLButtonElement = createElement('button', {
-    className: 'game-info__favorite',
-    attributes: { type: 'button', 'aria-pressed': 'false', 'aria-label': ADD_LABEL },
-    children: [createIcon(heartIcon, 'game-info__favorite-icon'), label],
-  });
-
-  button.addEventListener('click', (): void => {
-    const isActive: boolean = button.ariaPressed !== 'true';
-    const text: string = isActive ? REMOVE_LABEL : ADD_LABEL;
-
-    button.ariaPressed = String(isActive);
-    button.ariaLabel = text;
-    label.textContent = text;
-  });
-
-  return button;
-}
-
 /**
- * Title, rating, description, characteristics and the actions of the game. "Play Now" does
+ * Title, rating, likes, description, characteristics and the actions of the game. "Play Now" does
  * nothing yet; the free static game never shows the paid "Buy Now" variant.
  */
-export function createGameInfo(game: GameDetails, titleId: string): HTMLElement {
+export function createGameInfo(
+  game: GameDetails,
+  titleId: string,
+  requireSession: RequireSession,
+): HTMLElement {
   const title: HTMLHeadingElement = createElement('h2', {
     className: 'game-info__title',
     text: game.name,
     attributes: { id: titleId },
   });
+  const rating: Text = document.createTextNode(formatRating(game.rating));
+  const likes: Text = document.createTextNode(formatCount(game.likesCount));
   const stats: HTMLElement = createElement('div', {
     className: 'game-info__stats',
     children: [
-      createStat(starIcon, 'rating', 'Rating', formatRating(game.rating)),
-      createStat(heartIcon, 'likes', 'Likes', formatCount(game.likesCount)),
+      createStat(starIcon, 'rating', 'Rating', rating),
+      createStat(heartIcon, 'likes', 'Likes', likes),
     ],
+  });
+  const favoriteButton: HTMLButtonElement = createFavoriteButton({
+    slug: game.slug,
+    isFavorited: game.isLikedByCurrentUser,
+    requireSession,
+    onLikesCount: (likesCount: number): void => {
+      likes.textContent = formatCount(likesCount);
+    },
   });
   const description: HTMLParagraphElement = createElement('p', {
     className: 'game-info__description',
@@ -109,7 +98,7 @@ export function createGameInfo(game: GameDetails, titleId: string): HTMLElement 
       createSpecs(game),
       createElement('div', {
         className: 'game-info__actions',
-        children: [playButton, createFavoriteButton()],
+        children: [playButton, favoriteButton],
       }),
     ],
   });

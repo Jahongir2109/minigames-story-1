@@ -1,0 +1,23 @@
+@use 'abstracts' as *;
+
+// A ring in the current text color that turns while a button waits for the API.
+.spinner {
+  display: inline-block;
+  flex-shrink: 0;
+  width: size(3);
+  height: size(3);
+  border: border-width('thick') solid currentcolor;
+  border-right-color: transparent;
+  border-radius: corner('full');
+  animation: spinner-turn duration('spin') linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: calc(#{duration('spin')} * 4);
+  }
+}
+
+@keyframes spinner-turn {
+  to {
+    transform: rotate(1turn);
+  }
+}

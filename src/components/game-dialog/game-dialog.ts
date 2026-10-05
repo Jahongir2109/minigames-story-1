@@ -4,6 +4,7 @@ import { ApiError, getErrorMessage, isAbortError } from '@/api/client';
 import { fetchGameDetails } from '@/api/games';
 import closeIcon from '@/assets/icons/close.svg?raw';
 import type { AppSession, SessionStore } from '@/auth/session';
+import type { RequireSession } from '@/auth/session-guard';
 import { createEmptyState } from '@/components/ui/empty-state/empty-state';
 import { createErrorBanner } from '@/components/ui/error-banner/error-banner';
 import { createSkeleton, createSkeletonRegion } from '@/components/ui/skeleton/skeleton';
@@ -26,6 +27,10 @@ export interface GameDialogOptions {
    * them when the user signs in, logs out or the session expires.
    */
   session: SessionStore;
+  /**
+   * Checks the session before a protected action (favorite, comment, like).
+   */
+  requireSession: RequireSession;
   /**
    * Called when the user closes the dialog (not when it is hidden under Auth).
    */
@@ -131,7 +136,7 @@ export function createGameDialog(options: GameDialogOptions): GameDialog {
     const body: HTMLElement = createElement('div', {
       className: 'game-dialog__body',
       children: [
-        createGameInfo(game, TITLE_ID),
+        createGameInfo(game, TITLE_ID, options.requireSession),
         createGameRecords(game.topRecords),
         createGameComments(slug, signal, user),
       ],
