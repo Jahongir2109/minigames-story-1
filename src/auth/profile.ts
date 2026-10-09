@@ -44,15 +44,15 @@ export function getCommentAuthorName(profile: Pick<UserProfile, 'displayName' | 
 
 /**
  * Avatar initials: the first letter or digit of the first word, or of each of the first two words.
- * Empty when the name has no letters or digits (a generic avatar is shown then).
+ * Only the first two words count, so a word without letters or digits adds nothing. Empty when
+ * they have no letters or digits (a generic avatar is shown then).
  */
 export function getProfileInitials(name: string): string {
   return name
     .trim()
     .split(/\s+/)
-    .map((word: string): string => ALPHANUMERIC_PATTERN.exec(word)?.[0] ?? '')
-    .filter((initial: string): boolean => initial !== '')
     .slice(0, INITIALS_WORDS)
+    .map((word: string): string => ALPHANUMERIC_PATTERN.exec(word)?.[0] ?? '')
     .join('')
     .toLocaleUpperCase();
 }
