@@ -3,6 +3,8 @@ import './game-dialog.scss';
 import { ApiError, getErrorMessage, isAbortError } from '@/api/client';
 import { fetchGameDetails } from '@/api/games';
 import closeIcon from '@/assets/icons/close.svg?raw';
+import type { AppSession, SessionStore } from '@/auth/session';
+import type { RequireSession } from '@/auth/session-guard';
 import { createEmptyState } from '@/components/ui/empty-state/empty-state';
 import { createErrorBanner } from '@/components/ui/error-banner/error-banner';
 import { createSkeleton, createSkeletonRegion } from '@/components/ui/skeleton/skeleton';
@@ -19,12 +21,33 @@ import { createGameRecords } from './game-records';
 const TITLE_ID: string = 'game-dialog-title';
 const SKELETON_LINES: number = 4;
 
+export interface GameDialogOptions {
+  /**
+   * The details, the favorite and the comment likes follow the signed-in user; the dialog reloads
+   * them when the user signs in, logs out or the session expires.
+   */
+  session: SessionStore;
+  /**
+   * Checks the session before a protected action (favorite, comment, like).
+   */
+  requireSession: RequireSession;
+  /**
+   * Called when the user closes the dialog (not when it is hidden under Auth).
+   */
+  onClose: () => void;
+}
+
 export interface GameDialog {
   element: HTMLDialogElement;
   /**
-   * Opens the dialog for the game with this slug and loads its details and comments.
+   * Opens the dialog for the game with this slug and loads its details and comments. A hidden
+   * dialog of the same game is shown again as it was.
    */
   open: (slug: string) => void;
+  /**
+   * Hides the dialog while Auth is shown instead; the game (loaded if needed) and the URL stay.
+   */
+  hide: (slug: string) => void;
   close: () => void;
 }
 
@@ -77,9 +100,10 @@ function createMessageContent(closeButton: HTMLButtonElement, message: HTMLEleme
 }
 
 /**
- * Game Details dialog: the details of the opened game and its latest comments come from the API.
+ * Game Details dialog: the details of the opened game and its latest comments come from the API,
+ * personalized for the signed-in user.
  */
-export function createGameDialog(): GameDialog {
+export function createGameDialog(options: GameDialogOptions): GameDialog {
   const surface: HTMLElement = createElement('div', { className: 'game-dialog__surface' });
   const element: HTMLDialogElement = createElement('dialog', {
     className: 'game-dialog',
@@ -87,20 +111,34 @@ export function createGameDialog(): GameDialog {
     children: [surface],
   });
   let currentSlug: string | undefined;
-  // Aborted when the dialog closes or opens another game, so late answers are dropped.
-  let session: AbortController = new AbortController();
+  let user: AppSession | undefined;
+  // Hidden under Auth: the dialog element is closed, but the game stays loaded.
+  let isHidden: boolean = false;
+  // Aborted when the dialog closes, opens another game or reloads, so late answers are dropped.
+  let requests: AbortController = new AbortController();
+
+  const reset = (): void => {
+    requests.abort();
+    currentSlug = undefined;
+    isHidden = false;
+  };
 
   const close = (): void => {
-    element.close();
+    if (element.open) {
+      isHidden = false;
+      element.close();
+    } else {
+      reset();
+    }
   };
 
   const showGame = (game: GameDetails, slug: string, signal: AbortSignal): void => {
     const body: HTMLElement = createElement('div', {
       className: 'game-dialog__body',
       children: [
-        createGameInfo(game, TITLE_ID),
+        createGameInfo(game, TITLE_ID, options.requireSession),
         createGameRecords(game.topRecords),
-        createGameComments(slug, signal),
+        createGameComments({ slug, signal, user, requireSession: options.requireSession }),
       ],
     });
 
@@ -121,7 +159,11 @@ export function createGameDialog(): GameDialog {
     surface.replaceChildren(...createSkeletonContent(createCloseButton(close)));
 
     try {
-      const game: GameDetails = await fetchGameDetails(slug, { signal });
+      const game: GameDetails = await fetchGameDetails(
+        slug,
+        { userEmail: user?.email },
+        { signal },
+      );
 
       showGame(game, slug, signal);
     } catch (error: unknown) {
@@ -148,29 +190,68 @@ export function createGameDialog(): GameDialog {
     }
   };
 
-  const open = (slug: string): void => {
-    if (slug === currentSlug && element.open) {
+  const reload = (slug: string): void => {
+    requests.abort();
+    requests = new AbortController();
+    currentSlug = slug;
+    void load(slug, requests.signal);
+  };
+
+  // Loads the game unless it is already there.
+  const prepare = (slug: string): void => {
+    if (slug === currentSlug) {
       return;
     }
 
-    session.abort();
-    session = new AbortController();
-    currentSlug = slug;
-    void load(slug, session.signal);
-
-    if (!element.open) {
-      element.showModal();
-      lockScroll();
-    }
-
+    reload(slug);
     surface.scrollTop = 0;
   };
 
-  // Covers the close button, the backdrop, the Escape key and the programmatic close.
-  element.addEventListener('close', (): void => {
-    session.abort();
-    currentSlug = undefined;
+  const open = (slug: string): void => {
+    prepare(slug);
+    isHidden = false;
+
+    if (element.open) {
+      return;
+    }
+
+    element.showModal();
+    lockScroll();
+  };
+
+  const hide = (slug: string): void => {
+    prepare(slug);
+    isHidden = true;
+
+    if (!element.open) {
+      return;
+    }
+
+    element.close();
     unlockScroll();
+  };
+
+  // A new user (sign-in) or a guest (logout, expiry) sees their own favorite and likes.
+  options.session.subscribe((next: AppSession | undefined): void => {
+    const hasChanged: boolean = next?.email !== user?.email;
+
+    user = next;
+
+    if (hasChanged && currentSlug !== undefined) {
+      reload(currentSlug);
+    }
+  });
+
+  // Covers the close button, the backdrop, the Escape key and the programmatic close. Hiding
+  // under Auth (or opening again before the event) keeps the game.
+  element.addEventListener('close', (): void => {
+    if (isHidden || element.open) {
+      return;
+    }
+
+    reset();
+    unlockScroll();
+    options.onClose();
   });
 
   // The dialog box is exactly the surface, so a click on the dialog itself hits the backdrop.
@@ -180,5 +261,5 @@ export function createGameDialog(): GameDialog {
     }
   });
 
-  return { element, open, close };
+  return { element, open, hide, close };
 }

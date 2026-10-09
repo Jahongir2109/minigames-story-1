@@ -3,13 +3,20 @@ import './auth-dialog.scss';
 import { createElement } from '@/shared/dom/create-element';
 import { lockScroll, unlockScroll } from '@/shared/dom/scroll-lock';
 
-import { type AuthMode, createLoginForm, createRegisterForm } from './auth-forms';
+import type { AuthRequest } from '@/auth/auth-service';
+
+import { type AuthForm, type AuthMode, createLoginForm, createRegisterForm } from './auth-forms';
 
 export interface AuthDialogOptions {
   /**
    * Called when the user switches between Login and Register inside the dialog.
    */
   onModeChange?: (mode: AuthMode) => void;
+  /**
+   * Signs the user in and starts the app session; resolves `true` on success. The dialog stays
+   * locked meanwhile, closes on success and unlocks for a retry on failure.
+   */
+  authenticate: (request: AuthRequest) => Promise<boolean>;
 }
 
 export interface AuthDialog {
@@ -42,16 +49,25 @@ function getNextMode(mode: AuthMode): AuthMode {
   return mode === 'login' ? 'register' : 'login';
 }
 
-export function createAuthDialog(options: AuthDialogOptions = {}): AuthDialog {
+export function createAuthDialog(options: AuthDialogOptions): AuthDialog {
   let currentMode: AuthMode = 'login';
+  let isPending: boolean = false;
 
   const tabs: Record<AuthMode, HTMLButtonElement> = {
     login: createTab(TABS[0]),
     register: createTab(TABS[1]),
   };
+  const forms: Record<AuthMode, AuthForm> = {
+    login: createLoginForm({ onSwitch: selectMode, onSubmit: submit, onGoogle: submitGoogle }),
+    register: createRegisterForm({
+      onSwitch: selectMode,
+      onSubmit: submit,
+      onGoogle: submitGoogle,
+    }),
+  };
   const panels: Record<AuthMode, HTMLElement> = {
-    login: createPanel('login', createLoginForm({ onSwitch: selectMode })),
-    register: createPanel('register', createRegisterForm({ onSwitch: selectMode })),
+    login: createPanel('login', forms.login.element),
+    register: createPanel('register', forms.register.element),
   };
 
   const tabList: HTMLElement = createElement('div', {
@@ -109,7 +125,17 @@ export function createAuthDialog(options: AuthDialogOptions = {}): AuthDialog {
     viewport.style.height = `${String(panels[currentMode].offsetHeight)}px`;
   }
 
+  function resetForms(): void {
+    forms.login.reset();
+    forms.register.reset();
+  }
+
   function setMode(mode: AuthMode): void {
+    // Switching between Login and Register starts the other form from scratch.
+    if (mode !== currentMode) {
+      resetForms();
+    }
+
     currentMode = mode;
 
     for (const definition of TABS) {
@@ -128,7 +154,7 @@ export function createAuthDialog(options: AuthDialogOptions = {}): AuthDialog {
 
   // A switch made by the user inside the dialog (tabs, keyboard, the links under the forms).
   function selectMode(mode: AuthMode): void {
-    if (mode === currentMode) {
+    if (mode === currentMode || isPending) {
       return;
     }
 
@@ -158,9 +184,53 @@ export function createAuthDialog(options: AuthDialogOptions = {}): AuthDialog {
   resizeObserver.observe(panels.login);
   resizeObserver.observe(panels.register);
 
+  function setPending(isActive: boolean): void {
+    isPending = isActive;
+    forms.login.setPending(isActive);
+    forms.register.setPending(isActive);
+    tabs.login.disabled = isActive;
+    tabs.register.disabled = isActive;
+    surface.setAttribute('aria-busy', String(isActive));
+  }
+
+  const close = (): void => {
+    // A pending request keeps the dialog open: it closes itself on success.
+    if (!isPending) {
+      element.close();
+    }
+  };
+
+  async function run(request: AuthRequest): Promise<void> {
+    if (isPending) {
+      return;
+    }
+
+    setPending(true);
+
+    let isSuccess: boolean;
+
+    try {
+      isSuccess = await options.authenticate(request);
+    } finally {
+      setPending(false);
+    }
+
+    if (isSuccess) {
+      close();
+    }
+  }
+
+  function submit(request: AuthRequest): void {
+    void run(request);
+  }
+
+  function submitGoogle(): void {
+    void run({ kind: 'google' });
+  }
+
   const open = (mode: AuthMode): void => {
     if (element.open) {
-      if (mode !== currentMode) {
+      if (mode !== currentMode && !isPending) {
         setMode(mode);
       }
 
@@ -178,12 +248,23 @@ export function createAuthDialog(options: AuthDialogOptions = {}): AuthDialog {
     });
   };
 
-  const close = (): void => {
-    element.close();
-  };
+  // Escape cannot close the dialog while a request is pending.
+  element.addEventListener('cancel', (event: Event): void => {
+    if (isPending) {
+      event.preventDefault();
+    }
+  });
+  element.addEventListener('keydown', (event: KeyboardEvent): void => {
+    if (isPending && event.key === 'Escape') {
+      event.preventDefault();
+    }
+  });
 
-  // Covers the Escape key as well as the programmatic close.
-  element.addEventListener('close', unlockScroll);
+  // Covers the Escape key as well as the programmatic close; the next opening starts empty.
+  element.addEventListener('close', (): void => {
+    unlockScroll();
+    resetForms();
+  });
 
   // The dialog box is exactly the surface, so a click on the dialog itself hits the backdrop.
   element.addEventListener('click', (event: MouseEvent): void => {
