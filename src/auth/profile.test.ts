@@ -35,10 +35,15 @@ describe('getProfileInitials', () => {
     expect(getProfileInitials('Alex   Pro')).toBe('AP');
   });
 
-  it('skips leading symbols inside a word and words without letters or digits', () => {
+  it('skips leading symbols inside a word', () => {
     expect(getProfileInitials('_alex (pro)')).toBe('AP');
-    expect(getProfileInitials('alex -- pro')).toBe('AP');
     expect(getProfileInitials('42 lives')).toBe('4L');
+  });
+
+  it('looks only at the first two words, even when one has no letters or digits', () => {
+    expect(getProfileInitials('alex -- pro')).toBe('A');
+    expect(getProfileInitials('-- alex pro')).toBe('A');
+    expect(getProfileInitials('-- !! alex')).toBe('');
   });
 
   it('supports letters of any script', () => {
