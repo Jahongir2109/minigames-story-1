@@ -1,0 +1,9 @@
+{
+  "common": {
+    "gamesCount": "{count, plural, other {# ta oʻyin}}"
+  },
+  "language": {
+    "label": "Til",
+    "change": "Tilni almashtirish, hozirgisi: {name}"
+  }
+}
