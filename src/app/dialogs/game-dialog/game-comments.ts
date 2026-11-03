@@ -16,13 +16,13 @@ import { reportFailures } from '@/shared/data/report-failures';
 import { RelativeTimePipe } from '@/shared/format/format.pipes';
 import { EmptyState } from '@/shared/ui/empty-state/empty-state';
 import { ErrorBanner } from '@/shared/ui/error-banner/error-banner';
-import { Icon } from '@/shared/ui/icon/icon';
 
 import {
   type AvatarColorPicker,
   createAvatarColorPicker,
   getAvatarInitial,
 } from './comment-avatar';
+import { CommentLikeButton } from './comment-like-button';
 
 // The latest comments shown in the dialog.
 export const COMMENTS_LIMIT: number = 3;
@@ -39,7 +39,7 @@ interface CommentsRequest {
  */
 @Component({
   selector: 'app-game-comments',
-  imports: [EmptyState, ErrorBanner, Icon, RelativeTimePipe, TranslocoPipe],
+  imports: [CommentLikeButton, EmptyState, ErrorBanner, RelativeTimePipe, TranslocoPipe],
   template: `
     <section class="game-comments" aria-labelledby="game-comments-title">
       <h3 class="game-comments__title" id="game-comments-title">
@@ -93,13 +93,7 @@ interface CommentsRequest {
                   </time>
                 </header>
                 <p class="game-comments__text">{{ comment.text }}</p>
-                <p
-                  class="game-comments__like"
-                  [attr.aria-label]="'gameDialog.likes' | transloco: { count: comment.likesCount }"
-                >
-                  <app-icon class="game-comments__like-icon" name="heartFilled" />
-                  <span aria-hidden="true">{{ comment.likesCount }}</span>
-                </p>
+                <app-comment-like-button [comment]="comment" />
               </article>
             </li>
           }
