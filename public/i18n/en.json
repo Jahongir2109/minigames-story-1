@@ -2,9 +2,56 @@
   "common": {
     "gamesCount": "{count, plural, one {# game} other {# games}}"
   },
+  "titles": {
+    "home": "Home",
+    "library": "Game Library",
+    "notFound": "Page Not Found"
+  },
   "language": {
     "label": "Language",
-    "change": "Change language, current: {name}"
+    "change": "Change language, current: {name}",
+    "failed": "The language could not be loaded. Check your connection and try again."
+  },
+  "brand": {
+    "home": "{name} — home"
+  },
+  "nav": {
+    "main": "Main navigation",
+    "home": "Home",
+    "library": "Library",
+    "tournaments": "Tournaments",
+    "community": "Community"
+  },
+  "header": {
+    "login": "Log In",
+    "signUp": "Sign Up",
+    "openMenu": "Open menu"
+  },
+  "menu": {
+    "label": "Site menu",
+    "navigation": "Mobile navigation",
+    "close": "Close menu"
+  },
+  "footer": {
+    "description": "Take a short break and have fun. Hundreds of curated casual mini-games right in your web browser. No download required.",
+    "explore": "Explore",
+    "company": "Company",
+    "categories": "Categories",
+    "about": "About Us",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "share": "Share {name}",
+    "chat": "{name} community chat",
+    "news": "{name} news feed",
+    "copyright": "© {year} {name}. All rights reserved.",
+    "note": "Designed with love"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "The page you are looking for does not exist or has been moved.",
+    "home": "Back to Home",
+    "library": "Browse Library"
   },
   "errors": {
     "title": "Something went wrong",

@@ -9,6 +9,23 @@ Object.assign(HTMLElement.prototype, {
   },
 });
 
+// jsdom has no media queries: every query is reported as not matching (the mobile layout).
+// Tests that need another width replace window.matchMedia themselves.
+if (typeof matchMedia !== 'function') {
+  Object.defineProperty(globalThis, 'matchMedia', {
+    configurable: true,
+    writable: true,
+    value: (query: string): MediaQueryList =>
+      Object.assign(new EventTarget(), {
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: (): void => undefined,
+        removeListener: (): void => undefined,
+      }) as unknown as MediaQueryList,
+  });
+}
+
 Object.assign(HTMLDialogElement.prototype, {
   showModal(this: HTMLDialogElement): void {
     this.setAttribute('open', '');

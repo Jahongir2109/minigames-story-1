@@ -2,9 +2,56 @@
   "common": {
     "gamesCount": "{count, plural, other {# ta oʻyin}}"
   },
+  "titles": {
+    "home": "Bosh sahifa",
+    "library": "Oʻyinlar kutubxonasi",
+    "notFound": "Sahifa topilmadi"
+  },
   "language": {
     "label": "Til",
-    "change": "Tilni almashtirish, hozirgisi: {name}"
+    "change": "Tilni almashtirish, hozirgisi: {name}",
+    "failed": "Tilni yuklab boʻlmadi. Internet aloqasini tekshirib, qayta urinib koʻring."
+  },
+  "brand": {
+    "home": "{name} — bosh sahifa"
+  },
+  "nav": {
+    "main": "Asosiy navigatsiya",
+    "home": "Bosh sahifa",
+    "library": "Kutubxona",
+    "tournaments": "Turnirlar",
+    "community": "Hamjamiyat"
+  },
+  "header": {
+    "login": "Kirish",
+    "signUp": "Roʻyxatdan oʻtish",
+    "openMenu": "Menyuni ochish"
+  },
+  "menu": {
+    "label": "Sayt menyusi",
+    "navigation": "Mobil navigatsiya",
+    "close": "Menyuni yopish"
+  },
+  "footer": {
+    "description": "Biroz dam oling va maroqli vaqt oʻtkazing. Yuzlab saralangan oddiy mini-oʻyinlar toʻgʻridan-toʻgʻri brauzeringizda. Hech narsa yuklab olish shart emas.",
+    "explore": "Koʻrib chiqish",
+    "company": "Kompaniya",
+    "categories": "Turkumlar",
+    "about": "Biz haqimizda",
+    "contact": "Aloqa",
+    "privacy": "Maxfiylik siyosati",
+    "terms": "Foydalanish shartlari",
+    "share": "{name} bilan ulashish",
+    "chat": "{name} hamjamiyati chati",
+    "news": "{name} yangiliklari",
+    "copyright": "© {year} {name}. Barcha huquqlar himoyalangan.",
+    "note": "Mehr bilan yaratilgan"
+  },
+  "notFound": {
+    "title": "Sahifa topilmadi",
+    "description": "Siz qidirayotgan sahifa mavjud emas yoki boshqa joyga koʻchirilgan.",
+    "home": "Bosh sahifaga qaytish",
+    "library": "Kutubxonani koʻrish"
   },
   "errors": {
     "title": "Nimadir xato ketdi",
