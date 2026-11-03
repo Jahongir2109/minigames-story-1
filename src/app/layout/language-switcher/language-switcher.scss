@@ -1,0 +1,132 @@
+@use 'abstracts' as *;
+
+// Same height and outline as the burger button next to it; the list opens under the toggle,
+// aligned to its right edge so it never leaves the viewport.
+:host {
+  position: relative;
+  display: inline-flex;
+}
+
+.language-switcher {
+  &__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: size('05');
+    height: size(4);
+    padding-inline: inner(size(1)) size('05');
+    border: border-width('regular') solid color('on-primary');
+    border-radius: corner('small');
+    background-color: color('white');
+    color: color('on-primary');
+    @include text-style('label-large', 'bold');
+    text-transform: uppercase;
+    transition: background-color duration('fast') ease;
+
+    @include hover-device {
+      &:hover {
+        background-color: color('surface');
+      }
+    }
+
+    &[aria-expanded='true'] {
+      background-color: color('surface');
+    }
+  }
+
+  &__arrow {
+    width: size(3);
+    height: size(3);
+    color: color('on-bg');
+    transition: transform duration('fast') ease;
+
+    [aria-expanded='true'] > & {
+      transform: rotate(180deg);
+    }
+  }
+
+  &__list {
+    position: absolute;
+    top: calc(100% + #{size('05')});
+    right: 0;
+    z-index: z-index('dropdown');
+    min-width: calc(#{size(15)} + #{size(4)});
+    overflow: hidden;
+    border: border-width('regular') solid color('on-primary');
+    border-radius: corner('medium');
+    background-color: color('white');
+    box-shadow: shadow('level-1');
+    color: color('on-primary');
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: size(1);
+    padding: size(2);
+    @include text-style('label-large', 'medium');
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color duration('fast') ease;
+
+    &:not(:last-child) {
+      border-bottom: border-width('thin') solid color('outline');
+    }
+
+    @include hover-device {
+      &:hover {
+        background-color: color('surface');
+      }
+    }
+
+    &[aria-selected='true'] {
+      background-color: color('primary-low');
+      font-weight: font-weight('extra-bold');
+    }
+
+    &:focus-visible {
+      outline-offset: calc(-1 * #{border-width('regular')});
+    }
+  }
+
+  &__check {
+    width: size(2);
+    height: size(2);
+    color: color('tertiary');
+    visibility: hidden;
+
+    [aria-selected='true'] > & {
+      visibility: visible;
+    }
+  }
+}
+
+// Mobile menu: light outline on the dark background.
+:host(.language-switcher--inverse) .language-switcher__toggle {
+  border-color: color('white');
+  background-color: color('bg-footer-low');
+  color: color('white');
+
+  @include hover-device {
+    &:hover {
+      background-color: color('bg-footer-lowest');
+    }
+  }
+
+  &[aria-expanded='true'] {
+    background-color: color('bg-footer-lowest');
+  }
+
+  .language-switcher__arrow {
+    color: color('on-bg-footer');
+  }
+}
+
+// In the menu the list opens from the left edge of the toggle.
+:host(.language-switcher--inverse) .language-switcher__list {
+  right: auto;
+  left: 0;
+}
