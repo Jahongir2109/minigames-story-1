@@ -68,5 +68,52 @@
   },
   "time": {
     "justNow": "just now"
+  },
+  "hero": {
+    "title": "Take a Short Break & Have Fun",
+    "short": "Discover hundreds of curated casual mini-games right in your browser.",
+    "full": "Discover hundreds of curated casual mini-games. Play instantly in your browser — puzzle, match 3, farm, and board classics.",
+    "button": "Browse Library"
+  },
+  "carousel": {
+    "title": "New Games",
+    "region": "New games",
+    "slide": "{index} of {count}",
+    "previous": "Previous game",
+    "next": "Next game",
+    "open": "{name}: open details",
+    "cover": "{name} cover",
+    "loading": "Loading new games",
+    "failed": "New games could not be loaded",
+    "failedNotice": "Failed to load new games.",
+    "emptyTitle": "No new games yet",
+    "emptyMessage": "Fresh games will appear here soon."
+  },
+  "leaderboard": {
+    "title": "Top Players This Week",
+    "titleShort": "Top Players",
+    "caption": "Top players of the week ranked by total score",
+    "rank": "Rank",
+    "player": "Player",
+    "gamesPlayed": "Games Played",
+    "games": "Games",
+    "totalScore": "Total Score",
+    "score": "Score",
+    "streak": "Streak",
+    "favorite": "Favorite Game",
+    "days": "{count, plural, one {# day} other {# days}}",
+    "daysShort": "{count}d",
+    "loading": "Loading top players",
+    "failed": "Top players could not be loaded",
+    "failedNotice": "Failed to load the leaderboard.",
+    "emptyTitle": "No players yet",
+    "emptyMessage": "Play a game this week to be the first on the board."
+  },
+  "gameDeveloper": {
+    "title": "Are You a Game Developer?",
+    "description": "Want to see your game on MiniGames? We’re always looking for fun,\nengaging mini games to add to our platform. Submit your game\nand reach thousands of players!",
+    "submit": "Submit Form",
+    "contact": "or contact us at {email}",
+    "imageAlt": "Illustration of a game developer workspace with a monitor, a gamepad and a desk chair"
   }
 }
