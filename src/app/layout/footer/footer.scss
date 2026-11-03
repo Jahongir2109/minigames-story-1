@@ -1,0 +1,234 @@
+@use 'abstracts' as *;
+
+.footer {
+  background-color: color('bg-footer');
+  color: color('on-bg-footer');
+
+  &__inner {
+    display: flex;
+    flex-direction: column;
+    gap: fluid(size-value('3'), size-value('5'), $bp-mobile, $bp-tablet);
+    max-width: $bp-desktop;
+    margin-inline: auto;
+    padding: fluid(size-value('4'), size-value('5'), $bp-mobile, $bp-tablet) var(--page-padding);
+
+    @include from('tablet') {
+      gap: fluid(size-value('5'), size-value('8'));
+      padding-block: size(5);
+    }
+  }
+
+  // Brand and description on the left, link columns on the right (stacked below 1024px).
+  &__top {
+    display: flex;
+    flex-direction: column;
+    gap: size(3);
+
+    @include from('laptop') {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+  }
+
+  &__about {
+    display: flex;
+    flex-direction: column;
+    gap: size(3);
+
+    @include from('laptop') {
+      width: size-value('10') * 5;
+    }
+  }
+
+  &__description {
+    @include text-style('body-small', 'regular', 'relaxed');
+  }
+
+  // Columns: two per row with Community below on mobile, one row from tablet up.
+  &__links {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: size(3) size(5);
+
+    @include from('narrow') {
+      display: flex;
+      gap: size(5);
+    }
+
+    @include from('laptop') {
+      gap: size(10);
+    }
+  }
+
+  &__column {
+    display: flex;
+    flex-direction: column;
+    gap: size(2);
+
+    &--community {
+      grid-column: 1 / -1;
+    }
+  }
+
+  &__heading {
+    @include text-style('label-extra-large', 'bold');
+    color: color('white');
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: calc(#{size(1)} + #{size('05')});
+  }
+
+  &__link {
+    @include text-style('body-small', 'regular', 'body');
+    display: block;
+    width: fit-content;
+    color: color('on-bg-footer');
+    transition: color duration('fast') ease;
+
+    @include hover-device {
+      &:hover {
+        color: color('primary');
+      }
+    }
+
+    &:active {
+      color: color('primary-high');
+    }
+  }
+
+  &__socials {
+    display: flex;
+    gap: size(2);
+  }
+
+  &__social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fluid(size-value('4'), size-value('5'));
+    height: fluid(size-value('4'), size-value('5'));
+    border-radius: corner('full');
+    background-color: color('bg-footer-low');
+    color: color('white');
+    transition: background-color duration('fast') ease;
+
+    @include hover-device {
+      &:hover {
+        background-color: color('bg-footer-lowest');
+      }
+    }
+
+    &:active {
+      background-color: color('bg-footer-lowest');
+    }
+  }
+
+  &__social-icon {
+    width: calc(#{size(3)} - #{size('05')});
+    height: calc(#{size(3)} - #{size('05')});
+  }
+
+  // Divider, copyright and credits.
+  &__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: size(1) size(3);
+    padding-top: calc(#{size(1)} + #{size('05')});
+    border-top: border-width('thin') solid color('bg-footer-low');
+    font-size: fluid(
+      font-size-value('label-medium'),
+      font-size-value('label-large'),
+      $bp-mobile,
+      $bp-tablet
+    );
+    line-height: line-height('normal');
+
+    @include from('narrow') {
+      justify-content: space-between;
+    }
+
+    // The four items fit in one line from the tablet width (768px included).
+    @include from-inclusive('tablet') {
+      flex-wrap: nowrap;
+      white-space: nowrap;
+    }
+
+    @include from('narrow') {
+      padding-top: size(2);
+    }
+
+    @include from('laptop') {
+      padding-top: size(3);
+    }
+  }
+
+  &__copyright {
+    flex: 1 0 100%;
+
+    @include from('narrow') {
+      flex: 0 1 auto;
+    }
+  }
+
+  &__note {
+    display: none;
+
+    @include from('narrow') {
+      display: block;
+    }
+  }
+
+  &__credit {
+    display: inline-flex;
+    align-items: center;
+    gap: size(1);
+    color: color('on-bg-footer');
+    transition: color duration('fast') ease;
+
+    @include hover-device {
+      &:hover {
+        color: color('primary');
+      }
+    }
+
+    &:active {
+      color: color('primary-high');
+    }
+  }
+
+  &__badge {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: fluid(size-value('3') - size-value('05'), size-value('3'), $bp-mobile, $bp-desktop);
+    height: fluid(size-value('3') - size-value('05'), size-value('3'), $bp-mobile, $bp-desktop);
+    border-radius: corner('full');
+
+    &--school {
+      background-color: color('bg-footer-low');
+      color: color('primary');
+      font-size: font-size('label-small');
+      font-weight: font-weight('bold');
+    }
+
+    &--github {
+      background-color: color('white');
+      color: color('bg-footer');
+    }
+  }
+
+  &__badge-icon {
+    width: size(2);
+    height: size(2);
+  }
+
+  :focus-visible {
+    outline-color: color('primary');
+  }
+}
