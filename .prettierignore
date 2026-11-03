@@ -1,4 +1,6 @@
 dist
 node_modules
 coverage
+.angular
 package-lock.json
+src/environments/firebase.env.ts

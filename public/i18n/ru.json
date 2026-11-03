@@ -1,0 +1,9 @@
+{
+  "common": {
+    "gamesCount": "{count, plural, one {# игра} few {# игры} many {# игр} other {# игры}}"
+  },
+  "language": {
+    "label": "Язык",
+    "change": "Сменить язык, текущий: {name}"
+  }
+}

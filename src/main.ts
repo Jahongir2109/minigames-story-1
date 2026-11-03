@@ -1,8 +1,11 @@
-import '@fontsource-variable/inter/index.css';
-import '@fontsource/roboto/latin-500.css';
-import '@fontsource/roboto/latin-700.css';
-import './styles/main.scss';
+import { bootstrapApplication } from '@angular/platform-browser';
 
-import { mountApp } from '@/app/app';
+import { App } from './app/app';
+import { appConfig } from './app/app.config';
 
-mountApp(document.body);
+// A failed bootstrap is reported like any other uncaught error (browser console, error listeners).
+try {
+  await bootstrapApplication(App, appConfig);
+} catch (error: unknown) {
+  reportError(error);
+}

@@ -1,15 +1,18 @@
 # Dependencies
 node_modules/
 
-# Build output
+# Build output and caches
 dist/
-dist-ssr/
+out-tsc/
+.angular/cache/
 *.tsbuildinfo
 
 # Environment
 .env
 .env.*
 !.env.example
+# Generated from the env variables by scripts/write-environment.mjs
+src/environments/firebase.env.ts
 
 # Logs
 logs/
@@ -27,3 +30,4 @@ Thumbs.db
 .vercel/
 .eslintcache
 coverage/
+__screenshots__/
