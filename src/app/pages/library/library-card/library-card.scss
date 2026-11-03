@@ -1,0 +1,174 @@
+@use 'abstracts' as *;
+
+$image-height-mobile: token($library-card, 'image-height-mobile', 'library card');
+$image-width-tablet: token($library-card, 'image-width-tablet', 'library card');
+$image-width-desktop: token($library-card, 'image-width-desktop', 'library card');
+$height-tablet: token($library-card, 'height-tablet', 'library card');
+$height-desktop: token($library-card, 'height-desktop', 'library card');
+
+.library-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  @include outlined-surface('large', 'level-1', 'medium');
+  background-color: color('white');
+
+  @include from('narrow') {
+    flex-direction: row;
+    height: fluid($height-tablet, $height-desktop);
+  }
+
+  &__image {
+    flex-shrink: 0;
+    width: 100%;
+    height: $image-height-mobile;
+    object-fit: cover;
+
+    @include from('narrow') {
+      width: fluid($image-width-tablet, $image-width-desktop);
+      height: 100%;
+    }
+  }
+
+  // Mobile: the price joins the stats row and Details spans the whole card (mockup).
+  // Tablet and desktop: title and price on top, stats and Details at the bottom.
+  // The narrow last column fits the price and the Details button spans the two last columns, so
+  // the wider button does not take room from the title.
+  &__content {
+    display: grid;
+    flex: 1;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      'heading heading heading'
+      'description description description'
+      'stats stats price'
+      'details details details';
+    align-items: center;
+    gap: size(2);
+    min-width: 0;
+    padding: size(2);
+
+    @include from('narrow') {
+      grid-template-areas:
+        'heading heading price'
+        'description description description'
+        'stats details details';
+      align-content: space-between;
+      gap: 0 size(2);
+    }
+  }
+
+  &__heading {
+    display: flex;
+    flex-direction: column;
+    grid-area: heading;
+    align-items: flex-start;
+    gap: size(1);
+    min-width: 0;
+
+    @include from('narrow') {
+      flex-direction: row;
+      align-items: center;
+      gap: size(2);
+    }
+  }
+
+  &__title {
+    @include truncate-line;
+    max-width: 100%;
+    font-size: fluid(font-size-value('headline-small'), font-size-value('headline-medium'));
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+  }
+
+  &__badge {
+    flex-shrink: 0;
+    padding: 0 inner(size(1), border-width('light'));
+    border: border-width('light') solid color('on-primary');
+    border-radius: corner('extra-large');
+    background-color: color('secondary');
+    @include text-style('label-medium', 'bold');
+
+    @include from('narrow') {
+      padding-block: inner(size('05'), border-width('light'));
+    }
+  }
+
+  &__price {
+    grid-area: price;
+    justify-self: end;
+    font-size: fluid(font-size-value('headline-small'), font-size-value('headline-medium'));
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+
+    &--free {
+      color: color('price-free');
+    }
+  }
+
+  &__description {
+    display: -webkit-box;
+    grid-area: description;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    color: color('on-bg');
+    font-size: fluid(font-size-value('body-small'), font-size-value('body-medium'));
+    font-weight: font-weight('medium');
+    line-height: line-height('body');
+
+    @include from('wide') {
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+    }
+  }
+
+  &__stats {
+    display: flex;
+    grid-area: stats;
+    align-items: center;
+    gap: fluid(size-value('2'), size-value('3'));
+  }
+
+  &__stat {
+    display: inline-flex;
+    align-items: center;
+    gap: size('05');
+    font-size: fluid(font-size-value('label-medium'), font-size-value('label-large'));
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+
+    &--rating .library-card__stat-icon {
+      color: color('primary');
+    }
+
+    &--likes .library-card__stat-icon {
+      color: color('like');
+    }
+  }
+
+  &__stat-icon {
+    flex-shrink: 0;
+    width: size(3);
+    height: size(3);
+  }
+
+  // Nested selector outweighs the base `.button` size rules.
+  > .library-card__content > .library-card__details {
+    grid-area: details;
+    width: 100%;
+    @include button-size('medium');
+
+    @include from('narrow') {
+      justify-self: end;
+      width: auto;
+      @include button-size('small');
+    }
+
+    @include from('laptop') {
+      @include button-size('medium');
+    }
+  }
+}
