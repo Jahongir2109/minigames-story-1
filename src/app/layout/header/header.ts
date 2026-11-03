@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+import { DialogUrl } from '@/core/dialogs/dialog-url';
 import { CurrentPage, type PageName } from '@/core/navigation/current-page';
 import { NAVIGATION_LINKS, type NavigationLink } from '@/core/navigation/links';
 import { Button } from '@/shared/ui/button/button';
@@ -75,7 +76,7 @@ export type AuthMode = 'login' | 'register';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Header {
-  private readonly router: Router = inject(Router);
+  private readonly dialogs: DialogUrl = inject(DialogUrl);
 
   protected readonly currentPage: CurrentPage = inject(CurrentPage);
   protected readonly links: readonly NavigationLink[] = NAVIGATION_LINKS;
@@ -89,6 +90,6 @@ export class Header {
    * The Auth dialog follows the URL (`?auth=login`), so it can be linked and reopened with Back.
    */
   protected openAuth(mode: AuthMode): void {
-    void this.router.navigate([], { queryParams: { auth: mode }, queryParamsHandling: 'merge' });
+    this.dialogs.open('auth', mode);
   }
 }

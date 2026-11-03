@@ -154,5 +154,32 @@
     "page": "Страница {page}",
     "previousPage": "Предыдущая страница",
     "nextPage": "Следующая страница"
+  },
+  "gameDialog": {
+    "close": "Закрыть описание игры",
+    "loading": "Загрузка описания игры",
+    "failed": "Не удалось загрузить описание игры",
+    "failedNotice": "Описание игры не загрузилось.",
+    "notFoundTitle": "Игра не найдена",
+    "notFoundMessage": "Игры «{slug}» нет. Возможно, ссылка устарела или в ней опечатка.",
+    "heroAlt": "Обложка {name}",
+    "play": "Играть",
+    "genre": "Жанр",
+    "players": "Игроки",
+    "duration": "Длительность",
+    "price": "Цена",
+    "records": "Лучшие результаты",
+    "noRecordsTitle": "Результатов пока нет",
+    "noRecordsMessage": "Сыграйте, чтобы поставить первый рекорд.",
+    "place": "{position} место:",
+    "points": "{score} очк.",
+    "comments": "Комментарии",
+    "commentsCount": "Комментарии ({count})",
+    "loadingComments": "Загрузка комментариев",
+    "commentsFailed": "Не удалось загрузить комментарии",
+    "commentsFailedNotice": "Комментарии не загрузились.",
+    "noCommentsTitle": "Комментариев пока нет",
+    "noCommentsMessage": "Будьте первым, кто поделится мнением об этой игре.",
+    "likes": "{count, plural, one {# лайк} few {# лайка} many {# лайков} other {# лайка}}"
   }
 }

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { Router } from '@angular/router';
 
 import type { Game } from '@/core/api/models';
+import { DialogUrl } from '@/core/dialogs/dialog-url';
 
 import { Carousel } from './carousel/carousel';
 import { GameDeveloper } from './game-developer/game-developer';
@@ -20,15 +20,9 @@ import { Leaderboard } from './leaderboard/leaderboard';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Home {
-  private readonly router: Router = inject(Router);
+  private readonly dialogs: DialogUrl = inject(DialogUrl);
 
-  /**
-   * The Game Details dialog follows the URL (`?game=<slug>`).
-   */
   protected openGame(game: Game): void {
-    void this.router.navigate([], {
-      queryParams: { game: game.slug },
-      queryParamsHandling: 'merge',
-    });
+    this.dialogs.open('game', game.slug);
   }
 }

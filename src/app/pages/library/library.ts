@@ -15,6 +15,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { ApiError, getErrorKey } from '@/core/api/api-error';
 import { GamesApi } from '@/core/api/games-api';
 import type { ApiResponse, Game, GameCategory, GamesMeta, GamesQuery } from '@/core/api/models';
+import { DialogUrl } from '@/core/dialogs/dialog-url';
 import { LIBRARY_PATH } from '@/core/navigation/links';
 import { reportFailures } from '@/shared/data/report-failures';
 import { Button } from '@/shared/ui/button/button';
@@ -167,6 +168,7 @@ function isUnknownCategory(error: unknown): boolean {
 export class Library {
   private readonly api: GamesApi = inject(GamesApi);
   private readonly router: Router = inject(Router);
+  private readonly dialogs: DialogUrl = inject(DialogUrl);
   private readonly query: Signal<ParamMap> = toSignal(inject(ActivatedRoute).queryParamMap, {
     requireSync: true,
   });
@@ -300,13 +302,7 @@ export class Library {
     void this.router.navigate([LIBRARY_PATH]);
   }
 
-  /**
-   * The Game Details dialog follows the URL (`?game=<slug>`).
-   */
   protected openGame(game: Game): void {
-    void this.router.navigate([], {
-      queryParams: { game: game.slug },
-      queryParamsHandling: 'merge',
-    });
+    this.dialogs.open('game', game.slug);
   }
 }

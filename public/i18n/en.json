@@ -154,5 +154,32 @@
     "page": "Page {page}",
     "previousPage": "Previous page",
     "nextPage": "Next page"
+  },
+  "gameDialog": {
+    "close": "Close game details",
+    "loading": "Loading game details",
+    "failed": "Game details could not be loaded",
+    "failedNotice": "Failed to load the game details.",
+    "notFoundTitle": "Game Not Found",
+    "notFoundMessage": "There is no game “{slug}”. The link may be outdated or mistyped.",
+    "heroAlt": "{name} key art",
+    "play": "Play Now",
+    "genre": "Genre",
+    "players": "Players",
+    "duration": "Duration",
+    "price": "Price",
+    "records": "Top Records",
+    "noRecordsTitle": "No records yet",
+    "noRecordsMessage": "Play the game to set the first one.",
+    "place": "Place {position}:",
+    "points": "{score} pts",
+    "comments": "Comments",
+    "commentsCount": "Comments ({count})",
+    "loadingComments": "Loading comments",
+    "commentsFailed": "Comments could not be loaded",
+    "commentsFailedNotice": "Failed to load the comments.",
+    "noCommentsTitle": "No comments yet",
+    "noCommentsMessage": "Be the first to share what you think about this game.",
+    "likes": "{count, plural, one {# like} other {# likes}}"
   }
 }
