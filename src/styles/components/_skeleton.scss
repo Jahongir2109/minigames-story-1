@@ -1,0 +1,43 @@
+@use '../abstracts' as *;
+
+// Loading placeholder: a light band sweeps over it; the motion is dropped for users who reduce
+// it. The size comes from the class of the section that uses it.
+.skeleton {
+  display: block;
+  background:
+    linear-gradient(90deg, transparent 0%, color('surface-low') 50%, transparent 100%) 0 0 / 200%
+      100% no-repeat,
+    color('outline');
+  animation: skeleton-shimmer duration('shimmer') linear infinite;
+
+  &--block {
+    border-radius: corner('medium');
+  }
+
+  &--text {
+    height: 1em;
+    border-radius: corner('extra-small');
+  }
+
+  &--circle {
+    border-radius: corner('full');
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position:
+      200% 0,
+      0 0;
+  }
+
+  to {
+    background-position:
+      -200% 0,
+      0 0;
+  }
+}

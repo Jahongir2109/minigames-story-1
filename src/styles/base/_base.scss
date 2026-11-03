@@ -77,3 +77,8 @@ button:disabled {
 .visually-hidden {
   @include visually-hidden;
 }
+
+// Set on <html> while a menu or a dialog is open (see ScrollLock).
+.scroll-locked {
+  overflow: hidden;
+}
