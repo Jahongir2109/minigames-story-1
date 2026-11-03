@@ -4,9 +4,15 @@ import { Snackbar } from '@/shared/ui/snackbar/snackbar.service';
 
 /**
  * Shows a Snackbar every time the resource fails (the section itself shows an error banner).
- * Must be called in an injection context, e.g. a field initializer of a component.
+ * `isReported` can skip failures that the section treats as a normal state (e.g. an unknown
+ * category in a link shows "not found"). Must be called in an injection context, e.g. a field
+ * initializer of a component.
  */
-export function reportFailures(resource: Resource<unknown>, message: string): void {
+export function reportFailures(
+  resource: Resource<unknown>,
+  message: string,
+  isReported: (error: unknown) => boolean = (): boolean => true,
+): void {
   const snackbar: Snackbar = inject(Snackbar);
 
   effect(() => {
@@ -14,8 +20,12 @@ export function reportFailures(resource: Resource<unknown>, message: string): vo
       return;
     }
 
+    const error: unknown = resource.error();
+
     untracked(() => {
-      snackbar.show({ message, variant: 'error' });
+      if (isReported(error)) {
+        snackbar.show({ message, variant: 'error' });
+      }
     });
   });
 }

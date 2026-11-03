@@ -1,0 +1,125 @@
+@use 'abstracts' as *;
+
+$skeleton-card-height-mobile: 360px;
+$skeleton-card-height-tablet: token($library-card, 'height-tablet', 'library card');
+$skeleton-card-height-desktop: token($library-card, 'height-desktop', 'library card');
+
+// Side padding comes from the page gutter; the vertical rhythm of the Library sections is
+// 16px on mobile, 24px on tablet and 40px (title) / 16px (toolbar) on desktop.
+.library {
+  &__intro {
+    display: flex;
+    flex-direction: column;
+    gap: size(1);
+    max-width: $bp-desktop;
+    margin-inline: auto;
+    padding: fluid(size-value('2'), size-value('3'), $bp-mobile, $bp-tablet) var(--page-padding);
+
+    @include from('tablet') {
+      padding-block: fluid(size-value('3'), size-value('5'));
+    }
+  }
+
+  // Chips above the sort control on mobile and tablet, side by side on desktop.
+  &__toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: size(2);
+    max-width: $bp-desktop;
+    margin-inline: auto;
+    padding: size(2) var(--page-padding);
+
+    @include from('narrow') {
+      align-items: flex-start;
+    }
+
+    @include from('laptop') {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: size(3);
+    }
+  }
+
+  // The chips row scrolls on its own, so it must be allowed to shrink below its content.
+  &__chips {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  &__skeleton-chips {
+    display: flex;
+    gap: size(1);
+    overflow: hidden;
+  }
+
+  &__skeleton-chip {
+    flex-shrink: 0;
+    width: size(12);
+    height: size(5);
+    border-radius: corner('extra-large');
+  }
+
+  &__skeleton-card {
+    height: $skeleton-card-height-mobile;
+    border-radius: corner('large');
+
+    @include from('narrow') {
+      height: fluid($skeleton-card-height-tablet, $skeleton-card-height-desktop);
+    }
+  }
+
+  &__games {
+    max-width: $bp-desktop;
+    margin-inline: auto;
+    padding-inline: var(--page-padding);
+  }
+
+  &__list {
+    display: grid;
+    gap: fluid(size-value('2'), size-value('3'), $bp-mobile, $bp-tablet);
+
+    @include from('wide') {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &__pagination {
+    padding: size(3) var(--page-padding);
+
+    @include from('narrow') {
+      padding-block: size(5);
+    }
+  }
+
+  &__title {
+    font-size: fluid(
+      font-size-value('display-small'),
+      font-size-value('display-medium'),
+      $bp-mobile,
+      $bp-tablet
+    );
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+
+    @include from('tablet') {
+      font-size: fluid(font-size-value('display-medium'), font-size-value('display-large'));
+    }
+  }
+
+  &__subtitle {
+    color: color('on-bg');
+    font-size: fluid(
+      font-size-value('body-small'),
+      font-size-value('body-medium'),
+      $bp-mobile,
+      $bp-tablet
+    );
+    font-weight: font-weight('medium');
+    line-height: line-height('normal');
+
+    @include from('tablet') {
+      font-size: fluid(font-size-value('body-medium'), font-size-value('body-large'));
+    }
+  }
+}

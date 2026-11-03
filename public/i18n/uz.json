@@ -115,5 +115,44 @@
     "submit": "Ariza yuborish",
     "contact": "yoki biz bilan bogʻlaning: {email}",
     "imageAlt": "Monitor, geympad va kreslo bilan oʻyin ishlab chiquvchisining ish joyi tasviri"
+  },
+  "categories": {
+    "all": "Barcha oʻyinlar",
+    "puzzle": "Boshqotirma",
+    "card": "Karta",
+    "match": "Juftlash",
+    "farm": "Ferma",
+    "strategy": "Strategiya",
+    "arcade": "Arkada"
+  },
+  "library": {
+    "title": "Oʻyinlar kutubxonasi",
+    "subtitle": "Oddiy mini-oʻyinlar toʻplamimizni koʻrib chiqing",
+    "filterLabel": "Oʻyinlarni turkum boʻyicha saralash",
+    "sortBy": "Tartib:",
+    "sort": {
+      "ratingAsc": "Reyting ↑",
+      "ratingDesc": "Reyting ↓",
+      "nameAsc": "Nomi A→Z",
+      "nameDesc": "Nomi Z→A"
+    },
+    "games": "Oʻyinlar",
+    "loadingCategories": "Turkumlar yuklanmoqda",
+    "loadingGames": "Oʻyinlar yuklanmoqda",
+    "categoriesFailed": "Turkumlarni yuklab boʻlmadi",
+    "categoriesFailedNotice": "Oʻyin turkumlari yuklanmadi.",
+    "gamesFailed": "Oʻyinlarni yuklab boʻlmadi",
+    "gamesFailedNotice": "Oʻyinlar yuklanmadi.",
+    "notFoundTitle": "Maʼlumot topilmadi",
+    "notFoundMessage": "Bu sahifada tanlangan filtrlarga mos oʻyin yoʻq.",
+    "showAll": "Barcha oʻyinlarni koʻrsatish",
+    "free": "Bepul",
+    "rating": "Reyting",
+    "likes": "Yoqtirishlar",
+    "details": "Batafsil",
+    "pages": "Kutubxona sahifalari",
+    "page": "{page}-sahifa",
+    "previousPage": "Oldingi sahifa",
+    "nextPage": "Keyingi sahifa"
   }
 }

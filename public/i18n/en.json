@@ -115,5 +115,44 @@
     "submit": "Submit Form",
     "contact": "or contact us at {email}",
     "imageAlt": "Illustration of a game developer workspace with a monitor, a gamepad and a desk chair"
+  },
+  "categories": {
+    "all": "All Games",
+    "puzzle": "Puzzle",
+    "card": "Card",
+    "match": "Match",
+    "farm": "Farm",
+    "strategy": "Strategy",
+    "arcade": "Arcade"
+  },
+  "library": {
+    "title": "Game Library",
+    "subtitle": "Browse our collection of casual mini-games",
+    "filterLabel": "Filter games by category",
+    "sortBy": "Sort by:",
+    "sort": {
+      "ratingAsc": "Rating ↑",
+      "ratingDesc": "Rating ↓",
+      "nameAsc": "Name A→Z",
+      "nameDesc": "Name Z→A"
+    },
+    "games": "Games",
+    "loadingCategories": "Loading categories",
+    "loadingGames": "Loading games",
+    "categoriesFailed": "Categories could not be loaded",
+    "categoriesFailedNotice": "Failed to load the game categories.",
+    "gamesFailed": "Games could not be loaded",
+    "gamesFailedNotice": "Failed to load the games.",
+    "notFoundTitle": "Data Not Found",
+    "notFoundMessage": "No games match the selected filters on this page.",
+    "showAll": "Show All Games",
+    "free": "Free",
+    "rating": "Rating",
+    "likes": "Likes",
+    "details": "Details",
+    "pages": "Library pages",
+    "page": "Page {page}",
+    "previousPage": "Previous page",
+    "nextPage": "Next page"
   }
 }
