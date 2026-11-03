@@ -4,12 +4,19 @@ import type { Routes } from '@angular/router';
 import type { PageData } from './core/navigation/current-page';
 
 const HOME: PageData = { page: 'home' };
+const LIBRARY: PageData = { page: 'library' };
 const NOT_FOUND: PageData = { page: 'not-found' };
 
 async function loadHome(): Promise<Type<unknown>> {
   const { Home } = await import('./pages/home/home');
 
   return Home;
+}
+
+async function loadLibrary(): Promise<Type<unknown>> {
+  const { Library } = await import('./pages/library/library');
+
+  return Library;
 }
 
 async function loadNotFound(): Promise<Type<unknown>> {
@@ -23,5 +30,6 @@ async function loadNotFound(): Promise<Type<unknown>> {
 export const routes: Routes = [
   { path: '', title: 'titles.home', data: HOME, loadComponent: loadHome },
   { path: 'home', title: 'titles.home', data: HOME, loadComponent: loadHome },
+  { path: 'library', title: 'titles.library', data: LIBRARY, loadComponent: loadLibrary },
   { path: '**', title: 'titles.notFound', data: NOT_FOUND, loadComponent: loadNotFound },
 ];
