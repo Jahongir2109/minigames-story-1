@@ -2,15 +2,18 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+import { Session } from '@/core/auth/session.service';
 import { DialogUrl } from '@/core/dialogs/dialog-url';
 import { CurrentPage, type PageName } from '@/core/navigation/current-page';
 import { NAVIGATION_LINKS, type NavigationLink } from '@/core/navigation/links';
 import { Button } from '@/shared/ui/button/button';
 import { Icon } from '@/shared/ui/icon/icon';
+import { Snackbar } from '@/shared/ui/snackbar/snackbar.service';
 
 import { Brand } from '../brand/brand';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 import { MOBILE_MENU_ID, MobileMenu } from '../mobile-menu/mobile-menu';
+import { UserProfile } from '../user-profile/user-profile';
 
 export type AuthMode = 'login' | 'register';
 
@@ -20,7 +23,16 @@ export type AuthMode = 'login' | 'register';
  */
 @Component({
   selector: 'app-header',
-  imports: [Brand, Button, Icon, LanguageSwitcher, MobileMenu, RouterLink, TranslocoPipe],
+  imports: [
+    Brand,
+    Button,
+    Icon,
+    LanguageSwitcher,
+    MobileMenu,
+    RouterLink,
+    TranslocoPipe,
+    UserProfile,
+  ],
   template: `
     <header class="header">
       <div class="header__inner">
@@ -43,18 +55,22 @@ export type AuthMode = 'login' | 'register';
           </nav>
           <app-language-switcher />
           <div class="header__actions">
-            <button
-              class="header__login"
-              type="button"
-              appButton
-              variant="outline"
-              (click)="openAuth('login')"
-            >
-              {{ 'header.login' | transloco }}
-            </button>
-            <button class="header__signup" type="button" appButton (click)="openAuth('register')">
-              {{ 'header.signUp' | transloco }}
-            </button>
+            @if (session.user(); as user) {
+              <app-user-profile variant="header" [session]="user" (logout)="logout()" />
+            } @else {
+              <button
+                class="header__login"
+                type="button"
+                appButton
+                variant="outline"
+                (click)="openAuth('login')"
+              >
+                {{ 'header.login' | transloco }}
+              </button>
+              <button class="header__signup" type="button" appButton (click)="openAuth('register')">
+                {{ 'header.signUp' | transloco }}
+              </button>
+            }
             <button
               class="header__burger"
               type="button"
@@ -70,13 +86,21 @@ export type AuthMode = 'login' | 'register';
         </div>
       </div>
     </header>
-    <app-mobile-menu #menu (login)="openAuth('login')" (signUp)="openAuth('register')" />
+    <app-mobile-menu
+      #menu
+      (login)="openAuth('login')"
+      (signUp)="openAuth('register')"
+      (logout)="logout()"
+    />
   `,
   styleUrl: './header.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class Header {
   private readonly dialogs: DialogUrl = inject(DialogUrl);
+  private readonly snackbar: Snackbar = inject(Snackbar);
+
+  protected readonly session: Session = inject(Session);
 
   protected readonly currentPage: CurrentPage = inject(CurrentPage);
   protected readonly links: readonly NavigationLink[] = NAVIGATION_LINKS;
@@ -90,6 +114,15 @@ export class Header {
    * The Auth dialog follows the URL (`?auth=login`), so it can be linked and reopened with Back.
    */
   protected openAuth(mode: AuthMode): void {
-    this.dialogs.open('auth', mode);
+    // Auth never opens for a signed-in user.
+    if (this.session.check() === undefined) {
+      this.dialogs.open('auth', mode);
+    } else {
+      this.snackbar.show({ message: 'auth.already', variant: 'info' });
+    }
+  }
+
+  protected logout(): void {
+    void this.session.logout();
   }
 }

@@ -15,6 +15,7 @@ import {
 import { RouterLink } from '@angular/router';
 import { TranslocoPipe } from '@jsverse/transloco';
 
+import { Session } from '@/core/auth/session.service';
 import { CurrentPage, type PageName } from '@/core/navigation/current-page';
 import { NAVIGATION_LINKS, type NavigationLink } from '@/core/navigation/links';
 import { Button } from '@/shared/ui/button/button';
@@ -23,6 +24,7 @@ import { ScrollLock } from '@/shared/ui/scroll-lock';
 
 import { Brand } from '../brand/brand';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
+import { UserProfile } from '../user-profile/user-profile';
 
 export const MOBILE_MENU_ID: string = 'mobile-menu';
 
@@ -34,7 +36,7 @@ const DESKTOP_QUERY: string = '(min-width: 769px)';
  */
 @Component({
   selector: 'app-mobile-menu',
-  imports: [Brand, Button, Icon, LanguageSwitcher, RouterLink, TranslocoPipe],
+  imports: [Brand, Button, Icon, LanguageSwitcher, RouterLink, TranslocoPipe, UserProfile],
   template: `
     <dialog
       #dialog
@@ -72,18 +74,22 @@ const DESKTOP_QUERY: string = '(min-width: 769px)';
       </nav>
       <app-language-switcher [inverse]="true" />
       <div class="mobile-menu__actions">
-        <button
-          class="mobile-menu__button"
-          type="button"
-          appButton
-          variant="outline-inverse"
-          (click)="choose(login)"
-        >
-          {{ 'header.login' | transloco }}
-        </button>
-        <button class="mobile-menu__button" type="button" appButton (click)="choose(signUp)">
-          {{ 'header.signUp' | transloco }}
-        </button>
+        @if (session.user(); as user) {
+          <app-user-profile variant="menu" [session]="user" (logout)="choose(logout)" />
+        } @else {
+          <button
+            class="mobile-menu__button"
+            type="button"
+            appButton
+            variant="outline-inverse"
+            (click)="choose(login)"
+          >
+            {{ 'header.login' | transloco }}
+          </button>
+          <button class="mobile-menu__button" type="button" appButton (click)="choose(signUp)">
+            {{ 'header.signUp' | transloco }}
+          </button>
+        }
       </div>
     </dialog>
   `,
@@ -98,9 +104,11 @@ export class MobileMenu {
 
   readonly login: OutputEmitterRef<void> = output();
   readonly signUp: OutputEmitterRef<void> = output();
+  readonly logout: OutputEmitterRef<void> = output();
   readonly isOpen: Signal<boolean> = this.openState.asReadonly();
 
   protected readonly currentPage: CurrentPage = inject(CurrentPage);
+  protected readonly session: Session = inject(Session);
   protected readonly links: readonly NavigationLink[] = NAVIGATION_LINKS;
   protected readonly menuId: string = MOBILE_MENU_ID;
 

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+import { Session } from '@/core/auth/session.service';
 import { CurrentPage } from '@/core/navigation/current-page';
 import { DialogHost } from '@/dialogs/dialog-host';
 import { Footer } from '@/layout/footer/footer';
@@ -36,5 +37,7 @@ export class App {
   constructor() {
     // Created with the app, so the very first navigation is tracked too.
     inject(CurrentPage);
+    // A valid session is restored on startup and checked from then on.
+    inject(Session).watch();
   }
 }
