@@ -5,7 +5,7 @@ Stories 1–4 of the RS School qualifying stage were built with plain TypeScript
 
 ## Live demo
 
-- Creative Extension (Angular + i18n): added after the deploy of `creative-extension`
+- Creative Extension (Angular + i18n): https://creative-extension-kappa.vercel.app
 - Story 4: https://minigames-story-4.vercel.app
 - Story 3: https://minigames-story-3.vercel.app
 - Story 2: https://minigames-story-2.vercel.app
