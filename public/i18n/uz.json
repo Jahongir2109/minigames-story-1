@@ -55,9 +55,18 @@
   },
   "errors": {
     "title": "Nimadir xato ketdi",
-    "tryAgain": "Qayta urinish"
+    "tryAgain": "Qayta urinish",
+    "network": "Serverga ulanib boʻlmadi. Internet aloqasini tekshirib, qayta urinib koʻring.",
+    "timeout": "Server oʻz vaqtida javob bermadi. Qayta urinib koʻring.",
+    "notFound": "Soʻralgan maʼlumot topilmadi.",
+    "server": "Serverda muammo yuz berdi. Birozdan keyin qayta urinib koʻring.",
+    "request": "Server soʻrovni bajara olmadi.",
+    "unexpected": "Kutilmagan xatolik yuz berdi. Qayta urinib koʻring."
   },
   "snackbar": {
     "dismiss": "Xabarni yopish"
+  },
+  "time": {
+    "justNow": "hozirgina"
   }
 }
