@@ -1,0 +1,14 @@
+@use 'abstracts' as *;
+
+// Card height: 200px on mobile, 280px on tablet, 384px on desktop; the extra block size leaves
+// room for the card shadow. Shared by the slider and its loading placeholder.
+@mixin track-height {
+  height: calc(
+    #{fluid(size-value('12') + size-value('13'), size-value('5') * 7, $bp-mobile, $bp-tablet)} +
+      #{size('05')}
+  );
+
+  @include from('tablet') {
+    height: calc(#{fluid(size-value('5') * 7, size-value('12') * 4)} + #{size('05')});
+  }
+}

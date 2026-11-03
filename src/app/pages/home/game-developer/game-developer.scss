@@ -1,0 +1,104 @@
+@use 'abstracts' as *;
+
+.game-developer {
+  &__inner {
+    @include section-inner;
+
+    // Image and card share the row: 682 : 958 in the desktop design.
+    @include from('laptop') {
+      display: grid;
+      grid-template-columns: minmax(0, 682fr) minmax(0, 958fr);
+      align-items: center;
+    }
+  }
+
+  &__media {
+    overflow: hidden;
+    border-radius: corner('extra-large');
+    // Image height: 224px on mobile, 300px on tablet; desktop keeps the aspect ratio.
+    height: fluid(
+      size-value('15') * 2 - size-value('2'),
+      size-value('15') * 2.5,
+      $bp-mobile,
+      $bp-tablet
+    );
+
+    @include from('tablet') {
+      height: size-value('15') * 2.5;
+    }
+
+    @include from('laptop') {
+      height: auto;
+      aspect-ratio: 682 / 483;
+    }
+  }
+
+  &__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: size(2);
+    padding: inner(fluid(size-value('3'), size-value('4'), $bp-mobile, $bp-tablet));
+    border: border-width('regular') solid color('on-primary');
+    border-radius: corner('extra-large');
+    background-color: color('white');
+    box-shadow: shadow('card');
+
+    @include from('tablet') {
+      padding: inner(fluid(size-value('4'), size-value('5')));
+    }
+
+    @include from('laptop') {
+      gap: size(3);
+    }
+  }
+
+  &__title {
+    font-size: font-size('headline-medium');
+    font-weight: font-weight('bold');
+    line-height: line-height('heading');
+
+    @include from('laptop') {
+      font-size: font-size('headline-large');
+    }
+  }
+
+  &__description {
+    color: color('on-bg');
+    font-size: fluid(
+      font-size-value('label-medium'),
+      font-size-value('body-small'),
+      $bp-mobile,
+      $bp-tablet
+    );
+    line-height: line-height('relaxed');
+    // The line breaks of the text are part of the design.
+    white-space: pre-line;
+
+    @include from('tablet') {
+      font-size: fluid(font-size-value('body-small'), font-size-value('body-large'));
+    }
+  }
+
+  > .game-developer__inner > .game-developer__card > .game-developer__button {
+    align-self: flex-start;
+    box-shadow: shadow('button');
+    font-family: var(--font-family-secondary);
+  }
+
+  &__contact {
+    color: color('on-bg-low');
+    font-size: font-size('label-medium');
+    line-height: line-height('normal');
+
+    @include from('laptop') {
+      font-size: font-size('label-large');
+    }
+  }
+}

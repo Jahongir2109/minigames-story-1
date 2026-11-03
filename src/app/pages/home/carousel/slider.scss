@@ -1,0 +1,40 @@
+@use 'abstracts' as *;
+@use 'track';
+
+:host {
+  display: block;
+}
+
+// The track clips the cards parked outside of it.
+.carousel__track {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+  cursor: grab;
+  @include track.track-height;
+
+  &--dragging {
+    cursor: grabbing;
+  }
+}
+
+// Cards are positioned by the script on the keylines of the layout.
+.carousel__item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: calc(100% - #{size('05')});
+  transition:
+    transform duration('slow') ease-in-out,
+    width duration('slow') ease-in-out;
+
+  &--instant,
+  .carousel__track--dragging > & {
+    transition: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}

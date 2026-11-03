@@ -68,5 +68,52 @@
   },
   "time": {
     "justNow": "hozirgina"
+  },
+  "hero": {
+    "title": "Biroz dam oling va maroqli vaqt oʻtkazing",
+    "short": "Yuzlab saralangan oddiy mini-oʻyinlarni toʻgʻridan-toʻgʻri brauzerda kashf eting.",
+    "full": "Yuzlab saralangan oddiy mini-oʻyinlarni kashf eting. Brauzerda darhol oʻynang — boshqotirmalar, «3 ta qator», ferma va klassik stol oʻyinlari.",
+    "button": "Kutubxonani koʻrish"
+  },
+  "carousel": {
+    "title": "Yangi oʻyinlar",
+    "region": "Yangi oʻyinlar",
+    "slide": "{count} tadan {index}-si",
+    "previous": "Oldingi oʻyin",
+    "next": "Keyingi oʻyin",
+    "open": "{name}: batafsil maʼlumotni ochish",
+    "cover": "{name} muqovasi",
+    "loading": "Yangi oʻyinlar yuklanmoqda",
+    "failed": "Yangi oʻyinlarni yuklab boʻlmadi",
+    "failedNotice": "Yangi oʻyinlar yuklanmadi.",
+    "emptyTitle": "Hozircha yangi oʻyinlar yoʻq",
+    "emptyMessage": "Yangi oʻyinlar tez orada shu yerda paydo boʻladi."
+  },
+  "leaderboard": {
+    "title": "Haftaning eng yaxshi oʻyinchilari",
+    "titleShort": "Eng yaxshi oʻyinchilar",
+    "caption": "Haftaning eng yaxshi oʻyinchilari umumiy ball boʻyicha",
+    "rank": "Oʻrin",
+    "player": "Oʻyinchi",
+    "gamesPlayed": "Oʻynalgan oʻyinlar",
+    "games": "Oʻyinlar",
+    "totalScore": "Umumiy ball",
+    "score": "Ball",
+    "streak": "Ketma-ketlik",
+    "favorite": "Sevimli oʻyin",
+    "days": "{count, plural, other {# kun}}",
+    "daysShort": "{count} k",
+    "loading": "Eng yaxshi oʻyinchilar yuklanmoqda",
+    "failed": "Eng yaxshi oʻyinchilarni yuklab boʻlmadi",
+    "failedNotice": "Reyting yuklanmadi.",
+    "emptyTitle": "Hozircha oʻyinchilar yoʻq",
+    "emptyMessage": "Bu hafta oʻynab, birinchi boʻling."
+  },
+  "gameDeveloper": {
+    "title": "Siz oʻyin ishlab chiquvchimisiz?",
+    "description": "Oʻyiningizni MiniGames’da koʻrishni xohlaysizmi? Biz platformamiz uchun\ndoim qiziqarli mini-oʻyinlarni qidiramiz. Oʻyiningizni yuboring\nva minglab oʻyinchilarga yetib boring!",
+    "submit": "Ariza yuborish",
+    "contact": "yoki biz bilan bogʻlaning: {email}",
+    "imageAlt": "Monitor, geympad va kreslo bilan oʻyin ishlab chiquvchisining ish joyi tasviri"
   }
 }
