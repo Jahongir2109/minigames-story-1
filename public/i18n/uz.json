@@ -5,5 +5,12 @@
   "language": {
     "label": "Til",
     "change": "Tilni almashtirish, hozirgisi: {name}"
+  },
+  "errors": {
+    "title": "Nimadir xato ketdi",
+    "tryAgain": "Qayta urinish"
+  },
+  "snackbar": {
+    "dismiss": "Xabarni yopish"
   }
 }

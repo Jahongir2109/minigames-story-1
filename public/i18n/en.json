@@ -5,5 +5,12 @@
   "language": {
     "label": "Language",
     "change": "Change language, current: {name}"
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "tryAgain": "Try Again"
+  },
+  "snackbar": {
+    "dismiss": "Dismiss notification"
   }
 }

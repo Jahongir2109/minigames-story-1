@@ -1,0 +1,33 @@
+@use 'abstracts' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: size(1);
+  padding: size(5) size(3);
+  border: border-width('regular') dashed color('outline-variant');
+  border-radius: corner('large');
+  text-align: center;
+}
+
+.empty-state {
+  &__title {
+    @include text-style('headline-small', 'bold', 'heading');
+  }
+
+  &__message {
+    max-width: $game-dialog-width;
+    color: color('on-bg');
+    @include text-style('body-small', 'medium', 'body');
+  }
+
+  // The projected action keeps a little distance from the text.
+  &__action {
+    margin-top: size(1);
+
+    &:empty {
+      display: none;
+    }
+  }
+}
