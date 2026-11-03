@@ -252,5 +252,32 @@
     "passwordSpecial": "Parolda maxsus belgi boʻlishi kerak.",
     "confirmationRequired": "Parolni tasdiqlang.",
     "confirmationMismatch": "Parollar mos kelmadi."
+  },
+  "favorite": {
+    "add": "Sevimlilarga qoʻshish",
+    "remove": "Sevimlilardan olib tashlash",
+    "guest": "Oʻyinlarni sevimlilarga qoʻshish uchun tizimga kiring.",
+    "added": "Oʻyin sevimlilaringizga qoʻshildi.",
+    "removed": "Oʻyin sevimlilaringizdan olib tashlandi.",
+    "failed": "Sevimlilar yangilanmadi. {reason}",
+    "unknown": "Sevimlilar oʻzgarganini tasdiqlab boʻlmadi. Joriy holatni koʻrish uchun oʻyinni qayta oching."
+  },
+  "commentLike": {
+    "label": "{count, plural, other {# ta yoqtirish}}. {liked, select, yes {{author} izohidan yoqtirishni olib tashlash} other {{author} izohini yoqtirish}}",
+    "guest": "Izohlarni yoqtirish uchun tizimga kiring.",
+    "failed": "Yoqtirish saqlanmadi. {reason}",
+    "unknown": "Yoqtirish saqlanganini tasdiqlab boʻlmadi. Joriy holatni koʻrish uchun oʻyinni qayta oching."
+  },
+  "commentForm": {
+    "label": "Izoh yozish",
+    "placeholder": "Izoh yozing…",
+    "guestPlaceholder": "Izoh yozish uchun tizimga kiring",
+    "send": "Izohni yuborish",
+    "guest": "Izoh yozish uchun tizimga kiring.",
+    "empty": "Yuborishdan oldin nimadir yozing.",
+    "tooLong": "Izoh {max} belgidan oshmasligi kerak.",
+    "posted": "Izohingiz joylandi.",
+    "failed": "Izohingiz joylanmadi. {reason}",
+    "unknown": "Izoh joylanganini tasdiqlab boʻlmadi. Qayta yuborishdan oldin izohlarni tekshiring."
   }
 }
