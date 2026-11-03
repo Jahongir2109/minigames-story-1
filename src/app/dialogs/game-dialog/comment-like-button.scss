@@ -1,0 +1,48 @@
+@use 'abstracts' as *;
+
+// The like pill hangs into the card padding so its icon lines up with the text.
+.like {
+  display: inline-flex;
+  align-items: center;
+  gap: size('05');
+  margin: calc(-1 * #{size('05')}) 0 calc(-1 * #{size('05')}) calc(-1 * #{size(1)});
+  padding: size('05') size(1);
+  border-radius: corner('medium');
+  color: color('on-primary');
+  @include text-style('label-medium', 'bold');
+  transition:
+    background-color duration('fast') ease,
+    color duration('fast') ease;
+
+  @include hover-device {
+    &:hover {
+      background-color: color('surface');
+    }
+  }
+
+  &[aria-pressed='true'] {
+    color: color('like');
+  }
+
+  &:disabled {
+    cursor: progress;
+  }
+
+  &__icon {
+    width: size(2);
+    height: size(2);
+    color: color('on-bg');
+    transition: color duration('fast') ease;
+  }
+
+  &[aria-pressed='true'] > &__icon {
+    color: color('like');
+  }
+
+  // The pending spinner takes the place of the 16px heart.
+  &__spinner {
+    width: size(2);
+    height: size(2);
+    border-width: border-width('regular');
+  }
+}

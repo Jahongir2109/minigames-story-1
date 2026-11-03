@@ -252,5 +252,32 @@
     "passwordSpecial": "Password must contain a special character.",
     "confirmationRequired": "Confirm your password.",
     "confirmationMismatch": "Passwords do not match."
+  },
+  "favorite": {
+    "add": "Add to Favorites",
+    "remove": "Remove from Favorites",
+    "guest": "Log in to add games to your favorites.",
+    "added": "The game is in your favorites now.",
+    "removed": "The game is no longer in your favorites.",
+    "failed": "Favorites were not updated. {reason}",
+    "unknown": "We could not confirm whether your favorites changed. Reopen the game to see the current state."
+  },
+  "commentLike": {
+    "label": "{count, plural, one {# like} other {# likes}}. {liked, select, yes {Remove your like from the comment by {author}} other {Like the comment by {author}}}",
+    "guest": "Log in to like comments.",
+    "failed": "The like was not saved. {reason}",
+    "unknown": "We could not confirm whether your like was saved. Reopen the game to see the current state."
+  },
+  "commentForm": {
+    "label": "Write a comment",
+    "placeholder": "Write a comment…",
+    "guestPlaceholder": "Log in to write a comment",
+    "send": "Send comment",
+    "guest": "Log in to write comments.",
+    "empty": "Write something before sending the comment.",
+    "tooLong": "A comment can be up to {max} characters long.",
+    "posted": "Your comment is posted.",
+    "failed": "Your comment was not posted. {reason}",
+    "unknown": "We could not confirm whether your comment was posted. Check the comments before sending it again."
   }
 }

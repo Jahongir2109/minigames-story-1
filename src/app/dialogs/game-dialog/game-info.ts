@@ -67,7 +67,7 @@ export class GameInfo {
   /**
    * The like count that the server returned with the last favorite change.
    */
-  readonly likesCount: InputSignal<number | undefined> = input<number>();
+  readonly likesCount: InputSignal<number | null> = input<number | null>(null);
 
   protected specs(): readonly Spec[] {
     const { genre, players, duration, price } = this.game().specs;

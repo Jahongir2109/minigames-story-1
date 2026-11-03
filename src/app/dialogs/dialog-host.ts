@@ -31,7 +31,7 @@ export function isAuthMode(value: string | undefined): value is AuthMode {
     <app-game-dialog
       [slug]="dialogs.game()"
       [hidden]="authMode() !== undefined"
-      [userEmail]="session.user()?.email"
+      [user]="session.user()"
       (closed)="dialogs.close('game')"
     />
     <app-auth-dialog

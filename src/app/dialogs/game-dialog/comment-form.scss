@@ -1,0 +1,94 @@
+@use 'abstracts' as *;
+
+.comment-form {
+  display: flex;
+  align-items: center;
+  gap: size(2);
+
+  // The avatar of the comment form is larger than the avatars of the comments.
+  &__avatar {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: size(5);
+    height: size(5);
+    border: border-width('light') solid color('on-primary');
+    border-radius: corner('full');
+    background-color: color('primary');
+    @include text-style('label-large', 'bold');
+  }
+
+  // The guest avatar shows a person icon.
+  &__avatar-icon {
+    width: size(3);
+    height: size(3);
+  }
+
+  &__input {
+    flex: 1;
+    min-width: 0;
+    height: size(6);
+    min-height: size(6);
+    max-height: size(11);
+    margin: 0;
+    padding: inner(size(1), border-width('thin')) inner(size(2), border-width('thin'));
+    overflow-y: hidden;
+    resize: none;
+    border: border-width('thin') solid color('on-primary');
+    border-radius: corner('small');
+    background-color: color('white');
+    color: color('on-primary');
+    font: inherit;
+    @include text-style('body-small');
+
+    &::placeholder {
+      color: color('on-bg-low');
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      background-color: color('surface-low');
+    }
+
+    // The focused state keeps the default size: the thicker border is an inset shadow.
+    &:focus {
+      outline: none;
+      box-shadow: inset 0 0 0 border-width('thin') color('on-primary');
+    }
+  }
+
+  &__send {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: size(5);
+    height: size(5);
+    border: border-width('light') solid color('on-primary');
+    border-radius: corner('small');
+    background-color: color('bg-footer-low');
+    color: color('white');
+    transition:
+      background-color duration('fast') ease,
+      opacity duration('fast') ease;
+
+    @include hover-device {
+      &:hover:not(:disabled) {
+        background-color: color('tertiary');
+      }
+    }
+
+    &:disabled {
+      border-color: transparent;
+      background-color: color('outline-variant');
+      color: color('on-bg');
+      opacity: 0.5;
+    }
+  }
+
+  &__send-icon {
+    width: size(3);
+    height: size(3);
+  }
+}

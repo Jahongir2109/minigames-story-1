@@ -1,17 +1,20 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   type ElementRef,
   inject,
   input,
   type InputSignal,
+  linkedSignal,
   output,
   type OutputEmitterRef,
   type ResourceRef,
   type Signal,
   untracked,
   viewChild,
+  type WritableSignal,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { rxResource } from '@angular/core/rxjs-interop';
@@ -20,12 +23,15 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { ApiError, getErrorKey } from '@/core/api/api-error';
 import { GamesApi } from '@/core/api/games-api';
 import type { GameDetails } from '@/core/api/models';
+import type { AppSession } from '@/core/auth/session';
 import { reportFailures } from '@/shared/data/report-failures';
 import { EmptyState } from '@/shared/ui/empty-state/empty-state';
 import { ErrorBanner } from '@/shared/ui/error-banner/error-banner';
 import { Icon } from '@/shared/ui/icon/icon';
 import { ScrollLock } from '@/shared/ui/scroll-lock';
 
+import { CommentForm } from './comment-form';
+import { FavoriteButton } from './favorite-button';
 import { GameComments } from './game-comments';
 import { GameInfo } from './game-info';
 import { GameRecords } from './game-records';
@@ -50,7 +56,9 @@ function isNotFound(error: unknown): boolean {
 @Component({
   selector: 'app-game-dialog',
   imports: [
+    CommentForm,
     EmptyState,
+    FavoriteButton,
     ErrorBanner,
     GameComments,
     GameInfo,
@@ -132,9 +140,17 @@ function isNotFound(error: unknown): boolean {
             <ng-container [ngTemplateOutlet]="closeButton" />
           </div>
           <div class="game-dialog__body">
-            <app-game-info [game]="game" [titleId]="titleId" />
+            <app-game-info [game]="game" [titleId]="titleId" [likesCount]="likesCount()">
+              <app-favorite-button
+                [slug]="game.slug"
+                [favorited]="game.isLikedByCurrentUser"
+                (likesChange)="likesCount.set($event)"
+              />
+            </app-game-info>
             <app-game-records [records]="game.topRecords" />
-            <app-game-comments [slug]="game.slug" [userEmail]="userEmail()" />
+            <app-game-comments #comments [slug]="game.slug" [userEmail]="userEmail()">
+              <app-comment-form [slug]="game.slug" [user]="user()" (posted)="comments.reload()" />
+            </app-game-comments>
           </div>
         }
       </div>
@@ -166,13 +182,21 @@ export class GameDialog {
   /**
    * The signed-in user: personalizes the favorite and the comment likes. A change reloads them.
    */
-  readonly userEmail: InputSignal<string | undefined> = input<string>();
+  readonly user: InputSignal<AppSession | undefined> = input<AppSession>();
   /**
    * The user closed the dialog (button, backdrop or Escape).
    */
   readonly closed: OutputEmitterRef<void> = output();
 
   protected readonly titleId: string = GAME_DIALOG_TITLE_ID;
+  protected readonly userEmail: Signal<string | undefined> = computed(() => this.user()?.email);
+  // The like count that the server returned with the last favorite change of this game.
+  protected readonly likesCount: WritableSignal<number | null> = linkedSignal(() => {
+    this.slug();
+    this.userEmail();
+
+    return null;
+  });
   protected readonly skeletonLines: readonly number[] = SKELETON_LINES;
   protected readonly details: ResourceRef<GameDetails | undefined> = rxResource({
     params: (): DetailsRequest | undefined => {
