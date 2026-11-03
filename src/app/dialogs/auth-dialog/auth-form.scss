@@ -1,0 +1,109 @@
+@use 'abstracts' as *;
+
+// Form content of both panels
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: size(3);
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: size(1);
+  }
+
+  &__title {
+    @include text-style('headline-medium', 'bold');
+  }
+
+  &__subtitle {
+    @include text-style('label-large', 'regular');
+    color: color('on-bg');
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: size(3);
+  }
+
+  &__fields {
+    display: flex;
+    flex-direction: column;
+    gap: size(2);
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: size(2);
+  }
+
+  // Text buttons ("Forgot Password?", "Register", "Login")
+  &__link {
+    color: color('on-primary');
+    font-size: font-size('label-large');
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+    text-decoration: underline;
+    text-underline-offset: size('05');
+    transition: color duration('fast') ease;
+
+    @include hover-device {
+      &:hover {
+        color: color('tertiary');
+      }
+    }
+
+    &:active {
+      color: color('tertiary');
+      opacity: 0.8;
+    }
+  }
+
+  &__forgot {
+    align-self: flex-end;
+  }
+
+  &__form > .auth-form__actions > .button {
+    width: 100%;
+    min-height: calc(#{size(6)} + #{border-width('regular')});
+    padding-block: 0;
+    border-radius: corner('medium');
+    font-size: font-size('label-extra-large');
+    line-height: line-height('normal');
+  }
+
+  &__form > .auth-form__actions > .auth-form__submit {
+    box-shadow: 0 size('05') 0 color('on-primary');
+  }
+
+  &__form > .auth-form__actions > .auth-form__google {
+    background-color: color('white');
+  }
+
+  &__divider {
+    display: flex;
+    align-items: center;
+    gap: size(2);
+    color: color('on-bg');
+    font-size: font-size('label-medium');
+    font-weight: font-weight('bold');
+    line-height: line-height('normal');
+
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      height: border-width('thin');
+      background-color: color('outline-variant');
+    }
+  }
+
+  &__prompt {
+    color: color('on-bg');
+    font-size: font-size('label-large');
+    line-height: line-height('normal');
+    text-align: center;
+  }
+}
