@@ -1,5 +1,6 @@
 import { inject, Pipe, type PipeTransform } from '@angular/core';
 
+import { getDateFormat } from '@/core/i18n/intl-formats';
 import { LanguageStore } from '@/core/i18n/language.store';
 
 const DEFAULT_OPTIONS: Intl.DateTimeFormatOptions = {
@@ -25,6 +26,6 @@ export class LocalizedDatePipe implements PipeTransform {
 
     return Number.isNaN(date.getTime())
       ? ''
-      : new Intl.DateTimeFormat(this.languages.locale(), options).format(date);
+      : getDateFormat(this.languages.locale(), options).format(date);
   }
 }
