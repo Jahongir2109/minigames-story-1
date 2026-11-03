@@ -55,9 +55,18 @@
   },
   "errors": {
     "title": "Something went wrong",
-    "tryAgain": "Try Again"
+    "tryAgain": "Try Again",
+    "network": "Could not reach the server. Check your connection and try again.",
+    "timeout": "The server did not answer in time. Please try again.",
+    "notFound": "The requested data was not found.",
+    "server": "The server ran into a problem. Please try again a bit later.",
+    "request": "The server could not process the request.",
+    "unexpected": "Something unexpected happened. Please try again."
   },
   "snackbar": {
     "dismiss": "Dismiss notification"
+  },
+  "time": {
+    "justNow": "just now"
   }
 }
