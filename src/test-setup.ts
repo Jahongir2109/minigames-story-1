@@ -26,6 +26,27 @@ if (typeof matchMedia !== 'function') {
   });
 }
 
+// jsdom does not lay anything out, so a ResizeObserver never has anything to report.
+if (typeof ResizeObserver !== 'function') {
+  Object.defineProperty(globalThis, 'ResizeObserver', {
+    configurable: true,
+    writable: true,
+    value: class {
+      observe(): void {
+        // Nothing to measure in jsdom.
+      }
+
+      unobserve(): void {
+        // See observe().
+      }
+
+      disconnect(): void {
+        // See observe().
+      }
+    },
+  });
+}
+
 Object.assign(HTMLDialogElement.prototype, {
   showModal(this: HTMLDialogElement): void {
     this.setAttribute('open', '');
