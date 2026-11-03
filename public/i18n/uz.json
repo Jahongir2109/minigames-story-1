@@ -154,5 +154,32 @@
     "page": "{page}-sahifa",
     "previousPage": "Oldingi sahifa",
     "nextPage": "Keyingi sahifa"
+  },
+  "gameDialog": {
+    "close": "Oʻyin maʼlumotlarini yopish",
+    "loading": "Oʻyin maʼlumotlari yuklanmoqda",
+    "failed": "Oʻyin maʼlumotlarini yuklab boʻlmadi",
+    "failedNotice": "Oʻyin maʼlumotlari yuklanmadi.",
+    "notFoundTitle": "Oʻyin topilmadi",
+    "notFoundMessage": "“{slug}” degan oʻyin yoʻq. Havola eskirgan yoki notoʻgʻri yozilgan boʻlishi mumkin.",
+    "heroAlt": "{name} rasmi",
+    "play": "Oʻynash",
+    "genre": "Janr",
+    "players": "Oʻyinchilar",
+    "duration": "Davomiyligi",
+    "price": "Narxi",
+    "records": "Eng yaxshi natijalar",
+    "noRecordsTitle": "Hozircha natijalar yoʻq",
+    "noRecordsMessage": "Birinchi natijani qoʻyish uchun oʻynab koʻring.",
+    "place": "{position}-oʻrin:",
+    "points": "{score} ball",
+    "comments": "Izohlar",
+    "commentsCount": "Izohlar ({count})",
+    "loadingComments": "Izohlar yuklanmoqda",
+    "commentsFailed": "Izohlarni yuklab boʻlmadi",
+    "commentsFailedNotice": "Izohlar yuklanmadi.",
+    "noCommentsTitle": "Hozircha izohlar yoʻq",
+    "noCommentsMessage": "Bu oʻyin haqidagi fikringizni birinchi boʻlib yozing.",
+    "likes": "{count, plural, other {# ta yoqtirish}}"
   }
 }
