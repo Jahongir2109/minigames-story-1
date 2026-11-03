@@ -1,0 +1,89 @@
+@use 'abstracts' as *;
+@use 'track';
+
+.carousel {
+  &__inner {
+    @include section-inner;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__controls {
+    display: none;
+    gap: size(2);
+
+    @include from('narrow') {
+      display: flex;
+    }
+  }
+
+  &__control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fluid(size-value('5'), size-value('6'));
+    height: fluid(size-value('5'), size-value('6'));
+    border: border-width('regular') solid color('on-primary');
+    border-radius: corner('full');
+    color: color('on-primary');
+    transition:
+      background-color duration('fast') ease,
+      transform duration('fast') ease;
+
+    &--previous {
+      background-color: color('white');
+    }
+
+    &--next {
+      background-color: color('primary');
+    }
+
+    @include hover-device {
+      &--previous:hover {
+        background-color: color('surface');
+      }
+
+      &--next:hover {
+        background-color: color('primary-high');
+      }
+    }
+
+    &:active {
+      transform: scale(0.96);
+    }
+  }
+
+  &__control-icon {
+    width: size(3);
+    height: size(3);
+  }
+
+  // Loading placeholder of the same height as the slider: one card on mobile, three from tablet.
+  &__skeleton {
+    display: flex;
+    gap: size(3);
+    @include track.track-height;
+  }
+
+  &__skeleton-card {
+    flex: 1;
+    height: calc(100% - #{size('05')});
+    border-radius: corner('large');
+
+    &:not(:nth-child(2)) {
+      display: none;
+
+      @include from('narrow') {
+        display: block;
+      }
+    }
+
+    &:nth-child(2) {
+      flex-grow: 2;
+    }
+  }
+}
